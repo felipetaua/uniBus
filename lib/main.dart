@@ -74,7 +74,7 @@ class BusAttendanceApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -101,12 +101,12 @@ class AuthWrapper extends StatelessWidget {
 
           // Se é estudante e não completou o perfil, mostrar tela de boas-vindas
           if (!isOrganizer && !profileCompleted) {
-            return WelcomeScreen();
+            return const WelcomeScreen();
           }
 
-          return isOrganizer ? OrganizerDashboard() : StudentDashboard();
+          return isOrganizer ? OrganizerDashboard() : const StudentDashboard();
         }
-        return LoginScreen();
+        return const LoginScreen();
       },
     );
   }
