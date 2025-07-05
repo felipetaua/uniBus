@@ -25,7 +25,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
 
   void _setupRealTimeUpdates() {
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    
+
     Supabase.instance.client
         .from('attendances')
         .stream(primaryKey: ['id'])
@@ -33,14 +33,15 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
         .listen((data) {
           setState(() {
             _todayAttendances = data;
-            _totalConfirmed = data.where((a) => a['will_attend'] == true).length;
+            _totalConfirmed =
+                data.where((a) => a['will_attend'] == true).length;
           });
         });
   }
 
   Future<void> _loadTodayAttendances() async {
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    
+
     try {
       final response = await Supabase.instance.client
           .from('attendances')
@@ -50,7 +51,8 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
 
       setState(() {
         _todayAttendances = List<Map<String, dynamic>>.from(response);
-        _totalConfirmed = _todayAttendances.where((a) => a['will_attend'] == true).length;
+        _totalConfirmed =
+            _todayAttendances.where((a) => a['will_attend'] == true).length;
         _isLoading = false;
       });
     } catch (error) {
@@ -64,9 +66,8 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
   Future<void> _generatePDF() async {
     final pdf = pw.Document();
     final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final confirmedStudents = _todayAttendances
-        .where((a) => a['will_attend'] == true)
-        .toList();
+    final confirmedStudents =
+        _todayAttendances.where((a) => a['will_attend'] == true).toList();
 
     pdf.addPage(
       pw.Page(
@@ -80,7 +81,8 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
               ),
               pw.SizedBox(height: 20),
               pw.Text('Data: $today'),
-              pw.Text('Total confirmados: ${confirmedStudents.length}/$_busCapacity'),
+              pw.Text(
+                  'Total confirmados: ${confirmedStudents.length}/$_busCapacity'),
               pw.SizedBox(height: 20),
               pw.Table.fromTextArray(
                 headers: ['#', 'Nome do Estudante', 'Status'],
@@ -105,80 +107,88 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateFormat('EEEE, dd/MM/yyyy', 'pt_BR').format(DateTime.now());
-    final confirmedStudents = _todayAttendances
-        .where((a) => a['will_attend'] == true)
-        .toList();
+    final today =
+        DateFormat('EEEE, dd/MM/yyyy', 'pt_BR').format(DateTime.now());
+    final confirmedStudents =
+        _todayAttendances.where((a) => a['will_attend'] == true).toList();
     final availableSeats = _busCapacity - _totalConfirmed;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Painel Organizador'),
+        title: const Text('Painel Organizador'),
         actions: [
           IconButton(
-            icon: Icon(Icons.picture_as_pdf),
+            icon: const Icon(Icons.picture_as_pdf),
             onPressed: confirmedStudents.isNotEmpty ? _generatePDF : null,
             tooltip: 'Exportar PDF',
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: _loadTodayAttendances,
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () => Supabase.instance.client.auth.signOut(),
           ),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 // Cards de resumo
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
                       Expanded(
                         child: Card(
                           color: Colors.green[50],
                           child: Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               children: [
-                                Icon(Icons.people, color: Colors.green, size: 32),
-                                SizedBox(height: 8),
+                                const Icon(Icons.people,
+                                    color: Colors.green, size: 32),
+                                const SizedBox(height: 8),
                                 Text(
                                   '$_totalConfirmed',
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.copyWith(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                                Text('Confirmados'),
+                                const Text('Confirmados'),
                               ],
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Card(
                           color: Colors.blue[50],
                           child: Padding(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             child: Column(
                               children: [
-                                Icon(Icons.event_seat, color: Colors.blue, size: 32),
-                                SizedBox(height: 8),
+                                const Icon(Icons.event_seat,
+                                    color: Colors.blue, size: 32),
+                                const SizedBox(height: 8),
                                 Text(
                                   '$availableSeats',
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.copyWith(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                                Text('Vagas livres'),
+                                const Text('Vagas livres'),
                               ],
                             ),
                           ),
@@ -190,7 +200,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
 
                 // Indicador de capacidade
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -198,17 +208,17 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
                         'Capacidade do ônibus',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       LinearProgressIndicator(
                         value: _totalConfirmed / _busCapacity,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _totalConfirmed > _busCapacity * 0.8 
-                              ? Colors.red 
+                          _totalConfirmed > _busCapacity * 0.8
+                              ? Colors.red
                               : Colors.green,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         '$_totalConfirmed/$_busCapacity lugares',
                         style: TextStyle(color: Colors.grey[600]),
@@ -217,7 +227,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
                   ),
                 ),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Lista de estudantes
                 Expanded(
@@ -227,15 +237,19 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
                       children: [
                         TabBar(
                           tabs: [
-                            Tab(text: 'Confirmados (${confirmedStudents.length})'),
+                            Tab(
+                                text:
+                                    'Confirmados (${confirmedStudents.length})'),
                             Tab(text: 'Todos (${_todayAttendances.length})'),
                           ],
                         ),
                         Expanded(
                           child: TabBarView(
                             children: [
-                              _buildStudentList(confirmedStudents, showOnlyConfirmed: true),
-                              _buildStudentList(_todayAttendances, showOnlyConfirmed: false),
+                              _buildStudentList(confirmedStudents,
+                                  showOnlyConfirmed: true),
+                              _buildStudentList(_todayAttendances,
+                                  showOnlyConfirmed: false),
                             ],
                           ),
                         ),
@@ -248,16 +262,17 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
     );
   }
 
-  Widget _buildStudentList(List<Map<String, dynamic>> students, {required bool showOnlyConfirmed}) {
+  Widget _buildStudentList(List<Map<String, dynamic>> students,
+      {required bool showOnlyConfirmed}) {
     if (students.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              showOnlyConfirmed 
+              showOnlyConfirmed
                   ? 'Nenhum estudante confirmou presença ainda'
                   : 'Nenhum registro para hoje',
               style: Theme.of(context).textTheme.titleMedium,
@@ -268,7 +283,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       itemCount: students.length,
       itemBuilder: (context, index) {
         final student = students[index];
@@ -277,7 +292,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
         final updatedAt = DateTime.parse(student['updated_at']);
 
         return Card(
-          margin: EdgeInsets.only(bottom: 8),
+          margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: willAttend ? Colors.green : Colors.orange,
@@ -290,9 +305,9 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
             subtitle: Text(
               '${willAttend ? 'Confirmou' : 'Não vai'} às ${DateFormat('HH:mm').format(updatedAt)}',
             ),
-            trailing: willAttend 
-                ? Icon(Icons.directions_bus, color: Colors.green)
-                : Icon(Icons.cancel, color: Colors.orange),
+            trailing: willAttend
+                ? const Icon(Icons.directions_bus, color: Colors.green)
+                : const Icon(Icons.cancel, color: Colors.orange),
           ),
         );
       },

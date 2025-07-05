@@ -15,6 +15,8 @@ class AppInitializer extends StatelessWidget {
   // Cria um Future que encapsula toda a lógica de inicialização.
   final Future<void> _initFuture = _initializeApp();
 
+  AppInitializer({super.key});
+
   static Future<void> _initializeApp() async {
     // Garante que os bindings do Flutter estão prontos.
     WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +48,7 @@ class AppInitializer extends StatelessWidget {
             );
           }
           // Tudo certo, vamos para o app.
-          return BusAttendanceApp();
+          return const BusAttendanceApp();
         }
 
         // Enquanto a inicialização está em andamento, mostra uma tela de carregamento.
@@ -60,6 +62,8 @@ class AppInitializer extends StatelessWidget {
 }
 
 class BusAttendanceApp extends StatelessWidget {
+  const BusAttendanceApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -69,20 +73,22 @@ class BusAttendanceApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
       ),
-      home: AuthWrapper(),
+      home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<AuthState>(
