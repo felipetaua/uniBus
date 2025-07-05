@@ -23,15 +23,17 @@ CREATE POLICY "Users can insert own attendances" ON attendances
 CREATE POLICY "Users can update own attendances" ON attendances
   FOR UPDATE USING (auth.uid() = user_id);
 
+-- Função segura para obter a 'role' do usuário atual
+CREATE OR REPLACE FUNCTION get_my_role()
+RETURNS TEXT AS $$
+BEGIN
+  RETURN auth.jwt()->>'role';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Política para organizadores verem todos os registros
 CREATE POLICY "Organizers can view all attendances" ON attendances
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM auth.users 
-      WHERE auth.users.id = auth.uid() 
-      AND auth.users.raw_user_meta_data->>'role' = 'organizer'
-    )
-  );
+  FOR SELECT USING (get_my_role() = 'organizer');
 
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_attendances_user_date ON attendances(user_id, date);

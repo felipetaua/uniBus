@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'config/supabase_config.dart';
 import 'screens/login_screen.dart';
@@ -8,18 +9,20 @@ import 'screens/organizer_dashboard.dart';
 import 'screens/welcome_screen.dart';
 
 void main() {
+  // runApp é chamado imediatamente, e a inicialização é gerenciada por um widget.
   runApp(AppInitializer());
 }
 
+/// Um widget que gerencia a inicialização assíncrona do aplicativo.
 class AppInitializer extends StatelessWidget {
   // Cria um Future que encapsula toda a lógica de inicialização.
   final Future<void> _initFuture = _initializeApp();
 
-  AppInitializer({super.key});
-
   static Future<void> _initializeApp() async {
     // Garante que os bindings do Flutter estão prontos.
     WidgetsFlutterBinding.ensureInitialized();
+    // Inicializa os dados de localização para formatação de datas.
+    await initializeDateFormatting('pt_BR');
     // Carrega as variáveis de ambiente.
     await dotenv.load(fileName: "dotenv");
     // Inicializa o Supabase com as credenciais carregadas.
@@ -48,7 +51,7 @@ class AppInitializer extends StatelessWidget {
             );
           }
           // Tudo certo, vamos para o app.
-          return const BusAttendanceApp();
+          return BusAttendanceApp();
         }
 
         // Enquanto a inicialização está em andamento, mostra uma tela de carregamento.
@@ -62,8 +65,6 @@ class AppInitializer extends StatelessWidget {
 }
 
 class BusAttendanceApp extends StatelessWidget {
-  const BusAttendanceApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -73,22 +74,20 @@ class BusAttendanceApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
       ),
-      home: const AuthWrapper(),
+      home: AuthWrapper(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<AuthState>(
@@ -102,12 +101,12 @@ class AuthWrapper extends StatelessWidget {
 
           // Se é estudante e não completou o perfil, mostrar tela de boas-vindas
           if (!isOrganizer && !profileCompleted) {
-            return const WelcomeScreen();
+            return WelcomeScreen();
           }
 
-          return isOrganizer ? OrganizerDashboard() : const StudentDashboard();
+          return isOrganizer ? OrganizerDashboard() : StudentDashboard();
         }
-        return const LoginScreen();
+        return LoginScreen();
       },
     );
   }
