@@ -102,10 +102,10 @@ class AuthWrapper extends StatelessWidget {
 
           // Se é estudante e não completou o perfil, mostrar tela de boas-vindas
           if (!isOrganizer && !profileCompleted) {
-            return WelcomeScreen();
+            return const WelcomeScreen();
           }
 
-          return isOrganizer ? OrganizerDashboard() : StudentDashboard();
+          return isOrganizer ? OrganizerDashboard() : const StudentDashboard();
         }
         return const LoginScreen();
       },
