@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -49,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Login realizado com sucesso!'),
           backgroundColor: Colors.green,
         ),
@@ -80,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Conta criada e login realizado!'),
             backgroundColor: Colors.green,
           ),
@@ -96,17 +98,17 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(
+              const Icon(
                 Icons.directions_bus,
                 size: 80,
                 color: Colors.blue,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Text(
                 'Presença Ônibus',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -115,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 'Confirme sua presença diária',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -123,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 48),
+              const SizedBox(height: 48),
 
               // Toggle entre email e matrícula
               Row(
@@ -137,10 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         foregroundColor:
                             _useEmail ? Colors.white : Colors.black,
                       ),
-                      child: Text('E-mail'),
+                      child: const Text('E-mail'),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => setState(() => _useEmail = false),
@@ -150,13 +152,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         foregroundColor:
                             !_useEmail ? Colors.white : Colors.black,
                       ),
-                      child: Text('Matrícula'),
+                      child: const Text('Matrícula'),
                     ),
                   ),
                 ],
               ),
 
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               TextField(
                 controller: _useEmail ? _emailController : _matriculaController,
@@ -171,27 +173,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     _useEmail ? TextInputType.emailAddress : TextInputType.text,
               ),
 
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               ElevatedButton(
                 onPressed: _isLoading ? null : _signIn,
                 child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text('Entrar / Criar Conta'),
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Entrar / Criar Conta'),
               ),
 
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
 
               OutlinedButton(
                 onPressed: _isLoading ? null : _showManualSignup,
-                child: Text('Criar Nova Conta'),
+                child: const Text('Criar Nova Conta'),
               ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               TextButton(
                 onPressed: () => _showOrganizerLogin(),
-                child: Text('Sou organizador'),
+                child: const Text('Sou organizador'),
               ),
             ],
           ),
@@ -204,12 +206,12 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Acesso Organizador'),
+        title: const Text('Acesso Organizador'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'E-mail do organizador',
                 border: OutlineInputBorder(),
               ),
@@ -228,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
         ],
       ),
@@ -243,39 +245,39 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Criar Nova Conta'),
+        title: const Text('Criar Nova Conta'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Nome completo',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'E-mail',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: matriculaController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Matrícula (opcional)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.badge),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 'Senha padrão: estudante123',
                 style: TextStyle(
@@ -289,13 +291,13 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () async {
               if (nameController.text.isEmpty || emailController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Preencha nome e e-mail')),
+                  const SnackBar(content: Text('Preencha nome e e-mail')),
                 );
                 return;
               }
@@ -316,7 +318,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Conta criada com sucesso!'),
                     backgroundColor: Colors.green,
                   ),
@@ -332,7 +334,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 setState(() => _isLoading = false);
               }
             },
-            child: Text('Criar Conta'),
+            child: const Text('Criar Conta'),
           ),
         ],
       ),

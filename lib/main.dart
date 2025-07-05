@@ -107,7 +107,7 @@ class AuthWrapper extends StatelessWidget {
 
           return isOrganizer ? OrganizerDashboard() : StudentDashboard();
         }
-        return LoginScreen();
+        return const LoginScreen();
       },
     );
   }
