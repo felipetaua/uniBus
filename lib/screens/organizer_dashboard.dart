@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/supabase_config.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -14,7 +15,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
   List<Map<String, dynamic>> _todayAttendances = [];
   bool _isLoading = true;
   int _totalConfirmed = 0;
-  final int _busCapacity = 45; // Capacidade do ônibus
+  final int _busCapacity = SupabaseConfig.busCapacity;
 
   @override
   void initState() {
