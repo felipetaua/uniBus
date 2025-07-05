@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'student_history.dart';
 
 class StudentDashboard extends StatefulWidget {
+  const StudentDashboard({super.key});
+
   @override
   _StudentDashboardState createState() => _StudentDashboardState();
 }

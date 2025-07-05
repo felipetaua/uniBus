@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 
 class StudentHistory extends StatefulWidget {
+  const StudentHistory({super.key});
+
   @override
   _StudentHistoryState createState() => _StudentHistoryState();
 }
@@ -45,22 +47,22 @@ class _StudentHistoryState extends State<StudentHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meu Histórico'),
+        title: const Text('Meu Histórico'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _attendances.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.history, size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
+                      const Icon(Icons.history, size: 64, color: Colors.grey),
+                      const SizedBox(height: 16),
                       Text(
                         'Nenhum registro encontrado',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         'Suas confirmações de presença aparecerão aqui',
                         style: TextStyle(color: Colors.grey[600]),
@@ -69,18 +71,19 @@ class _StudentHistoryState extends State<StudentHistory> {
                   ),
                 )
               : ListView.builder(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   itemCount: _attendances.length,
                   itemBuilder: (context, index) {
                     final attendance = _attendances[index];
                     final date = DateTime.parse(attendance['date']);
                     final willAttend = attendance['will_attend'] as bool;
-                    
+
                     return Card(
-                      margin: EdgeInsets.only(bottom: 8),
+                      margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: willAttend ? Colors.green : Colors.orange,
+                          backgroundColor:
+                              willAttend ? Colors.green : Colors.orange,
                           child: Icon(
                             willAttend ? Icons.check : Icons.close,
                             color: Colors.white,
@@ -90,7 +93,9 @@ class _StudentHistoryState extends State<StudentHistory> {
                           DateFormat('EEEE, dd/MM/yyyy', 'pt_BR').format(date),
                         ),
                         subtitle: Text(
-                          willAttend ? 'Confirmou presença' : 'Registrou ausência',
+                          willAttend
+                              ? 'Confirmou presença'
+                              : 'Registrou ausência',
                         ),
                         trailing: Text(
                           DateFormat('HH:mm').format(
