@@ -64,6 +64,102 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
     }
   }
 
+  Future<void> _scanQRCode() async {
+    // Antes de navegar, verificar se o contexto ainda é válido
+    if (!mounted) return;
+
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (context) => const QRScannerScreen()),
+    );
+
+    if (result != null && result.isNotEmpty) {
+      _handleScannedQR(result);
+    }
+  }
+
+  Future<void> _handleScannedQR(String studentId) async {
+    // Mostrar um indicador de carregamento
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final response = await Supabase.instance.client
+          .from('attendances')
+          .select('will_attend, student_name')
+          .eq('user_id', studentId)
+          .eq('date', today)
+          .maybeSingle();
+
+      // Fechar o indicador de carregamento
+      if (mounted) Navigator.of(context).pop();
+
+      if (!mounted) return;
+
+      String title;
+      String content;
+      IconData icon;
+      Color iconColor;
+
+      if (response == null) {
+        title = 'Não Encontrado';
+        content = 'Nenhum registro de presença para este estudante hoje.';
+        icon = Icons.error_outline;
+        iconColor = Colors.red;
+      } else {
+        final willAttend = response['will_attend'] as bool;
+        final studentName = response['student_name'] ?? 'Estudante';
+        if (willAttend) {
+          title = 'Confirmado!';
+          content = '$studentName está na lista de hoje.';
+          icon = Icons.check_circle_outline;
+          iconColor = Colors.green;
+        } else {
+          title = 'Atenção';
+          content = '$studentName marcou que NÃO IRIA hoje.';
+          icon = Icons.warning_amber_rounded;
+          iconColor = Colors.orange;
+        }
+      }
+
+      _showScanResultDialog(title, content, icon, iconColor);
+    } catch (e) {
+      // Fechar o indicador de carregamento em caso de erro
+      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao verificar QR Code: $e')),
+        );
+      }
+    }
+  }
+
+  void _showScanResultDialog(
+      String title, String content, IconData icon, Color iconColor) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(icon, color: iconColor),
+            const SizedBox(width: 10),
+            Text(title),
+          ],
+        ),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _generatePDF() async {
     final pdf = pw.Document();
     final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -118,6 +214,11 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
       appBar: AppBar(
         title: const Text('Painel Organizador'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            onPressed: _scanQRCode,
+            tooltip: 'Escanear QR Code',
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: confirmedStudents.isNotEmpty ? _generatePDF : null,
