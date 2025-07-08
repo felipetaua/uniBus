@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
+import 'qr_scanner_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -124,6 +125,40 @@ class _StudentDashboardState extends State<StudentDashboard> {
           backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  Future<void> _scanToConfirm() async {
+    if (!mounted) return;
+
+    // Navega para a tela de scanner e aguarda o resultado
+    final scannedCode = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (context) => const QRScannerScreen()),
+    );
+
+    if (scannedCode == null || scannedCode.isEmpty) {
+      return; // Usuário cancelou
+    }
+
+    // Define o código esperado para o dia.
+    // Este código deve ser gerado e exibido no ônibus.
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final expectedCode = 'UNIBUS_CHECKIN_$today';
+
+    if (scannedCode == expectedCode) {
+      // Se o código for válido, confirma a presença
+      await _updateAttendance(true);
+    } else {
+      // Se for inválido, mostra um erro
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('QR Code inválido ou não corresponde ao dia de hoje.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -267,6 +302,20 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _isLoading ? null : _scanToConfirm,
+                icon: const Icon(Icons.qr_code_scanner),
+                label: const Text('Escanear para confirmar'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: BorderSide(color: Theme.of(context).primaryColor),
+                  foregroundColor: Theme.of(context).primaryColor,
+                ),
+              ),
             ),
             if (_isLoading) ...[
               const SizedBox(height: 24),
