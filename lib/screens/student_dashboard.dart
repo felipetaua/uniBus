@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
+import 'organizer_dashboard.dart';
 import 'qr_hub_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
@@ -113,7 +114,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
     if (user != null && user.id.isNotEmpty) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => QrHubScreen(studentId: user.id, initialIndex: 1),
+          builder: (context) =>
+              QrHubScreen(studentId: user.id, initialIndex: 1),
         ),
       );
     } else {
@@ -184,6 +186,17 @@ class _StudentDashboardState extends State<StudentDashboard> {
               context,
               MaterialPageRoute(builder: (context) => const StudentHistory()),
             ),
+          ),
+          // Botão temporário para o painel do organizador
+          IconButton(
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OrganizerDashboard()),
+              );
+            },
+            tooltip: 'Painel Organizador (Temp)',
           ),
           IconButton(
             icon: const Icon(Icons.logout),
