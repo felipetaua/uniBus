@@ -1,3 +1,4 @@
+import 'package:bus_attendance_app/screens/qr_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
