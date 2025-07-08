@@ -211,7 +211,12 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Acesso Organizador'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+          children: [
+            Text(
+              'O acesso de organizador é restrito e deve ser criado por um administrador. Insira seu e--mail cadastrado para receber o link de login.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: organizerEmailController,
               decoration: const InputDecoration(
@@ -220,11 +225,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 prefixIcon: Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Você receberá um link de acesso no seu e-mail.',
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
           ],
         ),
@@ -246,7 +246,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 await Supabase.instance.client.auth.signInWithOtp(email: email);
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Link de acesso enviado para $email')),
+                    SnackBar(
+                        content: Text('Link de acesso enviado para $email')),
                   );
                 }
               } catch (error) {
