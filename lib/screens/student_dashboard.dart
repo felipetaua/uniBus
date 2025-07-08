@@ -1,8 +1,8 @@
+import 'package:bus_attendance_app/screens/qr_display.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
-import 'qr_display_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -119,7 +119,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Não foi possível gerar o QR Code. Faça login novamente.'),
+          content:
+              Text('Não foi possível gerar o QR Code. Faça login novamente.'),
           backgroundColor: Colors.red,
         ),
       );
