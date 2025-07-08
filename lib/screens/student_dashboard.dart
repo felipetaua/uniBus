@@ -1,9 +1,8 @@
-import 'package:bus_attendance_app/screens/qr_display.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
-import 'qr_scanner_screen.dart';
+import 'qr_hub_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -114,7 +113,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
     if (user != null && user.id.isNotEmpty) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => QRDisplayScreen(data: user.id),
+          builder: (context) => QrHubScreen(studentId: user.id, initialIndex: 1),
         ),
       );
     } else {
@@ -131,9 +130,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
   Future<void> _scanToConfirm() async {
     if (!mounted) return;
 
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+
     // Navega para a tela de scanner e aguarda o resultado
     final scannedCode = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (context) => const QRScannerScreen()),
+      MaterialPageRoute(builder: (context) => QrHubScreen(studentId: user.id)),
     );
 
     if (scannedCode == null || scannedCode.isEmpty) {
