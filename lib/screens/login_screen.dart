@@ -203,27 +203,28 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showOrganizerLogin() {
+    final organizerEmailController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Acesso Organizador'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             TextField(
+              controller: organizerEmailController,
               decoration: const InputDecoration(
                 labelText: 'E-mail do organizador',
                 border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
               ),
-              onSubmitted: (email) async {
-                Navigator.pop(context);
-                await Supabase.instance.client.auth.signInWithOtp(
-                  email: email,
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Link enviado para $email')),
-                );
-              },
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Você receberá um link de acesso no seu e-mail.',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
           ],
         ),
@@ -231,6 +232,33 @@ class _LoginScreenState extends State<LoginScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = organizerEmailController.text.trim();
+              if (email.isEmpty) {
+                return;
+              }
+
+              Navigator.pop(context);
+              setState(() => _isLoading = true);
+              try {
+                await Supabase.instance.client.auth.signInWithOtp(email: email);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Link de acesso enviado para $email')),
+                  );
+                }
+              } catch (error) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erro: ${error.toString()}')),
+                  );
+                }
+              }
+              setState(() => _isLoading = false);
+            },
+            child: const Text('Entrar'),
           ),
         ],
       ),
