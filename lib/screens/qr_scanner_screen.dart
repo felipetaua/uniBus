@@ -23,19 +23,27 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Escanear QR Code'),
-        actions: [
+        actions: <Widget>[
           IconButton(
             icon: ValueListenableBuilder(
-              valueListenable: controller.torchState,
+              valueListenable:
+                  controller.torchState, // Use controller.torchState
               builder: (context, state, child) {
                 switch (state) {
                   case TorchState.off:
                     return const Icon(Icons.flash_off, color: Colors.grey);
                   case TorchState.on:
                     return const Icon(Icons.flash_on, color: Colors.yellow);
+                  // Adiciona o caso para quando a lanterna não está disponível
+                  case TorchState.unavailable:
+                    return const Icon(Icons.flash_off, color: Colors.grey);
+                  case TorchState.auto:
+                    return const Icon(Icons.flash_auto, color: Colors.yellow);
+                  default:
+                    return const Icon(Icons.flash_off, color: Colors.grey);
                 }
               },
-            ),
+            ), // This is the missing parenthesis
             onPressed: () => controller.toggleTorch(),
           ),
           IconButton(
@@ -55,21 +63,24 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         children: [
           MobileScanner(
             controller: controller,
-            onDetect: (capture) {
+            onDetect: (capture) async {
+              // Se já estamos processando um código, ignore os próximos.
               if (_isProcessing) return;
-              setState(() {
-                _isProcessing = true;
-              });
 
               final List<Barcode> barcodes = capture.barcodes;
               if (barcodes.isNotEmpty && barcodes.first.rawValue != null) {
-                final String code = barcodes.first.rawValue!;
-                // Retorna o código escaneado para a tela anterior
-                Navigator.of(context).pop(code);
-              } else {
+                // Marca que estamos processando e para a câmera para evitar re-escanear.
                 setState(() {
-                  _isProcessing = false;
+                  _isProcessing = true;
                 });
+                await controller.stop();
+
+                final String code = barcodes.first.rawValue!;
+
+                // Garante que o widget ainda está na tela antes de navegar.
+                if (mounted) {
+                  Navigator.of(context).pop(code);
+                }
               }
             },
           ),
@@ -88,4 +99,10 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       ),
     );
   }
+}
+
+extension on MobileScannerController {
+  get cameraFacingState => null;
+
+  get torchState => null;
 }
