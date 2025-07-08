@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
+import 'qr_display_screen.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -107,6 +108,24 @@ class _StudentDashboardState extends State<StudentDashboard> {
         '📱 WhatsApp: "$_studentName confirmou presença no ônibus das 17h. ($time)');
   }
 
+  void _showQRCode() {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null && user.id.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => QRDisplayScreen(data: user.id),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível gerar o QR Code. Faça login novamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final today =
@@ -116,6 +135,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
       appBar: AppBar(
         title: Text('Olá, $_studentName'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_2),
+            onPressed: _showQRCode,
+            tooltip: 'Meu QR Code',
+          ),
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () => Navigator.push(

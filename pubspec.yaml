@@ -26,6 +26,9 @@ dependencies:
   # UI
   cupertino_icons: ^1.0.6
 
+  # Geração de QR Code
+  qr_flutter: ^4.1.0
+
   flutter_dotenv: ^5.1.0
 
 dev_dependencies:
