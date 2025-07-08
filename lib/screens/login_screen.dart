@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'O acesso de organizador é restrito e deve ser criado por um administrador. Insira seu e--mail cadastrado para receber o link de login.',
+              'O acesso de organizador é restrito e deve ser criado por um administrador. Insira seu e-mail cadastrado para receber o link de login.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
