@@ -85,3 +85,9 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 5. Crie um Pull Request
 
 ---
+
+## 📷 Capturas de Tela
+
+(Adicione aqui screenshots ou gifs da interface, check-in, avatar e loja)
+
+---
