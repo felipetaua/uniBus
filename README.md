@@ -82,8 +82,10 @@ Este projeto está licenciado sob a licença MIT – veja o arquivo [LICENSE](LI
 
 ## 👨‍🎓 Equipe
 
-- **Tauã Felipe** – Idealizador, desenvolvedor e organizador do projeto  
-- *(Você pode adicionar mais membros depois)*
+- **Tauã Felipe** – Idealizador, desenvolvedor e lider do projeto  
+- *Jeferson* - adicionar
+- **Otávio** - adicionar
+- **Gabriel** - adicionar
 
 ---
 
