@@ -104,3 +104,13 @@ Este projeto está licenciado sob a licença MIT – veja o arquivo [LICENSE](LI
 - *(Você pode adicionar mais membros depois)*
 
 ---
+
+## 🌍 Alinhamento com os ODS
+
+Este projeto está alinhado com os Objetivos de Desenvolvimento Sustentável da ONU:
+
+- 🎓 ODS 4 – Educação de Qualidade
+- ⚖️ ODS 10 – Redução das Desigualdades
+- 🏙️ ODS 11 – Cidades e Comunidades Sustentáveis
+
+---
