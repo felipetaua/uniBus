@@ -54,3 +54,12 @@ Criado com foco em **simplicidade, acessibilidade e impacto social**, o app perm
 - [ ] Mapa com rotas e paradas (em desenvolvimento)
 
 ---
+
+## 🎯 Motivação
+
+A ideia surgiu a partir de uma experiência real:  
+> “Muitos colegas ficaram esperando por um estudante que não estava pronto. Sem saber quando o ônibus chegaria, ninguém podia nem ir ao banheiro com tranquilidade. Isso atrasa todos, gera ansiedade e mostra que precisamos de algo melhor do que grupos de WhatsApp.”
+
+**Unibus nasceu para resolver esse problema.**
+
+---
