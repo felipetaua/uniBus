@@ -36,3 +36,21 @@ Criado com foco em **simplicidade, acessibilidade e impacto social**, o app perm
 - Tenha liberdade e controle sobre sua rotina.
 
 ---
+
+## 🚀 Funcionalidades
+
+### 👤 Para Estudantes:
+- [ ] Check-in diário com 1 clique: “Vou hoje” / “Não vou”
+- [ ] Histórico de presenças semanais
+- [ ] Localização do ônibus em tempo real (opcional)
+- [ ] Avatar personalizável com loja de cosméticos
+- [ ] Sistema de recompensas, conquistas e ranking
+
+### 🧑‍💼 Para Organizadores:
+- [ ] Lista de presença em tempo real
+- [ ] Contador de vagas preenchidas
+- [ ] Exportação da lista do dia em PDF
+- [ ] Check-in por QR Code (em desenvolvimento)
+- [ ] Mapa com rotas e paradas (em desenvolvimento)
+
+---
