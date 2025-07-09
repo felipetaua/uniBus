@@ -52,7 +52,7 @@ A ideia surgiu a partir de uma experiência real:
 - **Firebase Realtime Database** – Dados em tempo real
 - **Firebase Auth** – Autenticação simples de usuários
 - **Flutter Stack + PNGs** – Montagem de avatares customizáveis
-- **Google Maps API** – (em fase de integração)
+- **Google Maps API** – Mostrar em tempo real o onibus
 
 ---
 
@@ -70,7 +70,7 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 
 ## 📷 Capturas de Tela
 
-(Adicione aqui screenshots ou gifs da interface, check-in, avatar e loja)
+(Adicionar as screenshots ou gifs da interface, check-in, avatar e loja)
 
 ---
 
