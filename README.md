@@ -63,3 +63,13 @@ A ideia surgiu a partir de uma experiência real:
 **Unibus nasceu para resolver esse problema.**
 
 ---
+
+## 🧠 Tecnologias Utilizadas
+
+- **Flutter** – Interface mobile multiplataforma
+- **Firebase Realtime Database** – Dados em tempo real
+- **Firebase Auth** – Autenticação simples de usuários
+- **Flutter Stack + PNGs** – Montagem de avatares customizáveis
+- **Google Maps API** – (em fase de integração)
+
+---
