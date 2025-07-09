@@ -91,3 +91,9 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 (Adicione aqui screenshots ou gifs da interface, check-in, avatar e loja)
 
 ---
+
+## 📘 Licença
+
+Este projeto está licenciado sob a licença MIT – veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
