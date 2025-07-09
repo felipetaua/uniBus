@@ -73,3 +73,15 @@ A ideia surgiu a partir de uma experiência real:
 - **Google Maps API** – (em fase de integração)
 
 ---
+
+## ✍️ Como Contribuir
+
+Quer contribuir com o projeto? Sinta-se à vontade!
+
+1. Faça um fork
+2. Crie uma branch: `git checkout -b minha-feature`
+3. Faça suas alterações e dê commit: `git commit -m "Minha contribuição"`
+4. Envie para o repositório: `git push origin minha-feature`
+5. Crie um Pull Request
+
+---
