@@ -97,3 +97,10 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 Este projeto está licenciado sob a licença MIT – veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
+
+## 👨‍🎓 Equipe
+
+- **Tauã Felipe** – Idealizador, desenvolvedor e organizador do projeto  
+- *(Você pode adicionar mais membros depois)*
+
+---
