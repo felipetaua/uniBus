@@ -25,14 +25,14 @@ class NavigationMenu extends StatelessWidget {
           ],
         ),
       ),
-      body: controller.screen[controller.selectedIndex.value],
+      body: Obx(() => controller.screen[controller.selectedIndex.value]),
     );
   }
 }
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
-
+  // no lugar do container vai a pagina
   final screen = [
     Container(
       color: Colors.green,
