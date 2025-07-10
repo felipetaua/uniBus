@@ -5,11 +5,14 @@ class NavigationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NavigationController());
+
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         height: 80,
         elevation: 0,
-        selectedIndex: 1,
+        selectedIndex: controller.selectedIndex.value,
+        onDestinationSelected: (index) => {},
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.store), label: 'Store'),
@@ -20,4 +23,23 @@ class NavigationMenu extends StatelessWidget {
       body: Container(),
     );
   }
+}
+
+class NavigationController extends GetxController {
+  final Rx<int> selectedIndex = 0.obs;
+
+  final screen = [
+    Container(
+      color: Colors.green,
+    ),
+    Container(
+      color: Colors.blue,
+    ),
+    Container(
+      color: Colors.deepPurple,
+    ),
+    Container(
+      color: Colors.orange,
+    ),
+  ];
 }
