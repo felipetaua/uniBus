@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
@@ -7,6 +8,7 @@ class NavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(NavigationController());
+    final darkmode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       bottomNavigationBar: Obx(
@@ -16,6 +18,10 @@ class NavigationMenu extends StatelessWidget {
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected: (index) =>
               controller.selectedIndex.value = index,
+          backgroundColor: darkmode ? Colors.black : Colors.white,
+          indicatorColor: darkmode
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.1),
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.store), label: 'Store'),
