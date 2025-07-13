@@ -9,7 +9,7 @@ Aplicativo feito para estudantes universitários que usam transporte coletivo fr
 
 O **UniBus** é um app desenvolvido com Flutter que busca resolver um problema recorrente enfrentado por estudantes: a desorganização no uso do transporte universitário.
 
-Criado com foco em **simplicidade, acessibilidade e impacto social**, o app permite que o estudante:
+Criado com foco em **simplicidade, acessibilidade e impacto social com elementos de gamificação**, o app permite que o estudante:
 
 - Confirme se vai usar o ônibus no dia;
 - Veja a localização do motorista em tempo real;
@@ -69,8 +69,9 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 ---
 
 ## 📷 Capturas de Tela
-
-(Adicionar as screenshots ou gifs da interface, check-in, avatar e loja)
+<img width="393" height="852" alt="iPhone 16 - 1" src="https://github.com/user-attachments/assets/dccf9be6-e91c-4536-a22f-3cded31eed19" />
+<img width="393" height="852" alt="iPhone 16 - 2" src="https://github.com/user-attachments/assets/96ce242a-f7a0-4a33-88a3-f7e8b45b4e28" />
+<img width="393" height="852" alt="iPhone 16 - 3" src="https://github.com/user-attachments/assets/6b1bd22c-e92b-40f2-abd0-fe775612802d" />
 
 ---
 
@@ -83,7 +84,7 @@ Este projeto está licenciado sob a licença MIT – veja o arquivo [LICENSE](LI
 ## 👨‍🎓 Equipe
 
 - **Tauã Felipe** – Idealizador, desenvolvedor e lider do projeto  
-- *Jeferson* - adicionar
+- **Jeferson** - adicionar
 - **Otávio** - adicionar
 - **Gabriel** - adicionar
 
