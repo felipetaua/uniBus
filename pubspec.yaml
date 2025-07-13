@@ -40,6 +40,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -48,6 +49,7 @@ flutter:
   assets:  
     - dotenv
     - assets/images/
+    - assets/images/icone-app.png
   
   # Fontes customizadas (opcional)
   # fonts:
@@ -56,3 +58,8 @@ flutter:
   #       - asset: fonts/Roboto-Regular.ttf
   #       - asset: fonts/Roboto-Bold.ttf
   #         weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icone-app.png"
