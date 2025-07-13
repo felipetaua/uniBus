@@ -47,6 +47,7 @@ flutter:
   # Assets
   assets:  
     - dotenv
+    - assets/images/
   
   # Fontes customizadas (opcional)
   # fonts:

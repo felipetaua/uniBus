@@ -48,47 +48,86 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+    with TickerProviderStateMixin {
+  late AnimationController _lineController;
+  late Animation<double> _lineAnimation;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+  late AnimationController _gradientController;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    // Controller for the animated lines
+    _lineController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5), // Duração de um ciclo completo
-    )..repeat(); // Faz a animação se repetir infinitamente
+      duration: const Duration(seconds: 5), // Duration of a complete cycle
+    )..repeat(); // Makes the animation repeat infinitely
 
-    // A animação vai de -1.0 a 1.0 para mapear o movimento vertical
-    _animation = Tween<double>(begin: -1.0, end: 1.0).animate(_controller);
+    // The animation goes from -1.0 to 1.0 to map the vertical movement
+    _lineAnimation =
+        Tween<double>(begin: -1.0, end: 1.0).animate(_lineController);
 
-    // Navega para a próxima tela após um atraso (e.g., 4 segundos)
-    Future.delayed(const Duration(seconds: 4), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const HomeScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            transitionDuration:
-                const Duration(milliseconds: 800), // duração do fade
-          ),
-        );
-      }
-    });
+    // Controller for the logo fade-in/fade-out animation
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+          seconds: 2), // Duration of one fade cycle (e.g., 2 seconds)
+    )..repeat(
+        reverse:
+            true); // Repeats the animation in reverse for fading in and out
+
+    _fadeAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_fadeController);
+
+    // Controller for the gradient background animation
+    _gradientController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+          milliseconds: 1000), // Duration for the gradient to appear
+    );
+
+    // Sequence of animations and navigation
+    _startAnimationSequence();
+  }
+
+  void _startAnimationSequence() async {
+    // Wait for the logo animation to play a few cycles or a set time
+    await Future.delayed(
+        const Duration(seconds: 3)); // Logo animates for 3 seconds
+
+    // Start the gradient animation
+    _gradientController.forward();
+
+    // Wait for the gradient animation to complete
+    await Future.delayed(const Duration(
+        milliseconds: 1000)); // Matches gradient animation duration
+
+    // Navigate to the next screen after a delay
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const HomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(
+              milliseconds: 800), // Duration of the fade transition
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _lineController.dispose();
+    _fadeController.dispose();
+    _gradientController.dispose();
     super.dispose();
   }
 
@@ -97,119 +136,130 @@ class _SplashScreenState extends State<SplashScreen>
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    // Área onde as linhas irão animar, abaixo do texto "Uber"
-    final double lineAnimationHeight =
-        screenHeight * 0.8; // Altura da área de animação das linhas
-    final double lineAreaTop =
-        screenHeight * 0.5; // Posição vertical de início da área de linhas
+    final double lineAnimationHeight = screenHeight * 0.8;
+    final double lineAreaTop = screenHeight * 0.5;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: screenHeight * 0.35,
-            child: const Text(
-              'Uber',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
+      body: AnimatedBuilder(
+        animation: _gradientController,
+        builder: (context, child) {
+          // Interpolação manual do gradient
+          final double t = _gradientController.value;
+          final List<Color> gradientColors = [
+            Color.lerp(Colors.black, const Color(0xFFB06DF9), t)!,
+            Color.lerp(Colors.black, const Color(0xFF828EF3), t)!,
+            Color.lerp(Colors.black, const Color(0xFF84CFB2), t)!,
+            Color.lerp(Colors.black, const Color(0xFFCAFF5C), t)!,
+          ];
+
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: gradientColors,
+                stops: const [0.0, 0.33, 0.66, 1.0],
               ),
             ),
-          ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Logo image with fading animation
+                Positioned(
+                  top: screenHeight * 0.35,
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Image.asset(
+                      'assets/images/logo-texto-image.png', // Replace with your image path
+                      width: screenWidth * 0.3, // Adjust size as needed
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
 
-          // Container para as linhas animadas
-          Positioned(
-            top: lineAreaTop,
-            height: lineAnimationHeight,
-            width: screenWidth,
-            child: ClipRect(
-              child: AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  final double travelRange = lineAnimationHeight * 1.5;
-                  final double currentY =
-                      _animation.value * travelRange - (travelRange / 2);
+                // Container for animated lines (remains the same)
+                Positioned(
+                  top: lineAreaTop,
+                  height: lineAnimationHeight,
+                  width: screenWidth,
+                  child: ClipRect(
+                    child: AnimatedBuilder(
+                      animation: _lineAnimation,
+                      builder: (context, child) {
+                        final double travelRange = lineAnimationHeight * 1.5;
+                        final double currentY =
+                            _lineAnimation.value * travelRange -
+                                (travelRange / 2);
 
-                  // Propriedades das linhas
-                  const double lineHeight =
-                      80; // Comprimento de cada segmento de linha
-                  const double lineWidth = 5; // Espessura de cada linha
-                  const double lineSpacing =
-                      150; // Espaçamento vertical entre as linhas que aparecem
+                        const double lineHeight = 80;
+                        const double lineWidth = 5;
+                        const double lineSpacing = 150;
 
-                  List<Widget> lines = [];
-                  // Adiciona múltiplas linhas para criar um fluxo contínuo
-                  final int numberOfLines =
-                      (lineAnimationHeight / lineSpacing).ceil() +
-                          3; // +3 para garantir linhas fora da tela
+                        List<Widget> lines = [];
+                        final int numberOfLines =
+                            (lineAnimationHeight / lineSpacing).ceil() + 3;
 
-                  for (int i = 0; i < numberOfLines; i++) {
-                    // Calcula a posição Y de cada linha individualmente
-                    final double individualLineY = currentY + (i * lineSpacing);
+                        for (int i = 0; i < numberOfLines; i++) {
+                          final double individualLineY =
+                              currentY + (i * lineSpacing);
 
-                    // Opacidade para criar o efeito de "passando" (fade in/out)
-                    final double opacity = _getLineOpacity(
-                      individualLineY,
-                      lineAnimationHeight,
-                    );
+                          final double opacity = _getLineOpacity(
+                            individualLineY,
+                            lineAnimationHeight,
+                          );
 
-                    if (opacity > 0) {
-                      lines.add(
-                        Positioned(
-                          top: individualLineY,
-                          left: (screenWidth - lineWidth) / 2,
-                          child: Opacity(
-                            opacity: opacity,
-                            child: Container(
-                              width: lineWidth,
-                              height: lineHeight,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withOpacity(0.5),
-                                    blurRadius: 10,
-                                    spreadRadius: 3,
+                          if (opacity > 0) {
+                            lines.add(
+                              Positioned(
+                                top: individualLineY,
+                                left: (screenWidth - lineWidth) / 2,
+                                child: Opacity(
+                                  opacity: opacity,
+                                  child: Container(
+                                    width: lineWidth,
+                                    height: lineHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white.withOpacity(0.5),
+                                          blurRadius: 10,
+                                          spreadRadius: 3,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  }
-                  return Stack(children: lines);
-                },
-              ),
+                            );
+                          }
+                        }
+                        return Stack(children: lines);
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
   double _getLineOpacity(double yPos, double containerHeight) {
-    const double fadeZoneHeight =
-        200; // Distância em pixels das bordas para começar o fade
+    const double fadeZoneHeight = 200;
 
     double opacity = 1.0;
 
-    // Fade-in na parte superior
     if (yPos < fadeZoneHeight) {
       opacity = yPos / fadeZoneHeight;
-    }
-    // Fade-out na parte inferior
-    else if (yPos > containerHeight - fadeZoneHeight) {
+    } else if (yPos > containerHeight - fadeZoneHeight) {
       opacity = (containerHeight - yPos) / fadeZoneHeight;
     }
 
-    return opacity.clamp(
-        0.0, 1.0); // Garante que a opacidade esteja entre 0 e 1
+    return opacity.clamp(0.0, 1.0);
   }
 }
