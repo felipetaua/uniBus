@@ -72,6 +72,7 @@ Quer contribuir com o projeto? Sinta-se à vontade!
 <img width="393" height="852" alt="iPhone 16 - 1" src="https://github.com/user-attachments/assets/dccf9be6-e91c-4536-a22f-3cded31eed19" />
 <img width="393" height="852" alt="iPhone 16 - 2" src="https://github.com/user-attachments/assets/96ce242a-f7a0-4a33-88a3-f7e8b45b4e28" />
 <img width="393" height="852" alt="iPhone 16 - 3" src="https://github.com/user-attachments/assets/6b1bd22c-e92b-40f2-abd0-fe775612802d" />
+<img width="393" height="852" alt="iPhone 16 - 4" src="https://github.com/user-attachments/assets/2506c639-7cd6-4336-8aa6-3b4633d3823a" />
 
 ---
 
