@@ -1,5 +1,5 @@
 # 🚌 UniBus
-.
+
 **Organize sua ida à faculdade com apenas um clique.**  
 Aplicativo feito para estudantes universitários que usam transporte coletivo fretado e precisam de uma solução prática para confirmar presença, visualizar rotas e evitar atrasos.
 
