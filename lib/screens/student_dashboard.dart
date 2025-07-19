@@ -7,6 +7,7 @@ import 'student_history.dart';
 import 'organizer_dashboard.dart';
 import 'qr_hub_screen.dart';
 import 'route_map_screen.dart';
+import 'profile_screen.dart';
 
 class StudentNavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
@@ -16,9 +17,7 @@ class StudentNavigationController extends GetxController {
     const StorePage(),
     const RouteMapScreen(),
     // Placeholder para Perfil
-    const Scaffold(
-        body: Center(
-            child: Text('Perfil em breve!', style: TextStyle(fontSize: 24)))),
+    const ProfileScreen(),
   ];
 }
 
