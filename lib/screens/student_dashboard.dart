@@ -1,19 +1,72 @@
+import 'package:bus_attendance_app/screens/store_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'student_history.dart';
 import 'organizer_dashboard.dart';
 import 'qr_hub_screen.dart';
-import 'botttombar2.dart';
 
-class StudentDashboard extends StatefulWidget {
+class StudentNavigationController extends GetxController {
+  final Rx<int> selectedIndex = 0.obs;
+
+  final screens = [
+    const StudentHomeTab(),
+    const StorePage(),
+    // Placeholder para Favoritos
+    const Scaffold(
+        body: Center(
+            child:
+                Text('Favoritos em breve!', style: TextStyle(fontSize: 24)))),
+    // Placeholder para Perfil
+    const Scaffold(
+        body: Center(
+            child: Text('Perfil em breve!', style: TextStyle(fontSize: 24)))),
+  ];
+}
+
+class StudentDashboard extends StatelessWidget {
   const StudentDashboard({super.key});
 
   @override
-  _StudentDashboardState createState() => _StudentDashboardState();
+  Widget build(BuildContext context) {
+    final controller = Get.put(StudentNavigationController());
+    final darkmode = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      body: Obx(() => controller.screens[controller.selectedIndex.value]),
+      bottomNavigationBar: Obx(
+        () => NavigationBar(
+          height: 80,
+          elevation: 0,
+          selectedIndex: controller.selectedIndex.value,
+          onDestinationSelected: (index) =>
+              controller.selectedIndex.value = index,
+          backgroundColor: darkmode ? Colors.black : Colors.white,
+          indicatorColor: darkmode
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.1),
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+            NavigationDestination(icon: Icon(Icons.store), label: 'Loja'),
+            NavigationDestination(
+                icon: Icon(Icons.favorite), label: 'Favoritos'),
+            NavigationDestination(icon: Icon(Icons.person), label: 'Perfil'),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _StudentDashboardState extends State<StudentDashboard> {
+class StudentHomeTab extends StatefulWidget {
+  const StudentHomeTab({super.key});
+
+  @override
+  State<StudentHomeTab> createState() => _StudentHomeTabState();
+}
+
+class _StudentHomeTabState extends State<StudentHomeTab> {
   bool? _todayAttendance;
   bool _isLoading = false;
   String _studentName = '';
