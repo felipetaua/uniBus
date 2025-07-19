@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'student_dashboard.dart';
+
 class NavigationMenu extends StatelessWidget {
   const NavigationMenu({super.key});
 
@@ -39,9 +41,7 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
   // no lugar do container vai a pagina
   final screen = [
-    Container(
-      color: Colors.green,
-    ),
+    StudentDashboard(), // Aqui você coloca sua tela principal do estudante
     Container(
       color: Colors.blue,
     ),

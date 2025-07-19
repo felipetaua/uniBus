@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'student_history.dart';
 import 'organizer_dashboard.dart';
 import 'qr_hub_screen.dart';
+import 'botttombar2.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
