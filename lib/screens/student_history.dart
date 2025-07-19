@@ -12,6 +12,7 @@ class StudentHistory extends StatefulWidget {
 class _StudentHistoryState extends State<StudentHistory> {
   List<Map<String, dynamic>> _attendances = [];
   bool _isLoading = true;
+  String _filter = 'all'; // 'all', 'present', 'absent'
 
   @override
   void initState() {
@@ -43,15 +44,36 @@ class _StudentHistoryState extends State<StudentHistory> {
     }
   }
 
+  List<Map<String, dynamic>> get _filteredAttendances {
+    if (_filter == 'present') {
+      return _attendances.where((a) => a['will_attend'] == true).toList();
+    } else if (_filter == 'absent') {
+      return _attendances.where((a) => a['will_attend'] == false).toList();
+    }
+    return _attendances;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meu Histórico'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.filter_list),
+            onSelected: (value) => setState(() => _filter = value),
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'all', child: Text('Todos')),
+              const PopupMenuItem(
+                  value: 'present', child: Text('Só presenças')),
+              const PopupMenuItem(value: 'absent', child: Text('Só ausências')),
+            ],
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _attendances.isEmpty
+          : _filteredAttendances.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -72,9 +94,9 @@ class _StudentHistoryState extends State<StudentHistory> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: _attendances.length,
+                  itemCount: _filteredAttendances.length,
                   itemBuilder: (context, index) {
-                    final attendance = _attendances[index];
+                    final attendance = _filteredAttendances[index];
                     final date = DateTime.parse(attendance['date']);
                     final willAttend = attendance['will_attend'] as bool;
 
