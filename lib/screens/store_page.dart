@@ -23,18 +23,14 @@ class _StorePageState extends State<StorePage> {
     final response = await Supabase.instance.client
         .from('store')
         .select('rewards(id, name, cost, image_url), inventory')
-        .single()
-        .execute();
+        .single();
 
-    if (response.error != null) {
-      throw response.error!;
+    if (response.isEmpty) {
+      throw Exception('No data found for store');
     }
 
-    final data = response.data as Map<String, dynamic>;
-    _userPoints = data['inventory'] != null
-        ? (data['inventory'] as List)
-            .fold<int>(0, (sum, item) => sum + item['points'])
-        : 0;
+    final data = response;
+    _userPoints = (data['inventory'] as num?)?.toInt() ?? 0;
 
     return data;
   }
