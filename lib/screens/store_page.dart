@@ -35,8 +35,8 @@ class _StorePageState extends State<StorePage> {
       final profileData = results[0] as Map<String, dynamic>;
       final rewardsData = results[1] as List<dynamic>;
       final inventoryData = results[2] as List<dynamic>;
-      final ownedRewardIds =
-          inventoryData.map((item) => item['reward_id']).toSet();
+      final ownedRewardIds = Set<String>.from(
+          inventoryData.map((item) => item['reward_id']));
 
       if (mounted) {
         setState(() {
