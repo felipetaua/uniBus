@@ -46,7 +46,7 @@ class StudentDashboard extends StatelessWidget {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.store), label: 'Loja'),
-            NavigationDestination(icon: Icon(Icons.map_outlined), label: 'Rota'),
+            NavigationDestination(icon: Icon(Icons.map), label: 'Rota'),
             NavigationDestination(icon: Icon(Icons.person), label: 'Perfil'),
           ],
         ),
