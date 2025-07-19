@@ -1,3 +1,4 @@
+import 'package:bus_attendance_app/screens/store_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,10 +42,8 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
   // no lugar do container vai a pagina
   final screen = [
-    StudentDashboard(), // Aqui você coloca sua tela principal do estudante
-    Container(
-      color: Colors.blue,
-    ),
+    const StudentDashboard(), // Aqui você coloca sua tela principal do estudante
+    const StorePage(),
     Container(
       color: Colors.deepPurple,
     ),
