@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'student_history.dart';
 import 'organizer_dashboard.dart';
 import 'qr_hub_screen.dart';
+import 'route_map_screen.dart';
 
 class StudentNavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
@@ -13,11 +14,7 @@ class StudentNavigationController extends GetxController {
   final screens = [
     const StudentHomeTab(),
     const StorePage(),
-    // Placeholder para Favoritos
-    const Scaffold(
-        body: Center(
-            child:
-                Text('Favoritos em breve!', style: TextStyle(fontSize: 24)))),
+    const RouteMapScreen(),
     // Placeholder para Perfil
     const Scaffold(
         body: Center(
@@ -49,8 +46,7 @@ class StudentDashboard extends StatelessWidget {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
             NavigationDestination(icon: Icon(Icons.store), label: 'Loja'),
-            NavigationDestination(
-                icon: Icon(Icons.favorite), label: 'Favoritos'),
+            NavigationDestination(icon: Icon(Icons.map_outlined), label: 'Rota'),
             NavigationDestination(icon: Icon(Icons.person), label: 'Perfil'),
           ],
         ),
