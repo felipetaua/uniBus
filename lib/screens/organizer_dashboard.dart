@@ -205,8 +205,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final today =
-        DateFormat('EEEE, dd/MM/yyyy', 'pt_BR').format(DateTime.now());
+    DateFormat('EEEE, dd/MM/yyyy', 'pt_BR').format(DateTime.now());
     final confirmedStudents =
         _todayAttendances.where((a) => a['will_attend'] == true).toList();
     final availableSeats = _busCapacity - _totalConfirmed;

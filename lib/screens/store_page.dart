@@ -11,7 +11,7 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   late Future<Map<String, dynamic>> _dataFuture;
-  late int _userPoints;
+  int _userPoints = 0;
 
   @override
   void initState() {
@@ -20,19 +20,37 @@ class _StorePageState extends State<StorePage> {
   }
 
   Future<Map<String, dynamic>> _loadStoreData() async {
-    final response = await Supabase.instance.client
-        .from('store')
-        .select('rewards(id, name, cost, image_url), inventory')
-        .single();
+    final client = Supabase.instance.client;
+    final userId = client.auth.currentUser?.id;
 
-    if (response.isEmpty) {
-      throw Exception('No data found for store');
+    if (userId == null) throw 'Usuário não autenticado.';
+
+    try {
+      final results = await Future.wait([
+        client.from('profiles').select('points').eq('id', userId).single(),
+        client.from('rewards').select().order('cost', ascending: true),
+        client.from('user_inventory').select('reward_id').eq('user_id', userId),
+      ]);
+
+      final profileData = results[0] as Map<String, dynamic>;
+      final rewardsData = results[1] as List<dynamic>;
+      final inventoryData = results[2] as List<dynamic>;
+      final ownedRewardIds =
+          inventoryData.map((item) => item['reward_id']).toSet();
+
+      if (mounted) {
+        setState(() {
+          _userPoints = profileData['points'] ?? 0;
+        });
+      }
+
+      return {
+        'rewards': List<Map<String, dynamic>>.from(rewardsData),
+        'inventory': ownedRewardIds,
+      };
+    } catch (e) {
+      throw 'Erro ao carregar a loja: $e';
     }
-
-    final data = response;
-    _userPoints = (data['inventory'] as num?)?.toInt() ?? 0;
-
-    return data;
   }
 
   Future<void> _purchaseItem(String rewardId, int cost) async {
