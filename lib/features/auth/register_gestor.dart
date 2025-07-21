@@ -238,7 +238,7 @@ class registerGestorPageState extends State<registerGestorPage> {
                           const Text(
                             'Lembrar a senha',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: Colors.black87,
                             ),
                           ),
@@ -252,7 +252,7 @@ class registerGestorPageState extends State<registerGestorPage> {
                         child: const Text(
                           'Esqueceu a senha?',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 13,
                             color: Colors.blueAccent,
                           ),
                         ),
