@@ -6,7 +6,7 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: AppColors.lightPrimary,
     scaffoldBackgroundColor: AppColors.lightBackground,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.lightPrimary,
       onPrimary: AppColors.lightOnPrimary,
       secondary: AppColors.lightSecondary,
@@ -20,7 +20,7 @@ class AppTheme {
       error: AppColors.lightError,
       onError: AppColors.lightOnError,
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       titleLarge: TextStyle(color: AppColors.lightTextPrimary),
       bodyMedium: TextStyle(color: AppColors.lightTextPrimary),
       bodyLarge: TextStyle(color: AppColors.lightTextPrimary),
@@ -75,7 +75,7 @@ class AppTheme {
     brightness: Brightness.dark,
     primaryColor: AppColors.darkPrimary,
     scaffoldBackgroundColor: AppColors.darkBackground,
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.darkPrimary,
       onPrimary: AppColors.darkOnPrimary,
       secondary: AppColors.darkSecondary,
@@ -89,7 +89,7 @@ class AppTheme {
       error: AppColors.darkError,
       onError: AppColors.darkOnError,
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       titleLarge: TextStyle(color: AppColors.darkTextPrimary),
       bodyMedium: TextStyle(color: AppColors.darkTextPrimary),
       bodyLarge: TextStyle(color: AppColors.darkTextPrimary),
