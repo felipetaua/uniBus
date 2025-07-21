@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unibus_mvp/features/auth/account_student.dart';
-import 'package:unibus_mvp/features/auth/login_student.dart';
 
 // ignore: camel_case_types
 class registerStudentPage extends StatefulWidget {
