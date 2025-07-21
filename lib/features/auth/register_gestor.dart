@@ -194,7 +194,7 @@ class registerGestorPageState extends State<registerGestorPage> {
                   TextField(
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
-                      hintText: '••••••••',
+                      hintText: 'Digite sua senha',
                       fillColor: Colors.grey[200],
                       filled: true,
                       border: OutlineInputBorder(
