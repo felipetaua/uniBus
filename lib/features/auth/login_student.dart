@@ -98,7 +98,7 @@ class _loginStudentPageState extends State<loginStudentPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Entrar na minha conta',
+                    'Bem-vindo ao UniBus!',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class _loginStudentPageState extends State<loginStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Entre com seu email e senha para logar',
+                    'Organize sua rotina, confirme sua presença e ganhe recompensas por estar em dia. É rápido, simples e pensado para você.',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 12),

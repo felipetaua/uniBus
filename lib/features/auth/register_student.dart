@@ -43,8 +43,7 @@ class registerStudentPageState extends State<registerStudentPage> {
         child: Column(
           children: [
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.25, // Adjusted height
+              height: MediaQuery.of(context).size.height * 0.25,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -118,7 +117,7 @@ class registerStudentPageState extends State<registerStudentPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Crie sua conta',
+                    'Crie sua conta de estudante',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -127,7 +126,7 @@ class registerStudentPageState extends State<registerStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Entre com seu email e senha para logar',
+                    'Use seu e-mail institucional ou pessoal. Você poderá vincular sua linha de ônibus logo após o cadastro',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 12),
