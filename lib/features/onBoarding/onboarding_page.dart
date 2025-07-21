@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:bus_attendance_app/features/auth/account_gestor.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/onBoarding/onboarding_controller.dart';
 import 'package:bus_attendance_app/features/onBoarding/onboarding_data.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
