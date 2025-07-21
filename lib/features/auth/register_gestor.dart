@@ -51,7 +51,7 @@ class registerGestorPageState extends State<registerGestorPage> {
             child: Container(
               width:
                   MediaQuery.of(context).size.width *
-                  0.9, // 90% da largura da tela
+                  0.9,
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
