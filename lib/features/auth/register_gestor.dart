@@ -54,16 +54,14 @@ class registerGestorPageState extends State<registerGestorPage> {
                   0.9,
               padding: const EdgeInsets.all(24),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
                     'Termos de Uso e Política de Privacidade',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.65,
-                    child: const Scrollbar(
+                  const Expanded(
+                    child: Scrollbar(
                       thumbVisibility: true,
                       child: SingleChildScrollView(
                         child: Column(
