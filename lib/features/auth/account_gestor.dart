@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:unibus_mvp/features/auth/login_gestor.dart';
-import 'package:unibus_mvp/features/auth/register_gestor.dart';
-import 'package:unibus_mvp/features/onBoarding/onboarding_page.dart';
 
 // ignore: camel_case_types
 class accountGestorPage extends StatefulWidget {
