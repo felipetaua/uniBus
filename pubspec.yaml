@@ -51,10 +51,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/avatar/
-  assets:  
-    - dotenv
-    - assets/images/
-    - assets/images/icone-app.png
   
   # Fontes customizadas (opcional)
   # fonts:
