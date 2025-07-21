@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:unibus_mvp/features/onBoarding/onboarding_data.dart'; 
+import 'package:bus_attendance_app/features/onBoarding/onboarding_data.dart'; 
 
 class OnboardingController extends ChangeNotifier {
   final PageController _pageController = PageController();

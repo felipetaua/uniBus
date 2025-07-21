@@ -1,4 +1,5 @@
 import 'package:bus_attendance_app/core/theme/app_theme.dart';
+import 'package:bus_attendance_app/mvp-app/screens/splashscreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
