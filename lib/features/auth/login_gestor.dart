@@ -256,8 +256,86 @@ class _loginGestorPageState extends State<loginGestorPage> {
                     height: 50,
                     child: OutlinedButton(
                       onPressed: () {
-                        // Aqui você pode abrir um dialog ou navegar para a tela de código
-                        print('Utilizar código clicked');
+                        //modal de chave de acesso
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(24),
+                            ),
+                          ),
+                          builder: (context) {
+                            String code = '';
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                left: 24,
+                                right: 24,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom +
+                                    24,
+                                top: 24,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Digite o código de acesso',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  TextField(
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 8,
+                                    obscureText: true,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Código numérico',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(16),
+                                        ),
+                                      ),
+                                    ),
+                                    onChanged: (value) {
+                                      code = value;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // Aqui você pode validar o código e fazer o login
+                                        print('Código digitado: $code');
+                                        Navigator.pop(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(
+                                          0xFF5A73EC,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            32,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Confirmar',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.grey),
