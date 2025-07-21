@@ -1,3 +1,4 @@
+import 'package:bus_attendance_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
