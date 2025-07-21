@@ -430,11 +430,11 @@ class EventCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 10),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Icon(Icons.check_circle_outline, color: AppColors.lightSecondary), // Ícone de confirmar
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
                     Icon(Icons.cancel_outlined, color: AppColors.lightError), // Ícone de cancelar
                   ],
                 ),
