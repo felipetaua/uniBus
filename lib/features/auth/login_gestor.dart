@@ -271,7 +271,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                           Image.asset('assets/icons/chave.png', height: 24),
                           const SizedBox(width: 10),
                           const Text(
-                            'Utilizar código',
+                            'Chave de acesso',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black87,
