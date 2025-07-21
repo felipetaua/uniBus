@@ -11,8 +11,8 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leadingWidth: 100,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0, top: 8.0),
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 16.0, top: 8.0),
           child: Text(
             '22:38',
             style: TextStyle(
@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
             child: Container(
               width: 10,
               height: 10,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.red,
                 shape: BoxShape.circle,
               ),
@@ -44,18 +44,18 @@ class ProfilePage extends StatelessWidget {
         actions: [
           Row(
             children: [
-              Icon(Icons.wifi, color: Colors.black),
-              SizedBox(width: 4),
-              Icon(Icons.battery_full, color: Colors.black),
-              Text('46', style: TextStyle(color: Colors.black, fontSize: 16)),
-              SizedBox(width: 16),
+              const Icon(Icons.wifi, color: Colors.black),
+              const SizedBox(width: 4),
+              const Icon(Icons.battery_full, color: Colors.black),
+              const Text('46', style: TextStyle(color: Colors.black, fontSize: 16)),
+              const SizedBox(width: 16),
               IconButton(
-                icon: Icon(Icons.settings, color: Colors.black),
+                icon: const Icon(Icons.settings, color: Colors.black),
                 onPressed: () {
                   // Ação de configurações
                 },
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
             ],
           ),
         ],
@@ -77,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.grey[200],
-                          image: DecorationImage(
+                          image:const  DecorationImage(
                             image: AssetImage('assets/tanya_profile.png'),
                             fit: BoxFit.cover,
                           ),
@@ -87,7 +87,7 @@ class ProfilePage extends StatelessWidget {
                         bottom: 0,
                         right: 0,
                         child: Container(
-                          padding: EdgeInsets.symmetric(
+                          padding:const  EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
                           ),
@@ -95,7 +95,7 @@ class ProfilePage extends StatelessWidget {
                             color: Colors.orange,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(
+                          child:const  Text(
                             '1',
                             style: TextStyle(
                               color: Colors.white,
@@ -107,19 +107,19 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'Tanya',
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
@@ -129,12 +129,12 @@ class ProfilePage extends StatelessWidget {
                                 color: Colors.grey[600],
                               ),
                             ),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Icon(Icons.copy, size: 16, color: Colors.grey[600]),
                           ],
                         ),
-                        SizedBox(height: 8),
-                        Text(
+                        const SizedBox(height: 8),
+                        const Text(
                           'Level',
                           style: TextStyle(
                             fontSize: 18,
@@ -151,7 +151,7 @@ class ProfilePage extends StatelessWidget {
                         width: 30,
                         height: 30,
                       ),
-                      Text(
+                      const Text(
                         'x2',
                         style: TextStyle(
                           fontSize: 16,
@@ -179,8 +179,8 @@ class ProfilePage extends StatelessWidget {
                         width: 40,
                         height: 40,
                       ), 
-                      SizedBox(height: 4),
-                      Text(
+                      const SizedBox(height: 4),
+                      const Text(
                         '-',
                         style: TextStyle(
                           fontSize: 20,
@@ -200,8 +200,8 @@ class ProfilePage extends StatelessWidget {
                         width: 40,
                         height: 40,
                       ), 
-                      SizedBox(height: 4),
-                      Text(
+                      const SizedBox(height: 4),
+                      const Text(
                         '100',
                         style: TextStyle(
                           fontSize: 20,
@@ -218,8 +218,8 @@ class ProfilePage extends StatelessWidget {
                         width: 40,
                         height: 40,
                       ), 
-                      SizedBox(height: 4),
-                      Text(
+                      const SizedBox(height: 4),
+                      const Text(
                         '0',
                         style: TextStyle(
                           fontSize: 20,
@@ -239,7 +239,7 @@ class ProfilePage extends StatelessWidget {
               length: 2,
               child: Column(
                 children: [
-                  TabBar(
+                  const TabBar(
                     labelColor: Colors.black, 
                     unselectedLabelColor:
                         Colors.grey, 
@@ -251,13 +251,13 @@ class ProfilePage extends StatelessWidget {
                     height: 200,
                     child: TabBarView(
                       children: [
-                        Center(child: Text('My stats content goes here')),
+                        const Center(child: Text('My stats content goes here')),
                         Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Container(
-                                padding: EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
@@ -277,8 +277,8 @@ class ProfilePage extends StatelessWidget {
                                       width: 60,
                                       height: 60,
                                     ),
-                                    SizedBox(width: 16),
-                                    Expanded(
+                                    const SizedBox(width: 16),
+                                    const Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -306,7 +306,7 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Center(
                               child: Text(
                                 'Cards to unlock (263)',
