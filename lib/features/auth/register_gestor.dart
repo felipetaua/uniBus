@@ -47,12 +47,12 @@ class registerGestorPageState extends State<registerGestorPage> {
             content: SizedBox(
               width: double.maxFinite,
               height: MediaQuery.of(context).size.height * 0.65,
-              child: Scrollbar(
+              child: const Scrollbar(
                 thumbVisibility: true,
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         '📜 Termos de Uso – UniBus\n\n'
                         'Última atualização: 05/07/2025\n\n'
