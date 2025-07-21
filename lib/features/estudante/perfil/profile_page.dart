@@ -47,7 +47,10 @@ class ProfilePage extends StatelessWidget {
               const Icon(Icons.wifi, color: Colors.black),
               const SizedBox(width: 4),
               const Icon(Icons.battery_full, color: Colors.black),
-              const Text('46', style: TextStyle(color: Colors.black, fontSize: 16)),
+              const Text(
+                '46',
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
               const SizedBox(width: 16),
               IconButton(
                 icon: const Icon(Icons.settings, color: Colors.black),
@@ -77,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.grey[200],
-                          image:const  DecorationImage(
+                          image: const DecorationImage(
                             image: AssetImage('assets/tanya_profile.png'),
                             fit: BoxFit.cover,
                           ),
@@ -87,7 +90,7 @@ class ProfilePage extends StatelessWidget {
                         bottom: 0,
                         right: 0,
                         child: Container(
-                          padding:const  EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
                           ),
@@ -95,7 +98,7 @@ class ProfilePage extends StatelessWidget {
                             color: Colors.orange,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child:const  Text(
+                          child: const Text(
                             '1',
                             style: TextStyle(
                               color: Colors.white,
@@ -178,7 +181,7 @@ class ProfilePage extends StatelessWidget {
                         'assets/star_icon.png',
                         width: 40,
                         height: 40,
-                      ), 
+                      ),
                       const SizedBox(height: 4),
                       const Text(
                         '-',
@@ -199,7 +202,7 @@ class ProfilePage extends StatelessWidget {
                         'assets/coin_icon.png',
                         width: 40,
                         height: 40,
-                      ), 
+                      ),
                       const SizedBox(height: 4),
                       const Text(
                         '100',
@@ -217,7 +220,7 @@ class ProfilePage extends StatelessWidget {
                         'assets/diamond_icon_small.png',
                         width: 40,
                         height: 40,
-                      ), 
+                      ),
                       const SizedBox(height: 4),
                       const Text(
                         '0',
@@ -240,11 +243,10 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   const TabBar(
-                    labelColor: Colors.black, 
-                    unselectedLabelColor:
-                        Colors.grey, 
-                    indicatorColor: Colors.purple, 
-                    indicatorWeight: 4.0, 
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorColor: Colors.purple,
+                    indicatorWeight: 4.0,
                     tabs: [Tab(text: 'My stats'), Tab(text: 'Collection')],
                   ),
                   SizedBox(
