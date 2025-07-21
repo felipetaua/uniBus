@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unibus_mvp/core/theme/app_theme.dart';
-import 'package:unibus_mvp/features/splash_screen.dart';
+import 'package:unibus/core/theme/app_theme.dart';
+import 'package:unibus/features/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
