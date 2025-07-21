@@ -41,11 +41,16 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.0
 
 flutter:
   uses-material-design: true
   
   # Assets
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/avatar/
   assets:  
     - dotenv
     - assets/images/
@@ -58,8 +63,11 @@ flutter:
   #       - asset: fonts/Roboto-Regular.ttf
   #       - asset: fonts/Roboto-Bold.ttf
   #         weight: 700
-
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/icone-app.png"
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#121212"
