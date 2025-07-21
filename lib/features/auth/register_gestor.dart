@@ -118,7 +118,7 @@ class registerGestorPageState extends State<registerGestorPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Crie sua conta',
+                    'Cadastro de Gestor',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -127,7 +127,7 @@ class registerGestorPageState extends State<registerGestorPage> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Entre com seu email e senha para logar',
+                    'Preencha com seus dados para criar uma conta de organização. Você poderá gerenciar linhas e confirmar presença de usuários.',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 30),

@@ -97,7 +97,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Entrar na minha conta',
+                    'Área do Gestor',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Entre com seu email e senha para logar',
+                    'Acompanhe os estudantes em tempo real, acesse relatórios e mantenha tudo sob controle. Autenticação segura com seu e-mail institucional.',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 30),
