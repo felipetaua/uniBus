@@ -16,6 +16,8 @@ class registerGestorPageState extends State<registerGestorPage> {
   int _currentPage = 0;
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
+  bool _acceptedTerms =
+      false; // Adicione isso no início da classe registerGestorPageState
 
   @override
   void initState() {
@@ -259,19 +261,66 @@ class registerGestorPageState extends State<registerGestorPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _acceptedTerms,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _acceptedTerms = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.blueAccent,
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            // Aqui você pode abrir um dialog ou navegar para a página de termos
+                          },
+                          child: const Text.rich(
+                            TextSpan(
+                              text: 'Li e aceito os ',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'Termos de Uso',
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                                TextSpan(text: ' e a '),
+                                TextSpan(
+                                  text: 'Política de Privacidade',
+                                  style: TextStyle(
+                                    color: Colors.blueAccent,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Handle "Criar sua conta"
-                        print('Criar sua conta clicked');
-                      },
+                      onPressed:
+                          _acceptedTerms
+                              ? () {
+                                // Handle "Criar sua conta"
+                                print('Criar sua conta clicked');
+                              }
+                              : null, // Desabilita se não aceitou os termos
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF5A73EC,
-                        ), // Using the color from the image
+                        backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
