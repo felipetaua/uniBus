@@ -1,3 +1,6 @@
+import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:bus_attendance_app/features/auth/register_student.dart';
+import 'package:bus_attendance_app/features/onBoarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
