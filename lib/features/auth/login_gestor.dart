@@ -256,8 +256,8 @@ class _loginGestorPageState extends State<loginGestorPage> {
                     height: 50,
                     child: OutlinedButton(
                       onPressed: () {
-                        // Handle "Continue with Google"
-                        print('Continue with Google clicked');
+                        // Aqui você pode abrir um dialog ou navegar para a tela de código
+                        print('Utilizar código clicked');
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.grey),
@@ -268,49 +268,14 @@ class _loginGestorPageState extends State<loginGestorPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/icons/google_logo.png',
-                            height: 24,
-                          ), // Add your Google logo asset
+                          Image.asset('assets/icons/chave.png', height: 24),
                           const SizedBox(width: 10),
                           const Text(
-                            'Continue with Google',
+                            'Utilizar código',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.black87,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle "Continue with Apple"
-                        print('Continue with Apple clicked');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/icons/apple_logo.png',
-                            height: 24,
-                            color: Colors.white,
-                          ), // Add your Apple logo asset
-                          const SizedBox(width: 10),
-                          const Text(
-                            'Continue with Apple',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
                           ),
                         ],
                       ),
