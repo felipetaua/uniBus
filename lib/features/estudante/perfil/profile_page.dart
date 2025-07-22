@@ -83,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                             Icon(Icons.copy, size: 16, color: Colors.grey[600]),
                           ],
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 15),
                         const Text(
                           'Level',
                           style: TextStyle(
@@ -116,16 +116,16 @@ class ProfilePage extends StatelessWidget {
                             Column(
                               children: [
                                 Image.asset(
-                                  'assets/icons/xp_icon.png',
-                                  width: 25,
-                                  height: 25,
+                                  'assets/icons/stack-coins.png',
+                                  width: 30,
+                                  height: 30,
                                 ),
                                 const Text(
                                   'x2',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.blueAccent,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
