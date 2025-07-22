@@ -51,6 +51,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/avatar/
+    - assets/items/bg/
   
   # Fontes customizadas (opcional)
   # fonts:

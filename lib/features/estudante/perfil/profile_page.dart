@@ -27,8 +27,8 @@ class ProfilePage extends StatelessWidget {
                           color: Colors.grey[200],
                           image: const DecorationImage(
                             image: AssetImage(
-                              'assets/avatar/profile_placeholder.png',
-                            ),
+                              'assets/items/bg/bg-10.png',
+                            ), // aqui onde temos os background que o usuario tiver
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -138,7 +138,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Best Rank',
+                        'Melhor Rank',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
@@ -194,13 +194,15 @@ class ProfilePage extends StatelessWidget {
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: Colors.purple,
                     indicatorWeight: 4.0,
-                    tabs: [Tab(text: 'My stats'), Tab(text: 'Collection')],
+                    tabs: [Tab(text: 'Configurações'), Tab(text: 'Coleção')],
                   ),
                   SizedBox(
                     height: 200,
                     child: TabBarView(
                       children: [
-                        const Center(child: Text('Seus status')),
+                        const Center(
+                          child: Text('Configurações para adicionar '),
+                        ),
                         Column(
                           children: [
                             Padding(
@@ -258,7 +260,7 @@ class ProfilePage extends StatelessWidget {
                             const SizedBox(height: 16),
                             Center(
                               child: Text(
-                                'Cards to unlock (263)',
+                                'Desbloqueie itens exclusivos (10)',
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 16,
