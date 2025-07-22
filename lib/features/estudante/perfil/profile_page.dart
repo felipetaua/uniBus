@@ -158,7 +158,10 @@ class ProfilePage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text('Coins', style: TextStyle(color: Colors.grey[600])),
+                      Text(
+                        'Unicoins',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     ],
                   ),
                   Column(
