@@ -31,7 +31,7 @@ class StudentHomePage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.35,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -43,6 +43,16 @@ class StudentHomePage extends StatelessWidget {
                   Color(0xFFCAFF5C),
                 ],
                 stops: [0.0, 0.33, 0.66, 1.0],
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [backgroundColor.withOpacity(0.0), backgroundColor],
+                  stops: const [0.2, 1.0], // A transição começa em 40% do topo
+                ),
               ),
             ),
           ),
