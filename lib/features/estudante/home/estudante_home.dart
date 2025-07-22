@@ -13,12 +13,18 @@ class StudentHomePage extends StatelessWidget {
     final bool isDarkMode = brightness == Brightness.dark;
 
     // Cores e estilos adaptativos ao tema
-    final Color primaryColor = isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
-    final Color backgroundColor = isDarkMode ? AppColors.darkBackground : AppColors.lightBackground;
-    final Color surfaceColor = isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
-    final Color textPrimaryColor = isDarkMode ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final Color textSecondaryColor = isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-    final Color onPrimaryColor = isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
+    final Color primaryColor =
+        isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
+    final Color backgroundColor =
+        isDarkMode ? AppColors.darkBackground : AppColors.lightBackground;
+    final Color surfaceColor =
+        isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
+    final Color textPrimaryColor =
+        isDarkMode ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final Color textSecondaryColor =
+        isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final Color onPrimaryColor =
+        isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -26,7 +32,8 @@ class StudentHomePage extends StatelessWidget {
         children: [
           // Gradiente de fundo (parte superior)
           Container(
-            height: MediaQuery.of(context).size.height * 0.4, // Altura do gradiente
+            height:
+                MediaQuery.of(context).size.height * 0.4, // Altura do gradiente
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -48,7 +55,11 @@ class StudentHomePage extends StatelessWidget {
               children: [
                 // Header (Perfil, Moedas, XP, Ícones)
                 Padding(
-                  padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
+                  padding: const EdgeInsets.only(
+                    top: 60.0,
+                    left: 20.0,
+                    right: 20.0,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -57,7 +68,10 @@ class StudentHomePage extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: Image.asset('assets/images/profile_placeholder.png').image, // Imagem de perfil
+                            backgroundImage:
+                                Image.asset(
+                                  'assets/avatar/profile_placeholder.png',
+                                ).image, // Imagem de perfil
                             backgroundColor: Colors.grey.shade300,
                           ),
                           const SizedBox(width: 10),
@@ -119,7 +133,10 @@ class StudentHomePage extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: Colors.white.withOpacity(0.3),
                             ),
-                            child: Icon(Icons.qr_code_scanner, color: onPrimaryColor),
+                            child: Icon(
+                              Icons.qr_code_scanner,
+                              color: onPrimaryColor,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Container(
@@ -129,7 +146,10 @@ class StudentHomePage extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: Colors.white.withOpacity(0.3),
                             ),
-                            child: Icon(Icons.notifications_none, color: onPrimaryColor),
+                            child: Icon(
+                              Icons.notifications_none,
+                              color: onPrimaryColor,
+                            ),
                           ),
                         ],
                       ),
@@ -160,7 +180,10 @@ class StudentHomePage extends StatelessWidget {
                         hintStyle: TextStyle(color: textSecondaryColor),
                         border: InputBorder.none,
                         icon: Icon(Icons.search, color: textSecondaryColor),
-                        suffixIcon: Icon(Icons.filter_list, color: textSecondaryColor),
+                        suffixIcon: Icon(
+                          Icons.filter_list,
+                          color: textSecondaryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -211,7 +234,9 @@ class StudentHomePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
                     'Você vai hoje?',
-                    style: AppTextStyles.lightTitle.copyWith(color: textPrimaryColor),
+                    style: AppTextStyles.lightTitle.copyWith(
+                      color: textPrimaryColor,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -225,10 +250,18 @@ class StudentHomePage extends StatelessWidget {
                           onPressed: () {
                             // Lógica para "Vou hoje"
                           },
-                          icon: const Icon(Icons.check_circle_outline, color: Colors.white),
-                          label: const Text('Vou hoje', style: TextStyle(color: Colors.white)),
+                          icon: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Vou hoje',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF84CFB2), // Verde-água
+                            backgroundColor: const Color(
+                              0xFF84CFB2,
+                            ), // Verde-água
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
@@ -242,8 +275,14 @@ class StudentHomePage extends StatelessWidget {
                           onPressed: () {
                             // Lógica para "Não vou"
                           },
-                          icon: const Icon(Icons.cancel_outlined, color: Colors.white),
-                          label: const Text('Não vou', style: TextStyle(color: Colors.white)),
+                          icon: const Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Não vou',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFFD600), // Amarelo
                             shape: RoundedRectangleBorder(
@@ -264,14 +303,20 @@ class StudentHomePage extends StatelessWidget {
                       // Lógica para "Escanear para confirmar"
                     },
                     icon: Icon(Icons.qr_code, color: primaryColor),
-                    label: Text('Escanear para confirmar', style: TextStyle(color: primaryColor)),
+                    label: Text(
+                      'Escanear para confirmar',
+                      style: TextStyle(color: primaryColor),
+                    ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: primaryColor, width: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 15.0),
-                      minimumSize: const Size(double.infinity, 0), // Ocupa a largura total
+                      minimumSize: const Size(
+                        double.infinity,
+                        0,
+                      ), // Ocupa a largura total
                     ),
                   ),
                 ),
@@ -284,7 +329,9 @@ class StudentHomePage extends StatelessWidget {
                     children: [
                       Text(
                         'Eventos acadêmicos',
-                        style: AppTextStyles.lightTitle.copyWith(color: textPrimaryColor),
+                        style: AppTextStyles.lightTitle.copyWith(
+                          color: textPrimaryColor,
+                        ),
                       ),
                       TextButton(
                         onPressed: () {
@@ -292,7 +339,9 @@ class StudentHomePage extends StatelessWidget {
                         },
                         child: Text(
                           'Ver mais',
-                          style: AppTextStyles.lightBody.copyWith(color: primaryColor),
+                          style: AppTextStyles.lightBody.copyWith(
+                            color: primaryColor,
+                          ),
                         ),
                       ),
                     ],
@@ -309,10 +358,14 @@ class StudentHomePage extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return EventCard(
                         title: index == 0 ? 'Palestra' : 'Feira de Ciências',
-                        date: index == 0 ? '20/11/2025 às 19:30' : '23/08/2025 às 20:30',
-                        imagePath: index == 0
-                            ? 'assets/images/event_palestra.png' // Imagem para Palestra
-                            : 'assets/images/event_feira_ciencias.png', // Imagem para Feira de Ciências
+                        date:
+                            index == 0
+                                ? '20/11/2025 às 19:30'
+                                : '23/08/2025 às 20:30',
+                        imagePath:
+                            index == 0
+                                ? 'assets/images/event_palestra.png' // Imagem para Palestra
+                                : 'assets/images/event_feira_ciencias.png', // Imagem para Feira de Ciências
                         isDarkMode: isDarkMode,
                       );
                     },
@@ -325,7 +378,9 @@ class StudentHomePage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Garante que todos os itens são visíveis
+        type:
+            BottomNavigationBarType
+                .fixed, // Garante que todos os itens são visíveis
         backgroundColor: surfaceColor,
         selectedItemColor: primaryColor,
         unselectedItemColor: textSecondaryColor,
@@ -334,14 +389,8 @@ class StudentHomePage extends StatelessWidget {
           // Lógica de navegação para cada item
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Rotas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.storefront),
-            label: 'Loja',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Rotas'),
+          BottomNavigationBarItem(icon: Icon(Icons.storefront), label: 'Loja'),
           BottomNavigationBarItem(
             icon: Icon(Icons.check_box),
             label: 'Presença',
@@ -350,10 +399,7 @@ class StudentHomePage extends StatelessWidget {
             icon: Icon(Icons.history),
             label: 'Histórico',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );
@@ -376,8 +422,10 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color surfaceColor = isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
-    final Color onSurfaceColor = isDarkMode ? AppColors.darkOnSurface : AppColors.lightOnSurface;
+    final Color surfaceColor =
+        isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
+    final Color onSurfaceColor =
+        isDarkMode ? AppColors.darkOnSurface : AppColors.lightOnSurface;
 
     return Container(
       width: 180, // Largura do card de evento
@@ -397,7 +445,9 @@ class EventCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(15.0),
+            ),
             child: Image.asset(
               imagePath,
               height: 100,
@@ -424,7 +474,10 @@ class EventCard extends StatelessWidget {
                   date,
                   style: AppTextStyles.lightBody.copyWith(
                     fontSize: 12,
-                    color: isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    color:
+                        isDarkMode
+                            ? AppColors.darkTextSecondary
+                            : AppColors.lightTextSecondary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -433,9 +486,15 @@ class EventCard extends StatelessWidget {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.check_circle_outline, color: AppColors.lightSecondary), // Ícone de confirmar
+                    Icon(
+                      Icons.check_circle_outline,
+                      color: AppColors.lightSecondary,
+                    ), // Ícone de confirmar
                     SizedBox(width: 5),
-                    Icon(Icons.cancel_outlined, color: AppColors.lightError), // Ícone de cancelar
+                    Icon(
+                      Icons.cancel_outlined,
+                      color: AppColors.lightError,
+                    ), // Ícone de cancelar
                   ],
                 ),
               ],
