@@ -173,6 +173,7 @@ class StudentHomePage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: TextField(
+                      textAlignVertical: TextAlignVertical.center,
                       style: TextStyle(color: textPrimaryColor),
                       decoration: InputDecoration(
                         hintText: 'Search',
@@ -287,7 +288,7 @@ class StudentHomePage extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFD600), // Amarelo
+                          backgroundColor: const Color(0xFFB687E7),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
