@@ -1,6 +1,6 @@
+import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/register_student.dart';
-import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -225,7 +225,7 @@ class _loginStudentPageState extends State<loginStudentPage> {
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                            builder: (context) => const StudentHomePage(),
+                            builder: (context) => const NavigationMenu(),
                           ),
                         );
                       },
