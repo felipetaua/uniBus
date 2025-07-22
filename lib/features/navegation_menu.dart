@@ -1,7 +1,10 @@
 // lib/navigation_menu.dart
 
+import 'package:bus_attendance_app/features/estudante/historico/historico_page.dart';
 import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
+import 'package:bus_attendance_app/features/estudante/loja/store_page.dart';
 import 'package:bus_attendance_app/features/estudante/perfil/profile_page.dart';
+import 'package:bus_attendance_app/features/estudante/rotas/rotes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -72,31 +75,4 @@ class NavigationController extends GetxController {
     const HistoryPage(), // 4: Tela de Wishlist (Exemplo)
     const ProfilePage(), // 5: Tela de Perfil
   ];
-}
-
-class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Página de Histórico')));
-  }
-}
-
-class RotesPage extends StatelessWidget {
-  const RotesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Página de Rotas')));
-  }
-}
-
-class StorePage extends StatelessWidget {
-  const StorePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Página da Loja')));
-  }
 }
