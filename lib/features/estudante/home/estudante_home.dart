@@ -30,19 +30,17 @@ class StudentHomePage extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // Gradiente de fundo (parte superior)
           Container(
-            height:
-                MediaQuery.of(context).size.height * 0.4, // Altura do gradiente
+            height: MediaQuery.of(context).size.height * 0.4,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xFFB06DF9), // Roxo
-                  Color(0xFF828EF3), // Azul
-                  Color(0xFF84CFB2), // Verde-água
-                  Color(0xFFCAFF5C), // Verde-limão
+                  Color(0xFFB06DF9),
+                  Color(0xFF828EF3),
+                  Color(0xFF84CFB2),
+                  Color(0xFFCAFF5C),
                 ],
                 stops: [0.0, 0.33, 0.66, 1.0],
               ),
@@ -68,10 +66,9 @@ class StudentHomePage extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage:
-                                Image.asset(
-                                  'assets/avatar/profile_placeholder.png',
-                                ).image, // Imagem de perfil
+                            backgroundImage: const AssetImage(
+                              'assets/avatar/profile_placeholder.png',
+                            ), // Imagem de perfil
                             backgroundColor: Colors.grey.shade300,
                           ),
                           const SizedBox(width: 10),
@@ -90,7 +87,7 @@ class StudentHomePage extends StatelessWidget {
                                 children: [
                                   // Moedas
                                   Image.asset(
-                                    'assets/images/coin_icon.png', // Ícone de moeda
+                                    'assets/icons/coin_icon.png', // Ícone de moeda
                                     height: 20,
                                     width: 20,
                                   ),
@@ -105,7 +102,7 @@ class StudentHomePage extends StatelessWidget {
                                   const SizedBox(width: 15),
                                   // Experiência (XP)
                                   Image.asset(
-                                    'assets/images/xp_icon.png', // Ícone de XP
+                                    'assets/icons/xp_icon.png', // Ícone de XP
                                     height: 20,
                                     width: 20,
                                   ),
