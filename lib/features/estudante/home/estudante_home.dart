@@ -12,7 +12,6 @@ class StudentHomePage extends StatelessWidget {
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDarkMode = brightness == Brightness.dark;
 
-    // Cores e estilos adaptativos ao tema
     final Color primaryColor =
         isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
     final Color backgroundColor =
@@ -51,7 +50,7 @@ class StudentHomePage extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [backgroundColor.withOpacity(0.0), backgroundColor],
-                  stops: const [0.2, 1.0], // A transição começa em 40% do topo
+                  stops: const [0.2, 1.0], 
                 ),
               ),
             ),
@@ -97,11 +96,11 @@ class StudentHomePage extends StatelessWidget {
                                 children: [
                                   // Moedas
                                   Image.asset(
-                                    'assets/icons/coin_icon.png', // Ícone de moeda
+                                    'assets/icons/coin_icon.png', 
                                     height: 20,
                                     width: 20,
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 4),
                                   Text(
                                     '9999',
                                     style: AppTextStyles.lightBody.copyWith(
@@ -113,11 +112,11 @@ class StudentHomePage extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   // Experiência (XP)
                                   Image.asset(
-                                    'assets/icons/xp_icon.png', // Ícone de XP
+                                    'assets/icons/xp_icon.png', 
                                     height: 20,
                                     width: 20,
                                   ),
-                                  const SizedBox(width: 5),
+                                  const SizedBox(width: 4),
                                   Text(
                                     '9999 XP',
                                     style: AppTextStyles.lightBody.copyWith(
