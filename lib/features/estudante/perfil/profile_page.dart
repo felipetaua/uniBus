@@ -83,12 +83,28 @@ class ProfilePage extends StatelessWidget {
                             Icon(Icons.copy, size: 16, color: Colors.grey[600]),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 18),
                         const Text(
                           'Level',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: const SizedBox(
+                            height: 10,
+                            child: LinearProgressIndicator(
+                              value: 0.7, // Exemplo de progresso da barra em %
+                              backgroundColor: Color(0xFFE0E0E0),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(
+                                  0xFFB06DF9,
+                                ), // Adicionar a funcionalidade de trocar a cor da barra de progresso entre essas cores: Color(0xFFB06DF9), Color(0xFF828EF3), Color(0xFF84CFB2), Color(0xFFCAFF5C),
+                              ),
+                            ),
                           ),
                         ),
                       ],
