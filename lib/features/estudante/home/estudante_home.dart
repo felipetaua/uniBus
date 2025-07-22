@@ -106,10 +106,11 @@ class StudentHomePage extends StatelessWidget {
                                     '9999',
                                     style: AppTextStyles.lightBody.copyWith(
                                       color: onPrimaryColor,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(width: 15),
+                                  const SizedBox(width: 8),
                                   // Experiência (XP)
                                   Image.asset(
                                     'assets/icons/xp_icon.png', // Ícone de XP
@@ -121,6 +122,7 @@ class StudentHomePage extends StatelessWidget {
                                     '9999 XP',
                                     style: AppTextStyles.lightBody.copyWith(
                                       color: onPrimaryColor,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
