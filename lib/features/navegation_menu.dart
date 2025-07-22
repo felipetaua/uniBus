@@ -14,56 +14,120 @@ class NavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(NavigationController());
-    final darkmode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor =
+        isDarkMode ? const Color(0xFF121212) : Colors.white;
+    final Color activeColor =
+        isDarkMode ? Colors.white : const Color(0xFF888AF4);
+    const Color inactiveColor = Colors.grey;
 
     return Scaffold(
-      // A barra de navegação que você criou
-      bottomNavigationBar: Obx(
-        () => NavigationBar(
-          height: 90,
-          elevation: 0,
-          selectedIndex: controller.selectedIndex.value,
-          onDestinationSelected:
-              (index) => controller.selectedIndex.value = index,
-          backgroundColor: darkmode ? Colors.black : Colors.white,
-          indicatorColor:
-              darkmode
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.black.withOpacity(0.1),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.route_sharp),
+      // Usar IndexedStack preserva o estado de cada tela ao navegar
+      body: Obx(
+        () => IndexedStack(
+          index: controller.selectedIndex.value,
+          children:
+              controller.screen.map((widget) => widget as Widget).toList(),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => controller.selectedIndex.value = 2,
+        backgroundColor: const Color(0xFF84CFB2), 
+        shape: const CircleBorder(),
+        elevation: 4.0,
+        child: const Icon(Icons.check_box_outlined, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: backgroundColor,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        elevation: 10,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.route_sharp,
               label: 'Rotas',
+              index: 0,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            NavigationDestination(
-              icon: Icon(Icons.shopping_bag_outlined),
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.shopping_bag_outlined,
               label: 'Loja',
+              index: 1,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            NavigationDestination(
-              icon: Icon(Icons.check_box_outlined),
-              label: 'Presença',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.history_outlined),
+            const SizedBox(width: 48), // Espaço para o FAB
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.history_outlined,
               label: 'Histórico',
+              index: 3,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline),
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.person_outline,
               label: 'Perfil',
+              index: 4,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
           ],
         ),
       ),
-      // Exibe a tela correspondente ao item selecionado
-      body: Obx(
-        () => controller.screen[controller.selectedIndex.value] as Widget,
+    );
+  }
+
+  Widget _buildNavItem({
+    required NavigationController controller,
+    required IconData icon,
+    required String label,
+    required int index,
+    required Color activeColor,
+    required Color inactiveColor,
+  }) {
+    return Obx(
+      () => MaterialButton(
+        minWidth: 40,
+        onPressed: () {
+          controller.selectedIndex.value = index;
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              icon,
+              color:
+                  controller.selectedIndex.value == index
+                      ? activeColor
+                      : inactiveColor,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color:
+                    controller.selectedIndex.value == index
+                        ? activeColor
+                        : inactiveColor,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class NavigationController extends GetxController {
-  final Rx<int> selectedIndex = 0.obs;
+  final Rx<int> selectedIndex = 2.obs; // Inicia na tela de Presença (Home)
 
   // Lista de telas que serão exibidas pela NavigationMenu
   final screen = [
