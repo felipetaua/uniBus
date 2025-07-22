@@ -7,65 +7,10 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leadingWidth: 100,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 16.0, top: 8.0),
-          child: Text(
-            '22:38',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        title: Container(
-          width: 120,
-          height: 30,
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Center(
-            child: Container(
-              width: 10,
-              height: 10,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          Row(
-            children: [
-              const Icon(Icons.wifi, color: Colors.black),
-              const SizedBox(width: 4),
-              const Icon(Icons.battery_full, color: Colors.black),
-              const Text(
-                '46',
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.black),
-                onPressed: () {
-                  // Ação de configurações
-                },
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -76,7 +21,7 @@ class ProfilePage extends StatelessWidget {
                     children: [
                       Container(
                         width: 100,
-                        height: 100,
+                        height: 150,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.grey[200],
@@ -255,7 +200,7 @@ class ProfilePage extends StatelessWidget {
                     height: 200,
                     child: TabBarView(
                       children: [
-                        const Center(child: Text('My stats content goes here')),
+                        const Center(child: Text('Seus status')),
                         Column(
                           children: [
                             Padding(
@@ -267,7 +212,7 @@ class ProfilePage extends StatelessWidget {
                                     colors: [
                                       Colors.purple[700]!,
                                       Colors.blue[400]!,
-                                    ], // Cores do gradiente
+                                    ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
@@ -277,7 +222,7 @@ class ProfilePage extends StatelessWidget {
                                   children: [
                                     // Ícone de diamante (você pode usar um Image.asset ou Icon)
                                     Image.asset(
-                                      'assets/diamond_box.png',
+                                      'assets/icons/coin_icon.png',
                                       width: 60,
                                       height: 60,
                                     ),
@@ -288,16 +233,16 @@ class ProfilePage extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Unlock team cards',
+                                            'Desbloqueie Cosméticos',
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           SizedBox(height: 4),
                                           Text(
-                                            'Get a bonus on your winnings with the teams in your collection',
+                                            'Use suas moedas para liberar visuais únicos e turbinar seu avatar!',
                                             style: TextStyle(
                                               color: Colors.white70,
                                               fontSize: 14,
