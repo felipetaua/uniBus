@@ -2,6 +2,7 @@
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
+import 'package:bus_attendance_app/features/estudante/perfil/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class StudentHomePage extends StatelessWidget {
@@ -389,15 +390,20 @@ class StudentHomePage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type:
-            BottomNavigationBarType
-                .fixed, // Garante que todos os itens são visíveis
+        type: BottomNavigationBarType.fixed,
         backgroundColor: surfaceColor,
         selectedItemColor: primaryColor,
         unselectedItemColor: textSecondaryColor,
-        currentIndex: 2, // Exemplo: Presença selecionada
+        currentIndex: 2,
         onTap: (index) {
           // Lógica de navegação para cada item
+          if (index == 4) {
+            // O índice 4 corresponde ao item 'Perfil'
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+          }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Rotas'),
@@ -439,7 +445,7 @@ class EventCard extends StatelessWidget {
         isDarkMode ? AppColors.darkOnSurface : AppColors.lightOnSurface;
 
     return Container(
-      width: 180, // Largura do card de evento
+      width: 220, // Largura do card de evento
       margin: const EdgeInsets.symmetric(horizontal: 5.0),
       decoration: BoxDecoration(
         color: surfaceColor,

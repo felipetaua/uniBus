@@ -81,7 +81,9 @@ class ProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.grey[200],
                           image: const DecorationImage(
-                            image: AssetImage('assets/tanya_profile.png'),
+                            image: AssetImage(
+                              'assets/avatar/profile_placeholder.png',
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -150,7 +152,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/diamond_icon.png',
+                        'assets/icons/coin_icon.png',
                         width: 30,
                         height: 30,
                       ),
@@ -178,7 +180,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/star_icon.png',
+                        'assets/icons/coin_icon.png',
                         width: 40,
                         height: 40,
                       ),
@@ -199,7 +201,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/coin_icon.png',
+                        'assets/icons/coin_icon.png',
                         width: 40,
                         height: 40,
                       ),
@@ -217,7 +219,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/diamond_icon_small.png',
+                        'assets/icons/xp_icon.png',
                         width: 40,
                         height: 40,
                       ),
@@ -230,7 +232,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Diamonds',
+                        'Experiência',
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
