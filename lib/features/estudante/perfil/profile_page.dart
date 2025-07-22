@@ -152,7 +152,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/icons/coin_icon.png',
+                        'assets/icons/xp_icon.png',
                         width: 30,
                         height: 30,
                       ),
@@ -180,7 +180,7 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     children: [
                       Image.asset(
-                        'assets/icons/coin_icon.png',
+                        'assets/icons/tropy_icon.png',
                         width: 40,
                         height: 40,
                       ),
