@@ -20,7 +20,7 @@ class NavigationMenu extends StatelessWidget {
       // A barra de navegação que você criou
       bottomNavigationBar: Obx(
         () => NavigationBar(
-          height: 80,
+          height: 90,
           elevation: 0,
           selectedIndex: controller.selectedIndex.value,
           onDestinationSelected:
@@ -36,15 +36,15 @@ class NavigationMenu extends StatelessWidget {
               label: 'Rotas',
             ),
             NavigationDestination(
-              icon: Icon(Icons.store_outlined),
-              label: 'Store',
+              icon: Icon(Icons.shopping_bag_outlined),
+              label: 'Loja',
             ),
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
+              icon: Icon(Icons.check_box_outlined),
               label: 'Presença',
             ),
             NavigationDestination(
-              icon: Icon(Icons.favorite_outline_rounded),
+              icon: Icon(Icons.history_outlined),
               label: 'Histórico',
             ),
             NavigationDestination(
