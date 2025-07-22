@@ -91,41 +91,49 @@ class ProfilePage extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: const SizedBox(
-                            height: 10,
-                            child: LinearProgressIndicator(
-                              value: 0.7, // Exemplo de progresso da barra em %
-                              backgroundColor: Color(0xFFE0E0E0),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Color(
-                                  0xFFB06DF9,
-                                ), // Adicionar a funcionalidade de trocar a cor da barra de progresso entre essas cores: Color(0xFFB06DF9), Color(0xFF828EF3), Color(0xFF84CFB2), Color(0xFFCAFF5C),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: const SizedBox(
+                                  height: 10,
+                                  child: LinearProgressIndicator(
+                                    value:
+                                        0.7, // Exemplo de progresso da barra em %
+                                    backgroundColor: Color(0xFFE0E0E0),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(
+                                        0xFFB06DF9,
+                                      ), // Adicionar a funcionalidade de trocar a cor da barra de progresso entre essas cores: Color(0xFFB06DF9), Color(0xFF828EF3), Color(0xFF84CFB2), Color(0xFFCAFF5C),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 15),
+                            Column(
+                              children: [
+                                Image.asset(
+                                  'assets/icons/xp_icon.png',
+                                  width: 25,
+                                  height: 25,
+                                ),
+                                const Text(
+                                  'x2',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueAccent,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    children: [
-                      Image.asset(
-                        'assets/icons/xp_icon.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                      const Text(
-                        'x2',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
