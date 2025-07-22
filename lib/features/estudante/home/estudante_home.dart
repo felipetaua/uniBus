@@ -383,7 +383,7 @@ class StudentHomePage extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(height: 80), // Espaço para a BottomNavigationBar
+                const SizedBox(height: 40),
               ],
             ),
           ),
