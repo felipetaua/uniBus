@@ -50,7 +50,7 @@ class StudentHomePage extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [backgroundColor.withOpacity(0.0), backgroundColor],
-                  stops: const [0.2, 1.0], 
+                  stops: const [0.2, 1.0],
                 ),
               ),
             ),
@@ -96,7 +96,7 @@ class StudentHomePage extends StatelessWidget {
                                 children: [
                                   // Moedas
                                   Image.asset(
-                                    'assets/icons/coin_icon.png', 
+                                    'assets/icons/coin_icon.png',
                                     height: 20,
                                     width: 20,
                                   ),
@@ -112,7 +112,7 @@ class StudentHomePage extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   // Experiência (XP)
                                   Image.asset(
-                                    'assets/icons/xp_icon.png', 
+                                    'assets/icons/xp_icon.png',
                                     height: 20,
                                     width: 20,
                                   ),
@@ -240,10 +240,13 @@ class StudentHomePage extends StatelessWidget {
                 // Seção "Você vai hoje?"
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    'Você vai hoje?',
-                    style: AppTextStyles.lightTitle.copyWith(
-                      color: textPrimaryColor,
+                  child: Center(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Você vai hoje?',
+                      style: AppTextStyles.lightTitle.copyWith(
+                        color: textPrimaryColor,
+                      ),
                     ),
                   ),
                 ),
