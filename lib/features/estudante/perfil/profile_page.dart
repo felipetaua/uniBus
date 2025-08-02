@@ -1,3 +1,5 @@
+import 'package:bus_attendance_app/data/auth_services.dart';
+import 'package:bus_attendance_app/features/auth/login_student.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -227,8 +229,21 @@ class ProfilePage extends StatelessWidget {
                     height: 200,
                     child: TabBarView(
                       children: [
-                        const Center(
-                          child: Text('Configurações para adicionar '),
+                        ListView(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.logout),
+                              title: const Text('Sair'),
+                              onTap: () async {
+                                await AuthService().signOut();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => const loginStudentPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         Column(
                           children: [
@@ -308,3 +323,4 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
