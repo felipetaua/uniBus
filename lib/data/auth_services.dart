@@ -1,20 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<firebase_auth.User?> registerStudent({
+  Future<User?> registerStudent({
     required String email,
     required String password,
     required String name,
   }) async {
     try {
-      final result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      firebase_auth.User? user = result.user;
+      User? user = result.user;
       if (user != null) {
         // Adicionar o nome de exibição do usuário
         await user.updateDisplayName(name);
@@ -27,5 +26,9 @@ class AuthService {
       print(e.toString());
       return null;
     }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
