@@ -32,7 +32,7 @@ class AuthService {
       return null;
     }
   }
-  
+
   // login com email e senha
   Future<User?> signInWithEmailAndPassword(
     String email,
@@ -54,9 +54,9 @@ class AuthService {
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
       if (googleUser == null) {
-        // O usuário cancelou o login
-        return null;
+        return null; // O usuário cancelou o login
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -67,8 +67,11 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      UserCredential result = await _auth.signInWithCredential(credential);
-      return result.user;
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+
+      return userCredential.user;
     } catch (e) {
       print(e.toString());
       return null;
