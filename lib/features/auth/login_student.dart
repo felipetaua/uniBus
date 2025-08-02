@@ -4,16 +4,15 @@ import 'package:bus_attendance_app/features/auth/register_student.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_attendance_app/data/auth_services.dart';
 
-// ignore: camel_case_types
-class loginStudentPage extends StatefulWidget {
-  const loginStudentPage({super.key});
+class LoginStudentPage extends StatefulWidget {
+  const LoginStudentPage({super.key});
 
   @override
-  State<loginStudentPage> createState() => _loginStudentPageState();
+  State<LoginStudentPage> createState() => _LoginStudentPageState();
 }
 
 // ignore: camel_case_types
-class _loginStudentPageState extends State<loginStudentPage> {
+class _LoginStudentPageState extends State<LoginStudentPage> {
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
   bool _isLoading = false;

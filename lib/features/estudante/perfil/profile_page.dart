@@ -238,7 +238,7 @@ class ProfilePage extends StatelessWidget {
                                 await AuthService().signOut();
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => const loginStudentPage(),
+                                    builder: (context) => const LoginStudentPage(),
                                   ),
                                 );
                               },
