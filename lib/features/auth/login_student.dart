@@ -2,6 +2,7 @@ import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/register_student.dart';
 import 'package:flutter/material.dart';
+import 'package:bus_attendance_app/data/auth_services.dart';
 
 // ignore: camel_case_types
 class loginStudentPage extends StatefulWidget {
@@ -15,6 +16,37 @@ class loginStudentPage extends StatefulWidget {
 class _loginStudentPageState extends State<loginStudentPage> {
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final AuthService _authService = AuthService();
+
+  Future<void> _loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = await _authService.signInWithEmailAndPassword(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const NavigationMenu()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('E-mail ou senha inválidos.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +153,7 @@ class _loginStudentPageState extends State<loginStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'exemplo@gmail.com',
@@ -147,6 +180,7 @@ class _loginStudentPageState extends State<loginStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       hintText: 'Digite sua Senha',
@@ -222,23 +256,27 @@ class _loginStudentPageState extends State<loginStudentPage> {
                     width: double.infinity,
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const NavigationMenu(),
-                          ),
-                        );
-                      },
+                      onPressed: _loginUser,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child: const Text(
-                        'Entrar na conta',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                      child:
+                          _isLoading
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                              : const Text(
+                                'Entrar na conta',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 15),
