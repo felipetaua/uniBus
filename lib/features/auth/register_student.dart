@@ -1,6 +1,8 @@
 import 'package:bus_attendance_app/core/utils/lgpd_content.dart';
+import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -15,9 +17,19 @@ class registerStudentPage extends StatefulWidget {
 class registerStudentPageState extends State<registerStudentPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
-  bool _acceptedTerms = false; // Adicione esta linha
+  bool _acceptedTerms = false;
+
+  // bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -35,7 +47,59 @@ class registerStudentPageState extends State<registerStudentPage> {
   @override
   void dispose() {
     _pageController.dispose();
+
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+
     super.dispose();
+  }
+
+  Future<void> _registerUser() async {
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      );
+      return;
+    }
+
+    if (!_acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Você deve aceitar os termos de uso.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = await _authService.registerStudent(
+      email: _emailController.text,
+      password: _passwordController.text,
+      name: _nameController.text,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (user != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Conta criada com sucesso!')),
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const StudentHomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao criar a conta. Tente novamente.'),
+        ),
+      );
+    }
   }
 
   void _showLegalDialog() {
@@ -192,6 +256,7 @@ class registerStudentPageState extends State<registerStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _nameController,
                     decoration: InputDecoration(
                       hintText: 'Seu nome',
                       fillColor: Colors.grey[300],
@@ -217,6 +282,7 @@ class registerStudentPageState extends State<registerStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'exemplo@gmail.com',
@@ -243,6 +309,7 @@ class registerStudentPageState extends State<registerStudentPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       hintText: 'Digite sua Senha',
@@ -360,23 +427,27 @@ class registerStudentPageState extends State<registerStudentPage> {
                     width: double.infinity,
                     height: 45,
                     child: ElevatedButton(
-                      onPressed:
-                          _acceptedTerms
-                              ? () {
-                                // Handle "Criar sua conta"
-                                print('Criar sua conta clicked');
-                              }
-                              : null, // Desabilita se não aceitou os termos
+                      onPressed: _acceptedTerms ? _registerUser : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child: const Text(
-                        'Criar sua conta',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                      child:
+                          _isLoading
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                              : const Text(
+                                'Criar sua conta',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 15),
