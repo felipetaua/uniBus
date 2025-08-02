@@ -397,42 +397,77 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Esqueceu a senha?'),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: Center(
+              child: Image.asset('assets/images/logo-circle.png', height: 80),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  'Digite seu e-mail para receber um link de redefinição de senha.',
+                  'Redefina sua senha',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
+                const Text(
+                  'Digite seu e-mail para receber um link de redefinição de senha.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
                 TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'E-mail',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: 'Digite seu e-mail',
+                    fillColor: Colors.grey[200],
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
               ],
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await _authService.sendPasswordResetEmail(
-                    emailController.text,
-                  );
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('E-mail de redefinição de senha enviado.'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                  );
-                },
-                child: const Text('Enviar'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await _authService.sendPasswordResetEmail(
+                        emailController.text,
+                      );
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'E-mail de redefinição de senha enviado.',
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF5A73EC),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                    ),
+                    child: const Text(
+                      'Enviar',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
