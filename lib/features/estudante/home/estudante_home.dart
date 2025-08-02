@@ -140,7 +140,7 @@ class StudentHomePage extends StatelessWidget {
                             color: Colors.white.withOpacity(0.3),
                           ),
                           child: Icon(
-                            Icons.qr_code_scanner,
+                            Icons.history_outlined,
                             color: onPrimaryColor,
                           ),
                         ),
