@@ -294,10 +294,7 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                     width: double.infinity,
                     height: 50,
                     child: OutlinedButton(
-                      onPressed: () {
-                        // Handle "Continue with Google"
-                        print('Continue with Google clicked');
-                      },
+                      onPressed: _loginWithGoogle,
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.grey),
                         shape: RoundedRectangleBorder(

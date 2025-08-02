@@ -1,8 +1,13 @@
+// ignore_for_file: avoid_print
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  //criar conta
   Future<User?> registerStudent({
     required String email,
     required String password,
@@ -27,8 +32,12 @@ class AuthService {
       return null;
     }
   }
-
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+  
+  // login com email e senha
+  Future<User?> signInWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -41,6 +50,32 @@ class AuthService {
     }
   }
 
+  // login com Google
+  Future<User?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        // O usuário cancelou o login
+        return null;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential result = await _auth.signInWithCredential(credential);
+      return result.user;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // redefinir senha
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -50,6 +85,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    await _googleSignIn.signOut();
     await _auth.signOut();
   }
 }
