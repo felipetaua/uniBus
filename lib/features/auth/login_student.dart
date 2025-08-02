@@ -236,7 +236,61 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                         child: TextButton(
                           onPressed: () {
                             // Handle "Esqueceu a senha?"
-                            print('Esqueceu a senha? clicked');
+                            void _showForgotPasswordDialog() {
+                              final TextEditingController emailController =
+                                  TextEditingController();
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: const Text('Esqueceu a senha?'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            'Digite seu e-mail para receber um link de redefinição de senha.',
+                                          ),
+                                          const SizedBox(height: 16),
+                                          TextField(
+                                            controller: emailController,
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            decoration: const InputDecoration(
+                                              labelText: 'E-mail',
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed:
+                                              () => Navigator.of(context).pop(),
+                                          child: const Text('Cancelar'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            await _authService
+                                                .sendPasswordResetEmail(
+                                                  emailController.text,
+                                                );
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'E-mail de redefinição de senha enviado.',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: const Text('Enviar'),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                            }
                           },
                           child: const Text(
                             'Esqueceu a senha?',
