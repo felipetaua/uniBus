@@ -2,7 +2,7 @@ import 'package:bus_attendance_app/core/utils/lgpd_content.dart';
 import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
-import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
+import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -18,11 +18,9 @@ class registerStudentPageState extends State<registerStudentPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  bool _rememberPassword = false;
   bool _isPasswordVisible = false;
   bool _acceptedTerms = false;
 
-  // bool _isPasswordVisible = false;
   bool _isLoading = false;
 
   final TextEditingController _nameController = TextEditingController();
@@ -91,7 +89,7 @@ class registerStudentPageState extends State<registerStudentPage> {
         const SnackBar(content: Text('Conta criada com sucesso!')),
       );
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const StudentHomePage()),
+        MaterialPageRoute(builder: (context) => const NavigationMenu()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -337,45 +335,6 @@ class registerStudentPageState extends State<registerStudentPage> {
                         },
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: _rememberPassword,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                _rememberPassword = value!;
-                              });
-                            },
-                            activeColor: Colors.blueAccent,
-                          ),
-                          const Text(
-                            'Lembrar a senha',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Handle "Esqueceu a senha?"
-                          print('Esqueceu a senha? clicked');
-                        },
-                        child: const Text(
-                          'Esqueceu a senha?',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blueAccent,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 10),
                   Row(
