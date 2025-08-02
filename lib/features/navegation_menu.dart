@@ -1,10 +1,8 @@
-// lib/navigation_menu.dart
-
-import 'package:bus_attendance_app/features/estudante/historico/historico_page.dart';
 import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
 import 'package:bus_attendance_app/features/estudante/loja/store_page.dart';
 import 'package:bus_attendance_app/features/estudante/perfil/profile_page.dart';
 import 'package:bus_attendance_app/features/estudante/rotas/rotes_page.dart';
+import 'package:bus_attendance_app/features/message/message_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -136,7 +134,7 @@ class NavigationController extends GetxController {
 
     const StudentHomePage(), // 3: Tela Home / presença
 
-    const HistoryPage(), // 4: Tela de message (Exemplo)
+    const MessagePage(), // 4: Tela de message (Exemplo)
     const ProfilePage(), // 5: Tela de Perfil
   ];
 }
