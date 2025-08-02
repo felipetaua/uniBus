@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "281483438542",
+    "project_id": "unibus-ad9a4",
+    "storage_bucket": "unibus-ad9a4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281483438542:android:03efc3fa33fe7216a3e39f",
+        "android_client_info": {
+          "package_name": "com.example.unibus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnO2QaO2aVtYtH5dvEq0UlkTJ_y0CwsUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
