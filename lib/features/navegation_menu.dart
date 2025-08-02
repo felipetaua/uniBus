@@ -32,7 +32,7 @@ class NavigationMenu extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => controller.selectedIndex.value = 2,
-        backgroundColor: const Color(0xFF84CFB2), 
+        backgroundColor: const Color(0xFF84CFB2),
         shape: const CircleBorder(),
         elevation: 4.0,
         child: const Icon(Icons.check_box_outlined, color: Colors.white),
@@ -65,8 +65,8 @@ class NavigationMenu extends StatelessWidget {
             const SizedBox(width: 48), // Espaço para o FAB
             _buildNavItem(
               controller: controller,
-              icon: Icons.history_outlined,
-              label: 'Histórico',
+              icon: Icons.wysiwyg_rounded,
+              label: 'Mensagens',
               index: 3,
               activeColor: activeColor,
               inactiveColor: inactiveColor,
@@ -136,7 +136,7 @@ class NavigationController extends GetxController {
 
     const StudentHomePage(), // 3: Tela Home / presença
 
-    const HistoryPage(), // 4: Tela de Wishlist (Exemplo)
+    const HistoryPage(), // 4: Tela de message (Exemplo)
     const ProfilePage(), // 5: Tela de Perfil
   ];
 }
