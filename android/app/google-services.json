@@ -12,7 +12,20 @@
           "package_name": "com.example.unibus"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "281483438542-4u36kr4l0uh9ua6bgngo22k03tvtjduc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.unibus",
+            "certificate_hash": "464662681933669cdedd505470083c6aa878ba85"
+          }
+        },
+        {
+          "client_id": "281483438542-jv4d39u83oictu4fjlc43a4t71i74ipd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBnO2QaO2aVtYtH5dvEq0UlkTJ_y0CwsUQ"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281483438542-jv4d39u83oictu4fjlc43a4t71i74ipd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "281483438542-33m4g51h29lpbnfbmqvvmk8jlicgsijg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.unibus"
+              }
+            }
+          ]
         }
       }
     }

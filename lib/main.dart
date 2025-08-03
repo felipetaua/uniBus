@@ -8,6 +8,7 @@ import 'core/utils/device_orientation.dart';
 void main() async {
   await setPortraitOrientation();
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
