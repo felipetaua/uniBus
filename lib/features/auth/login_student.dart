@@ -10,8 +10,6 @@ class LoginStudentPage extends StatefulWidget {
   @override
   State<LoginStudentPage> createState() => _LoginStudentPageState();
 }
-
-// ignore: camel_case_types
 class _LoginStudentPageState extends State<LoginStudentPage> {
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
@@ -36,14 +34,16 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
       _isLoading = false;
     });
 
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavigationMenu()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('E-mail ou senha inválidos.')),
-      );
+    if (mounted) {
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const NavigationMenu()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('E-mail ou senha inválidos.')),
+        );
+      }
     }
   }
 
@@ -58,15 +58,101 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
       _isLoading = false;
     });
 
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavigationMenu()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao fazer login com o Google.')),
-      );
+    if (mounted) {
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const NavigationMenu()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Falha ao fazer login com o Google.')),
+        );
+      }
     }
+  }
+
+  void _showForgotPasswordDialog() {
+    final TextEditingController emailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Center(
+          child: Image.asset('assets/images/logo-circle.png', height: 80),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Redefina sua senha',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Digite seu e-mail para receber um link de redefinição de senha.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'Digite seu e-mail',
+                fillColor: Colors.grey[200],
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  await _authService.sendPasswordResetEmail(
+                    emailController.text,
+                  );
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'E-mail de redefinição de senha enviado.',
+                        ),
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF5A73EC),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                ),
+                child: const Text(
+                  'Enviar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -121,7 +207,6 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          // ignore: deprecated_member_use
                           color: Colors.white.withOpacity(0.3),
                           shape: BoxShape.circle,
                         ),
@@ -281,20 +366,19 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child:
-                          _isLoading
-                              ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              )
-                              : const Text(
-                                'Entrar na conta',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
                               ),
+                            )
+                          : const Text(
+                              'Entrar na conta',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -407,89 +491,6 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showForgotPasswordDialog() {
-    final TextEditingController emailController = TextEditingController();
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            title: Center(
-              child: Image.asset('assets/images/logo-circle.png', height: 80),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Redefina sua senha',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Digite seu e-mail para receber um link de redefinição de senha.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'Digite seu e-mail',
-                    fillColor: Colors.grey[200],
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancelar',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _authService.sendPasswordResetEmail(
-                        emailController.text,
-                      );
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'E-mail de redefinição de senha enviado.',
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5A73EC),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                    ),
-                    child: const Text(
-                      'Enviar',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
     );
   }
 }
