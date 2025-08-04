@@ -1,3 +1,4 @@
+import 'package:bus_attendance_app/features/estudante/message/chat/chat_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,7 +31,7 @@ class Chat {
 class MessagePage extends StatelessWidget {
   const MessagePage({super.key});
 
-  // Lista de dados para popular a tela 
+  // Lista de dados para popular a tela
   static final List<Chat> chatData = [
     Chat(
       name: 'Avisos da Gestão',
@@ -113,7 +114,7 @@ class MessagePage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10.0),
                 itemCount: chatData.length,
                 itemBuilder: (context, index) {
-                  return _buildChatListItem(chatData[index]);
+                  return _buildChatListItem(context, chatData[index]);
                 },
               ),
             ),
@@ -185,7 +186,7 @@ class MessagePage extends StatelessWidget {
   }
 
   // Construir cada item da lista de chat
-  Widget _buildChatListItem(Chat chat) {
+  Widget _buildChatListItem(BuildContext context, Chat chat) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: ListTile(
@@ -193,7 +194,11 @@ class MessagePage extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 28,
-              backgroundImage: NetworkImage(chat.avatarUrl),
+              // Lógica para carregar imagem da internet ou local
+              backgroundImage:
+                  chat.avatarUrl.startsWith('http')
+                      ? NetworkImage(chat.avatarUrl)
+                      : AssetImage(chat.avatarUrl) as ImageProvider,
             ),
             if (chat.isOnline)
               Positioned(
@@ -242,7 +247,11 @@ class MessagePage extends StatelessWidget {
           ],
         ),
         onTap: () {
-          // Ação ao clicar no chat
+          // Ação ao clicar no chat: NAVEGAR PARA A TELA DE DETALHES
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatDetailPage(chat: chat)),
+          );
         },
       ),
     );
