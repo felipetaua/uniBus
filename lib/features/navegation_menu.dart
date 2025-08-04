@@ -24,8 +24,7 @@ class NavigationMenu extends StatelessWidget {
       body: Obx(
         () => IndexedStack(
           index: controller.selectedIndex.value,
-          children:
-              controller.screen.map((widget) => widget as Widget).toList(),
+          children: controller.screen.map((widget) => widget).toList(),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -129,7 +128,7 @@ class NavigationController extends GetxController {
 
   // Lista de telas que serão exibidas pela NavigationMenu
   final screen = [
-    const RotesPage(), // 1: Tela de Rotas
+    const RoutesPage(), // 1: Tela de Rotas
     const StorePage(), // 2: Tela da Loja
 
     const StudentHomePage(), // 3: Tela Home / presença
