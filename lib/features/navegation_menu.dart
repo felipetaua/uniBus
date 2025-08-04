@@ -2,7 +2,7 @@ import 'package:bus_attendance_app/features/estudante/home/estudante_home.dart';
 import 'package:bus_attendance_app/features/estudante/loja/store_page.dart';
 import 'package:bus_attendance_app/features/estudante/perfil/profile_page.dart';
 import 'package:bus_attendance_app/features/estudante/rotas/rotes_page.dart';
-import 'package:bus_attendance_app/features/message/message_screen.dart';
+import 'package:bus_attendance_app/features/estudante/message/message_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
