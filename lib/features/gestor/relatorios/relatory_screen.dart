@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class RelatoryPage extends StatelessWidget {
-  const RelatoryPage({super.key});
+class GestorRelatoryPage extends StatelessWidget {
+  const GestorRelatoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,8 @@
-import 'package:bus_attendance_app/features/gestor/dashboard/gestor_dashboard_page.dart';
+import 'package:bus_attendance_app/features/gestor/dashboard/dashboard_gestor.dart';
+import 'package:bus_attendance_app/features/gestor/presence/presence_screen.dart';
 import 'package:bus_attendance_app/features/gestor/profile/gestor_profile_page.dart';
-import 'package:bus_attendance_app/features/gestor/reports/gestor_reports_page.dart';
+import 'package:bus_attendance_app/features/gestor/relatorios/relatory_screen.dart';
+import 'package:bus_attendance_app/features/gestor/rotas/rotes_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -48,11 +50,15 @@ class GestorNavigationMenu extends StatelessWidget {
 }
 
 class GestorNavigationController extends GetxController {
-  final Rx<int> selectedIndex = 0.obs;
+  final Rx<int> selectedIndex = 2.obs;
 
   final screens = [
-    const GestorDashboardPage(),
-    const GestorReportsPage(),
+    const RotesPages(),
+    const PresenceStudentsScreen(),
+
+    const GestorDashboardPage(), // dashboard inicial
+
+    const GestorRelatoryPage(),
     const GestorProfilePage(),
   ];
 }
