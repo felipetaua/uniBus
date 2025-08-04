@@ -4,6 +4,14 @@ import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 
+class Event {
+  final String title;
+  final String date;
+  final String imagePath;
+
+  Event({required this.title, required this.date, required this.imagePath});
+}
+
 class StudentHomePage extends StatelessWidget {
   const StudentHomePage({super.key});
 
@@ -11,6 +19,26 @@ class StudentHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDarkMode = brightness == Brightness.dark;
+
+    // Lista de eventos - pode ser carregada de um banco de dados no futuro
+    final List<Event> academicEvents = [
+      Event(
+        title: 'Palestra de IA',
+        date: '20/11/2025 às 19:30',
+        imagePath: 'assets/images/events/event_palestra.png',
+      ),
+      Event(
+        title: 'Feira de Ciências',
+        date: '23/08/2025 às 20:30',
+        imagePath: 'assets/images/eventsevent_feira_ciencias.png',
+      ),
+      Event(
+        title: 'Maratona de Programação',
+        date: '05/12/2025 às 09:00',
+        imagePath:
+            'assets/images/events/event_palestra.png', // Exemplo com imagem reutilizada
+      ),
+    ];
 
     final Color primaryColor =
         isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
@@ -359,20 +387,13 @@ class StudentHomePage extends StatelessWidget {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  itemCount: 3, // Exemplo: 3 eventos
+                  itemCount: academicEvents.length,
                   itemBuilder: (context, index) {
-                    final isPalestra = index == 0;
+                    final event = academicEvents[index];
                     return EventCard(
-                      title:
-                          isPalestra ? 'Palestra de IA' : 'Feira de Ciências',
-                      date:
-                          isPalestra
-                              ? '20/11/2025 às 19:30'
-                              : '23/08/2025 às 20:30',
-                      imagePath:
-                          isPalestra
-                              ? 'assets/images/event_palestra.png'
-                              : 'assets/images/event_feira_ciencias.png',
+                      title: event.title,
+                      date: event.date,
+                      imagePath: event.imagePath,
                       isDarkMode: isDarkMode,
                       onConfirm: () {
                         // TODO: Adicionar lógica para confirmar presença no evento

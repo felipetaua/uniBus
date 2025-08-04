@@ -49,6 +49,7 @@ flutter:
   # Assets
   assets:
     - assets/images/
+    - assets/images/events/
     - assets/icons/
     - assets/avatar/
     - assets/items/bg/
