@@ -1,5 +1,6 @@
 import 'package:bus_attendance_app/features/auth/account_gestor.dart';
 import 'package:bus_attendance_app/features/auth/register_gestor.dart';
+import 'package:bus_attendance_app/features/gestor/gestor_navigation_menu.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -219,8 +220,12 @@ class _loginGestorPageState extends State<loginGestorPage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle "Entrar na conta"
-                        print('Entrar na conta clicked');
+                        // TODO: Adicionar lógica de autenticação do gestor antes de navegar
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const GestorNavigationMenu(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(
