@@ -58,7 +58,7 @@ class ChatDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFEF9F9),
+      backgroundColor: const Color(0xFFCBDDE4),
       appBar: _buildAppBar(context),
       body: Column(
         children: [
@@ -91,7 +91,11 @@ class ChatDetailPage extends StatelessWidget {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          size: 20,
+          color: Colors.black87,
+        ),
         onPressed: () => Navigator.of(context).pop(),
       ),
       titleSpacing: 0,
@@ -108,19 +112,16 @@ class ChatDetailPage extends StatelessWidget {
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment:
-                  MainAxisAlignment
-                      .center, // Centraliza o conteúdo verticalmente
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   chat.name,
                   style: const TextStyle(
                     fontSize: 16,
+                    color: Colors.black87,
                     fontWeight: FontWeight.bold,
                   ),
-                  overflow:
-                      TextOverflow
-                          .ellipsis, // Evita quebra de layout com nomes longos
+                  overflow: TextOverflow.ellipsis,
                 ),
                 if (chat.isOnline)
                   const Text(
@@ -133,8 +134,14 @@ class ChatDetailPage extends StatelessWidget {
         ],
       ),
       actions: [
-        IconButton(icon: const Icon(Icons.call_outlined), onPressed: () {}),
-        IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+        IconButton(
+          icon: const Icon(Icons.call_outlined, color: Colors.black87),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.search, color: Colors.black87),
+          onPressed: () {},
+        ),
       ],
     );
   }
@@ -314,7 +321,7 @@ class ChatDetailPage extends StatelessWidget {
               backgroundColor: const Color(0xFF888AF4),
               child: IconButton(
                 icon: const Icon(
-                  Icons.mic,
+                  Icons.send_rounded,
                   color: Colors.white,
                 ), // Ou Icons.send
                 onPressed: () {},
