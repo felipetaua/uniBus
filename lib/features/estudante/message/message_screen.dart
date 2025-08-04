@@ -30,13 +30,13 @@ class Chat {
 class MessagePage extends StatelessWidget {
   const MessagePage({super.key});
 
-  // Lista de dados para popular a tela (simulando uma API ou banco de dados)
+  // Lista de dados para popular a tela 
   static final List<Chat> chatData = [
     Chat(
       name: 'Avisos da Gestão',
       message: 'Atenção: O ônibus das 18h sairá 15 minutos mais cedo hoje.',
       time: '10:05',
-      avatarUrl: 'https://i.pravatar.cc/150?img=7',
+      avatarUrl: 'assets/images/alerts.jpg',
       readStatusIcon: Icons.done_all,
       isPinned: true,
     ),
@@ -44,7 +44,7 @@ class MessagePage extends StatelessWidget {
       name: 'Galera do B-12 (Centro)',
       message: 'Ana: Alguém sabe se o ar condicionado foi consertado?',
       time: '14:35',
-      avatarUrl: 'https://i.pravatar.cc/150?img=32',
+      avatarUrl: 'assets/images/busao.jpg',
       readStatusIcon: Icons.done_all,
       isOnline: true,
     ),
@@ -69,7 +69,7 @@ class MessagePage extends StatelessWidget {
       name: 'UniBus Bot',
       message: 'Lembrete: Confirme sua presença para a viagem de amanhã.',
       time: 'Ontem',
-      avatarUrl: 'https://i.pravatar.cc/150?img=5',
+      avatarUrl: 'assets/images/unibot.jpg',
       readStatusIcon: Icons.done_all,
       isOnline: true,
     ),
