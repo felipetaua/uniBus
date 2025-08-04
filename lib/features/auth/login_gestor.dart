@@ -371,7 +371,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const registerGestorPage(),
+                              builder: (context) => const RegisterGestorScreen(),
                             ),
                           );
                         },
