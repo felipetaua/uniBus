@@ -13,44 +13,102 @@ class GestorNavigationMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(GestorNavigationController());
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final Color backgroundColor =
+        isDarkMode ? const Color(0xFF121212) : Colors.white;
     final Color activeColor =
         isDarkMode ? Colors.white : const Color(0xFF5A73EC);
     const Color inactiveColor = Colors.grey;
 
     return Scaffold(
       body: Obx(() => controller.screens[controller.selectedIndex.value]),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: controller.selectedIndex.value,
-          onTap: (index) => controller.selectedIndex.value = index,
-          selectedItemColor: activeColor,
-          unselectedItemColor: inactiveColor,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.route_outlined),
-              activeIcon: Icon(Icons.route_sharp),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => controller.selectedIndex.value = 2,
+        backgroundColor: const Color(0xFF5A73EC),
+        shape: const CircleBorder(),
+        elevation: 4.0,
+        child: const Icon(Icons.dashboard, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: backgroundColor,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        elevation: 10,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.route_outlined,
               label: 'Rotas',
+              index: 0,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_2_outlined),
-              activeIcon: Icon(Icons.groups_2),
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.groups_2_outlined,
               label: 'Presença',
+              index: 1,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              activeIcon: Icon(Icons.dashboard),
-              label: 'Dashboard',
+            const SizedBox(width: 48), // Espaço para o FAB
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.pie_chart_outline_outlined,
+              label: 'Relatório',
+              index: 3,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.pie_chart_outline_outlined),
-              activeIcon: Icon(Icons.pie_chart_rounded),
-              label: 'Relátorio',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
+            _buildNavItem(
+              controller: controller,
+              icon: Icons.person_outline,
               label: 'Perfil',
+              index: 4,
+              activeColor: activeColor,
+              inactiveColor: inactiveColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required GestorNavigationController controller,
+    required IconData icon,
+    required String label,
+    required int index,
+    required Color activeColor,
+    required Color inactiveColor,
+  }) {
+    return Obx(
+      () => MaterialButton(
+        minWidth: 40,
+        onPressed: () {
+          controller.selectedIndex.value = index;
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              icon,
+              color:
+                  controller.selectedIndex.value == index
+                      ? activeColor
+                      : inactiveColor,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color:
+                    controller.selectedIndex.value == index
+                        ? activeColor
+                        : inactiveColor,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -66,7 +124,7 @@ class GestorNavigationController extends GetxController {
     const RotesPages(),
     const PresenceStudentsScreen(),
 
-    const GestorDashboardPage(), // dashboard inicial
+    const GestorDashboardPage(), // 2: dashboard inicial
 
     const GestorRelatoryPage(),
     const GestorProfilePage(),
