@@ -355,23 +355,31 @@ class StudentHomePage extends StatelessWidget {
               const SizedBox(height: 15),
               // Lista de eventos acadêmicos (Horizontal Scroll)
               SizedBox(
-                height: 200, // Altura fixa para o carrossel de eventos
+                height: 250, // Altura fixa para o carrossel de eventos
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   itemCount: 3, // Exemplo: 3 eventos
                   itemBuilder: (context, index) {
+                    final isPalestra = index == 0;
                     return EventCard(
-                      title: index == 0 ? 'Palestra' : 'Feira de Ciências',
+                      title:
+                          isPalestra ? 'Palestra de IA' : 'Feira de Ciências',
                       date:
-                          index == 0
+                          isPalestra
                               ? '20/11/2025 às 19:30'
                               : '23/08/2025 às 20:30',
                       imagePath:
-                          index == 0
-                              ? 'assets/images/event_palestra.png' // Imagem para Palestra
-                              : 'assets/images/event_feira_ciencias.png', // Imagem para Feira de Ciências
+                          isPalestra
+                              ? 'assets/images/event_palestra.png'
+                              : 'assets/images/event_feira_ciencias.png',
                       isDarkMode: isDarkMode,
+                      onConfirm: () {
+                        // TODO: Adicionar lógica para confirmar presença no evento
+                      },
+                      onDecline: () {
+                        // TODO: Adicionar lógica para recusar presença no evento
+                      },
                     );
                   },
                 ),
@@ -385,12 +393,13 @@ class StudentHomePage extends StatelessWidget {
   }
 }
 
-// O widget EventCard permanece o mesmo
 class EventCard extends StatelessWidget {
   final String title;
   final String date;
   final String imagePath;
   final bool isDarkMode;
+  final VoidCallback onConfirm;
+  final VoidCallback onDecline;
 
   const EventCard({
     super.key,
@@ -398,45 +407,49 @@ class EventCard extends StatelessWidget {
     required this.date,
     required this.imagePath,
     required this.isDarkMode,
+    required this.onConfirm,
+    required this.onDecline,
   });
 
   @override
   Widget build(BuildContext context) {
     final Color surfaceColor =
         isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
-    final Color onSurfaceColor =
-        isDarkMode ? AppColors.darkOnSurface : AppColors.lightOnSurface;
+    final Color textPrimaryColor =
+        isDarkMode ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final Color textSecondaryColor =
+        isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
     return Container(
-      width: 220, // Largura do card de evento
-      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+      width: 250,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(15.0),
+              top: Radius.circular(16.0),
             ),
             child: Image.asset(
               imagePath,
-              height: 100,
+              height: 110,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -444,38 +457,52 @@ class EventCard extends StatelessWidget {
                   title,
                   style: AppTextStyles.lightBody.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: onSurfaceColor,
+                    color: textPrimaryColor,
+                    fontSize: 16,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 4),
                 Text(
                   date,
                   style: AppTextStyles.lightBody.copyWith(
                     fontSize: 12,
-                    color:
-                        isDarkMode
-                            ? AppColors.darkTextSecondary
-                            : AppColors.lightTextSecondary,
+                    color: textSecondaryColor,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 10),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: AppColors.lightSecondary,
-                    ), // Ícone de confirmar
-                    SizedBox(width: 5),
-                    Icon(
-                      Icons.cancel_outlined,
-                      color: AppColors.lightError,
-                    ), // Ícone de cancelar
-                  ],
+              ],
+            ),
+          ),
+          const Spacer(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: onDecline,
+                  child: Text(
+                    'Recusar',
+                    style: TextStyle(color: textSecondaryColor),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: onConfirm,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF84CFB2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: const Text(
+                    'Confirmar',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
