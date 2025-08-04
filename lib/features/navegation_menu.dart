@@ -60,7 +60,7 @@ class NavigationMenu extends StatelessWidget {
               activeColor: activeColor,
               inactiveColor: inactiveColor,
             ),
-            const SizedBox(width: 48), // Espaço para o FAB
+            const SizedBox(width: 30), // Espaço para o FAB
             _buildNavItem(
               controller: controller,
               icon: Icons.wysiwyg_rounded,
