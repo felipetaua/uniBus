@@ -28,14 +28,24 @@ class GestorNavigationMenu extends StatelessWidget {
           unselectedItemColor: inactiveColor,
           items: const [
             BottomNavigationBarItem(
+              icon: Icon(Icons.route_outlined),
+              activeIcon: Icon(Icons.route_sharp),
+              label: 'Rotas',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.groups_2_outlined),
+              activeIcon: Icon(Icons.groups_2),
+              label: 'Presença',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.dashboard_outlined),
               activeIcon: Icon(Icons.dashboard),
               label: 'Dashboard',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined),
-              activeIcon: Icon(Icons.bar_chart),
-              label: 'Relatórios',
+              icon: Icon(Icons.pie_chart_outline_outlined),
+              activeIcon: Icon(Icons.pie_chart_rounded),
+              label: 'Relátorio',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
