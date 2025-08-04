@@ -30,7 +30,7 @@ class StudentHomePage extends StatelessWidget {
       Event(
         title: 'Feira de Ciências',
         date: '23/08/2025 às 20:30',
-        imagePath: 'assets/images/eventsevent_feira_ciencias.png',
+        imagePath: 'assets/images/events/event_feira_ciencias.png',
       ),
       Event(
         title: 'Maratona de Programação',
