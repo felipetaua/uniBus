@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Classe modelo para representar os dados de um chat
 class Chat {
@@ -35,7 +36,7 @@ class MessagePage extends StatelessWidget {
       name: 'Avisos da Gestão',
       message: 'Atenção: O ônibus das 18h sairá 15 minutos mais cedo hoje.',
       time: '10:05',
-      avatarUrl: 'https://i.pravatar.cc/150?img=7', // Placeholder para logo
+      avatarUrl: 'https://i.pravatar.cc/150?img=7',
       readStatusIcon: Icons.done_all,
       isPinned: true,
     ),
@@ -43,7 +44,7 @@ class MessagePage extends StatelessWidget {
       name: 'Galera do B-12 (Centro)',
       message: 'Ana: Alguém sabe se o ar condicionado foi consertado?',
       time: '14:35',
-      avatarUrl: 'https://i.pravatar.cc/150?img=32', // Placeholder
+      avatarUrl: 'https://i.pravatar.cc/150?img=32',
       readStatusIcon: Icons.done_all,
       isOnline: true,
     ),
@@ -51,7 +52,7 @@ class MessagePage extends StatelessWidget {
       name: 'Juliana Paiva',
       message: 'Digitando...',
       time: '14:34',
-      avatarUrl: 'https://i.pravatar.cc/150?img=36', // Placeholder
+      avatarUrl: 'https://i.pravatar.cc/150?img=36',
       readStatusIcon: Icons.done_all,
       isTyping: true,
       isOnline: true,
@@ -60,16 +61,15 @@ class MessagePage extends StatelessWidget {
       name: 'Carlos Souza',
       message: 'Você: Ei, guarda um lugar pra mim hoje?',
       time: '13:50',
-      avatarUrl: 'https://i.pravatar.cc/150?img=12', // Placeholder
-      readStatusIcon: Icons.done, // Apenas um check (enviado)
+      avatarUrl: 'https://i.pravatar.cc/150?img=12',
+      readStatusIcon: Icons.done,
       isOnline: true,
     ),
     Chat(
       name: 'UniBus Bot',
       message: 'Lembrete: Confirme sua presença para a viagem de amanhã.',
       time: 'Ontem',
-      avatarUrl:
-          'https://i.pravatar.cc/150?img=5', // Placeholder de um ícone roxo
+      avatarUrl: 'https://i.pravatar.cc/150?img=5',
       readStatusIcon: Icons.done_all,
       isOnline: true,
     ),
@@ -77,17 +77,28 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      body: SafeArea(
-        child: Column(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        body: Column(
           children: [
-            // Logo do Projeto
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 4.0),
-              child: Image.asset(
-                'assets/images/logo-texto-image.png',
-                height: 50,
+            Container(
+              width: double.infinity,
+              color: const Color(0xFF141414),
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16.0,
+                bottom: 16.0,
+              ),
+              child: Center(
+                child: Image.asset(
+                  'assets/images/logo-texto-image.png',
+                  height: 40,
+                ),
               ),
             ),
             // Cabeçalho: "Chats" e ícones
@@ -120,7 +131,7 @@ class MessagePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Chats',
+            'Conversas',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
