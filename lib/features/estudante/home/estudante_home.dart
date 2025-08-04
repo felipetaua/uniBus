@@ -335,6 +335,7 @@ class StudentHomePage extends StatelessWidget {
                       'Eventos acadêmicos',
                       style: AppTextStyles.lightTitle.copyWith(
                         color: textPrimaryColor,
+                        fontSize: 20,
                       ),
                     ),
                     TextButton(
