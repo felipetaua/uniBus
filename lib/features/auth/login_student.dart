@@ -48,30 +48,6 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
     }
   }
 
-  // Future<void> _loginWithGoogle() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-
-  //   // final user = await _authService.signInWithGoogle();
-
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-
-  //   if (mounted) {
-  //     if (user != null) {
-  //       Navigator.of(context).pushReplacement(
-  //         MaterialPageRoute(builder: (context) => const NavigationMenu()),
-  //       );
-  //     } else {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Falha ao fazer login com o Google.')),
-  //       );
-  //     }
-  //   }
-  // }
-
   void _showForgotPasswordDialog() {
     final TextEditingController emailController = TextEditingController();
     showDialog(
