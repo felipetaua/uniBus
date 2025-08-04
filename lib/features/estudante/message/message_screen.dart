@@ -5,6 +5,6 @@ class MessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Página de Histórico')));
+    return const Scaffold(body: Center(child: Text('Página de Mensagens')));
   }
 }
