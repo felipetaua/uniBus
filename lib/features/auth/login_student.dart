@@ -75,6 +75,30 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
     }
   }
 
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = await _authService.signInWithGoogle();
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const NavigationMenu()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Falha no login com Google. Tente novamente.')),
+        );
+      }
+    }
+  }
+
   void _showForgotPasswordDialog() {
     final TextEditingController emailController = TextEditingController();
     showDialog(
@@ -509,7 +533,7 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                           width: double.infinity,
                           height: 50,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: _isLoading ? null : _loginWithGoogle,
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.grey),
                               shape: RoundedRectangleBorder(
