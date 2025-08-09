@@ -175,7 +175,7 @@ class accountStudentPageState extends State<accountStudentPage> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => const registerStudentPage(),
+                                builder: (context) => const RegisterStudentPage(),
                               ),
                             );
                           },

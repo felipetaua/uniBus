@@ -148,7 +148,7 @@ class accountGestorPageState extends State<accountGestorPage> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const loginGestorPage(),
+                              builder: (context) => const LoginGestorPage(),
                             ),
                           );
                           },
