@@ -347,11 +347,11 @@ class _ProfilePageState extends State<ProfilePage>
                                   children: [
                                     // Ícone de diamante (você pode usar um Image.asset ou Icon)
                                     Image.asset(
-                                      'assets/icons/coin_icon.png',
-                                      width: 60,
-                                      height: 60,
+                                      'assets/icons/gift-shop.png',
+                                      width: 80,
+                                      height: 80,
                                     ),
-                                    const SizedBox(width: 16),
+                                    const SizedBox(width: 12),
                                     const Expanded(
                                       child: Column(
                                         crossAxisAlignment:
