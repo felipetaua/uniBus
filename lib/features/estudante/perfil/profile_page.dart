@@ -1,9 +1,31 @@
 import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  // Carrega os dados do usuário logado
+  void _loadUserData() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    setState(() {
+      _user = currentUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,25 +86,29 @@ class ProfilePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const Text(
-                          'Tanya',
-                          style: TextStyle(
+                        Text(
+                          _user?.displayName ?? 'Wilson Junior',
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
-                              'YFKQKN',
+                              // Exibe os 6 primeiros caracteres do UID do usuário
+                              'ID: ${_user?.uid.substring(0, 6).toUpperCase() ?? '...'}',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],
                               ),
                             ),
                             const SizedBox(width: 4),
-                            Icon(Icons.copy, size: 16, color: Colors.grey[600]),
+                            Icon(Icons.copy,
+                                size: 16, color: Colors.grey[600]),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -323,4 +349,3 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
-

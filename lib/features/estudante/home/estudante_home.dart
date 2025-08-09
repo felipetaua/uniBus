@@ -2,6 +2,7 @@
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Event {
@@ -12,8 +13,30 @@ class Event {
   Event({required this.title, required this.date, required this.imagePath});
 }
 
-class StudentHomePage extends StatelessWidget {
+class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});
+
+  @override
+  State<StudentHomePage> createState() => _StudentHomePageState();
+}
+
+class _StudentHomePageState extends State<StudentHomePage> {
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (mounted) {
+      setState(() {
+        _user = currentUser;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +134,7 @@ class StudentHomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Wilson Junior',
+                              _user?.displayName ?? 'Carregando...',
                               style: AppTextStyles.lightBody.copyWith(
                                 color: onPrimaryColor,
                                 fontWeight: FontWeight.bold,
