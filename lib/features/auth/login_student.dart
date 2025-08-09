@@ -1,8 +1,12 @@
+import 'package:bus_attendance_app/features/gestor/gestor_navigation_menu.dart';
 import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/register_student.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_attendance_app/data/auth_services.dart';
+
+/// Define os papéis de usuário disponíveis para login.
+enum UserRole { estudante, gestor }
 
 class LoginStudentPage extends StatefulWidget {
   const LoginStudentPage({super.key});
@@ -15,36 +19,59 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  UserRole _selectedRole = UserRole.estudante;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
-  Future<void> _loginUser() async {
+  Future<void> _login() async {
     setState(() {
       _isLoading = true;
     });
 
-    final user = await _authService.signInWithEmailAndPassword(
-      _emailController.text,
-      _passwordController.text,
-    );
+    final isStudent = _selectedRole == UserRole.estudante;
 
-    setState(() {
-      _isLoading = false;
-    });
+    final user =
+        isStudent
+            ? await _authService.signInWithEmailAndPassword(
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            )
+            : await _authService.signInGestor(
+              _emailController.text.trim(),
+              _passwordController.text.trim(),
+            );
 
     if (mounted) {
       if (user != null) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const NavigationMenu()),
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    isStudent
+                        ? const NavigationMenu()
+                        : const GestorNavigationMenu(),
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('E-mail ou senha inválidos.')),
+          SnackBar(
+            content: Text(
+              isStudent
+                  ? 'E-mail ou senha inválidos.'
+                  : 'Email ou senha incorretos, ou você não tem permissão de gestor.',
+            ),
+          ),
         );
       }
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -213,18 +240,51 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Bem-vindo ao UniBus!',
-                    style: TextStyle(
+                  Center(
+                    child: SegmentedButton<UserRole>(
+                      segments: const <ButtonSegment<UserRole>>[
+                        ButtonSegment<UserRole>(
+                          value: UserRole.estudante,
+                          label: Text('Estudante'),
+                          icon: Icon(Icons.school_outlined),
+                        ),
+                        ButtonSegment<UserRole>(
+                          value: UserRole.gestor,
+                          label: Text('Gestor'),
+                          icon: Icon(Icons.business_center_outlined),
+                        ),
+                      ],
+                      selected: <UserRole>{_selectedRole},
+                      onSelectionChanged: (Set<UserRole> newSelection) {
+                        setState(() {
+                          _selectedRole = newSelection.first;
+                        });
+                      },
+                      style: SegmentedButton.styleFrom(
+                        backgroundColor: Colors.grey[200],
+                        foregroundColor: Colors.grey[700],
+                        selectedForegroundColor: Colors.white,
+                        selectedBackgroundColor: const Color(0xFF5A73EC),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    _selectedRole == UserRole.estudante
+                        ? 'Bem-vindo ao UniBus!'
+                        : 'Área do Gestor',
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Organize sua rotina, confirme sua presença e ganhe recompensas por estar em dia. É rápido, simples e pensado para você.',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  Text(
+                    _selectedRole == UserRole.estudante
+                        ? 'Organize sua rotina, confirme sua presença e ganhe recompensas por estar em dia. É rápido, simples e pensado para você.'
+                        : 'Acompanhe os estudantes em tempo real, acesse relatórios e mantenha tudo sob controle.',
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 12),
                   const Text(
@@ -337,7 +397,7 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                     width: double.infinity,
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: _loginUser,
+                      onPressed: _isLoading ? null : _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
@@ -450,7 +510,7 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const registerStudentPage(),
+                              builder: (context) => const RegisterStudentPage(),
                             ),
                           );
                         },
