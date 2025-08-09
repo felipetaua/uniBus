@@ -1,4 +1,4 @@
-import 'package:bus_attendance_app/features/onBoarding/onboarding_page.dart';
+import 'package:bus_attendance_app/features/auth/auth_gate.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _lineController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5), 
+      duration: const Duration(seconds: 5),
     )..repeat();
 
     _lineAnimation = Tween<double>(
@@ -59,8 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           pageBuilder:
-              (context, animation, secondaryAnimation) =>
-                  const OnboardingPage(),
+              (context, animation, secondaryAnimation) => const AuthGate(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
