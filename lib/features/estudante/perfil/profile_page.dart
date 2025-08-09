@@ -2,6 +2,7 @@ import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -107,8 +108,27 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             const SizedBox(width: 4),
-                            Icon(Icons.copy,
-                                size: 16, color: Colors.grey[600]),
+                            GestureDetector(
+                              onTap: () {
+                                if (_user?.uid != null) {
+                                  Clipboard.setData(
+                                    ClipboardData(text: _user!.uid),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'ID copiado para a área de transferência!',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Icon(
+                                Icons.copy,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -264,7 +284,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 await AuthService().signOut();
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => const LoginStudentPage(),
+                                    builder:
+                                        (context) => const LoginStudentPage(),
                                   ),
                                 );
                               },
