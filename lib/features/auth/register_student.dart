@@ -4,19 +4,21 @@ import 'package:bus_attendance_app/core/utils/lgpd_content.dart';
 import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:bus_attendance_app/features/gestor/gestor_navigation_menu.dart';
 import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:flutter/material.dart';
 
-// ignore: camel_case_types
-class registerStudentPage extends StatefulWidget {
-  const registerStudentPage({super.key});
+/// Define os papéis de usuário disponíveis para cadastro.
+enum UserRole { estudante, gestor }
+
+class RegisterStudentPage extends StatefulWidget {
+  const RegisterStudentPage({super.key});
 
   @override
-  State<registerStudentPage> createState() => registerStudentPageState();
+  State<RegisterStudentPage> createState() => _RegisterStudentPageState();
 }
 
-// ignore: camel_case_types
-class registerStudentPageState extends State<registerStudentPage> {
+class _RegisterStudentPageState extends State<RegisterStudentPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -24,6 +26,7 @@ class registerStudentPageState extends State<registerStudentPage> {
   bool _acceptedTerms = false;
 
   bool _isLoading = false;
+  UserRole _selectedRole = UserRole.estudante;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -55,7 +58,7 @@ class registerStudentPageState extends State<registerStudentPage> {
     super.dispose();
   }
 
-  Future<void> _registerUser() async {
+  Future<void> _register() async {
     if (_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
         _passwordController.text.isEmpty) {
@@ -76,29 +79,46 @@ class registerStudentPageState extends State<registerStudentPage> {
       _isLoading = true;
     });
 
-    final user = await _authService.registerStudent(
-      email: _emailController.text,
-      password: _passwordController.text,
-      name: _nameController.text,
-    );
+    final isStudent = _selectedRole == UserRole.estudante;
 
-    setState(() {
-      _isLoading = false;
-    });
+    final user =
+        isStudent
+            ? await _authService.registerStudent(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim(),
+              name: _nameController.text.trim(),
+            )
+            : await _authService.registerGestor(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim(),
+              name: _nameController.text.trim(),
+            );
 
-    if (user != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Conta criada com sucesso!')),
-      );
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavigationMenu()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro ao criar a conta. Tente novamente.'),
-        ),
-      );
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Conta criada com sucesso!')),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    isStudent
+                        ? const NavigationMenu()
+                        : const GestorNavigationMenu(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao criar a conta. Tente novamente.'),
+          ),
+        );
+      }
     }
   }
 
@@ -232,20 +252,53 @@ class registerStudentPageState extends State<registerStudentPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Crie sua conta de estudante',
-                    style: TextStyle(
+                  Center(
+                    child: SegmentedButton<UserRole>(
+                      segments: const <ButtonSegment<UserRole>>[
+                        ButtonSegment<UserRole>(
+                          value: UserRole.estudante,
+                          label: Text('Estudante'),
+                          icon: Icon(Icons.school_outlined),
+                        ),
+                        ButtonSegment<UserRole>(
+                          value: UserRole.gestor,
+                          label: Text('Empresa'),
+                          icon: Icon(Icons.business_center_outlined),
+                        ),
+                      ],
+                      selected: <UserRole>{_selectedRole},
+                      onSelectionChanged: (Set<UserRole> newSelection) {
+                        setState(() {
+                          _selectedRole = newSelection.first;
+                        });
+                      },
+                      style: SegmentedButton.styleFrom(
+                        backgroundColor: Colors.grey[200],
+                        foregroundColor: Colors.grey[700],
+                        selectedForegroundColor: Colors.white,
+                        selectedBackgroundColor: const Color(0xFF5A73EC),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    _selectedRole == UserRole.estudante
+                        ? 'Crie sua conta de estudante'
+                        : 'Crie sua conta de empresa',
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Use seu e-mail institucional ou pessoal. Você poderá vincular sua linha de ônibus logo após o cadastro',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  Text(
+                    _selectedRole == UserRole.estudante
+                        ? 'Use seu e-mail institucional ou pessoal. Você poderá vincular sua linha de ônibus logo após o cadastro.'
+                        : 'Preencha com seus dados para criar uma conta de organização. Você poderá gerenciar linhas e confirmar presença de usuários.',
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 30),
                   const Text(
                     'Nome',
                     style: TextStyle(
@@ -388,7 +441,8 @@ class registerStudentPageState extends State<registerStudentPage> {
                     width: double.infinity,
                     height: 45,
                     child: ElevatedButton(
-                      onPressed: _acceptedTerms ? _registerUser : null,
+                      onPressed:
+                          _acceptedTerms && !_isLoading ? _register : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
