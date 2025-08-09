@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bus_attendance_app/features/gestor/gestor_navigation_menu.dart';
 import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
@@ -93,7 +95,46 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Falha no login com Google. Tente novamente.')),
+          const SnackBar(
+            content: Text('Falha no login com Google. Tente novamente.'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _loginWithApple() async {
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Login com Apple está disponível apenas em dispositivos Apple.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = await _authService.signInWithApple();
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const NavigationMenu()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Falha no login com Apple. Tente novamente.'),
+          ),
         );
       }
     }
@@ -564,11 +605,7 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () {
-                              // Handle "Continue with Apple"
-                              // ignore: avoid_print
-                              print('Continue with Apple clicked');
-                            },
+                            onPressed: _isLoading ? null : _loginWithApple,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
