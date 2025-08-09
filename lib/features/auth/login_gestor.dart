@@ -1,20 +1,74 @@
+import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_gestor.dart';
 import 'package:bus_attendance_app/features/auth/register_gestor.dart';
 import 'package:bus_attendance_app/features/gestor/gestor_navigation_menu.dart';
 import 'package:flutter/material.dart';
+// Importação do serviço de autenticação
 
-// ignore: camel_case_types
-class loginGestorPage extends StatefulWidget {
-  const loginGestorPage({super.key});
+class LoginGestorPage extends StatefulWidget {
+  const LoginGestorPage({super.key});
 
   @override
-  State<loginGestorPage> createState() => _loginGestorPageState();
+  State<LoginGestorPage> createState() => _LoginGestorPageState();
 }
 
-// ignore: camel_case_types
-class _loginGestorPageState extends State<loginGestorPage> {
+class _LoginGestorPageState extends State<LoginGestorPage> {
+  // Controladores para os campos de texto
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  final AuthService _authService = AuthService();
+
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final user = await _authService.signInGestor(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (user != null) {
+        // Login de gestor bem-sucedido, navega para a tela de menu
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const GestorNavigationMenu(),
+            ),
+          );
+        }
+      } else {
+        // O login falhou ou o usuário não é um gestor
+        setState(() {
+          _errorMessage =
+              'Email ou senha incorretos, ou você não tem permissão de gestor.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Ocorreu um erro. Por favor, tente novamente.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +175,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _emailController, // Adicionado o controlador
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'exemplo@gmail.com',
@@ -147,6 +202,7 @@ class _loginGestorPageState extends State<loginGestorPage> {
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _passwordController, // Adicionado o controlador
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       hintText: 'Digite sua Senha',
@@ -215,30 +271,42 @@ class _loginGestorPageState extends State<loginGestorPage> {
                     ],
                   ),
                   const SizedBox(height: 30),
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Adicionar lógica de autenticação do gestor antes de navegar
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const GestorNavigationMenu(),
-                          ),
-                        );
-                      },
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : _login, // Desativa o botão durante o carregamento
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFF5A73EC,
-                        ), // Using the color from the image
+                        backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-                      child: const Text(
-                        'Entrar na conta',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                      child:
+                          _isLoading
+                              ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                              : const Text(
+                                'Entrar na conta',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 20),

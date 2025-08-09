@@ -4,7 +4,7 @@ import 'package:bus_attendance_app/core/utils/lgpd_content.dart';
 import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_gestor.dart';
 import 'package:bus_attendance_app/features/auth/login_gestor.dart';
-import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -21,12 +21,13 @@ class RegisterGestorPageState extends State<RegisterGestorPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _auth = AuthService(); // Instância do seu serviço de autenticação
+  final AuthService _auth =
+      AuthService(); // Instância do seu serviço de autenticação
 
   int _currentPage = 0;
   bool _rememberPassword = false;
   bool _isPasswordVisible = false;
-  bool _acceptedTerms = false; 
+  bool _acceptedTerms = false;
 
   @override
   void initState() {
@@ -53,56 +54,61 @@ class RegisterGestorPageState extends State<RegisterGestorPage> {
   void _showLegalDialog() {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 40,
-        ),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              const Text(
-                'Termos de Uso e Política de Privacidade',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 16),
-              const Expanded(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          termosEPoliticaUnibus,
-                          style: TextStyle(fontSize: 14),
+      builder:
+          (context) => Dialog(
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 40,
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.9,
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  const Text(
+                    'Termos de Uso e Política de Privacidade',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  const SizedBox(height: 16),
+                  const Expanded(
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              termosEPoliticaUnibus,
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Fechar'),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Fechar'),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
   void _registerGestor() async {
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Você precisa aceitar os termos de uso para continuar.')),
+        const SnackBar(
+          content: Text(
+            'Você precisa aceitar os termos de uso para continuar.',
+          ),
+        ),
       );
       return;
     }
@@ -134,7 +140,11 @@ class RegisterGestorPageState extends State<RegisterGestorPage> {
       } else {
         // O registro falhou. A mensagem de erro já é tratada dentro do AuthService.
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Falha ao registrar. Verifique os dados e tente novamente.')),
+          const SnackBar(
+            content: Text(
+              'Falha ao registrar. Verifique os dados e tente novamente.',
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -420,7 +430,10 @@ class RegisterGestorPageState extends State<RegisterGestorPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _acceptedTerms ? _registerGestor : null, // Chama a função de registro
+                      onPressed:
+                          _acceptedTerms
+                              ? _registerGestor
+                              : null, // Chama a função de registro
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF5A73EC),
                         shape: RoundedRectangleBorder(
@@ -445,7 +458,7 @@ class RegisterGestorPageState extends State<RegisterGestorPage> {
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const loginGestorPage(),
+                              builder: (context) => const LoginGestorPage(),
                             ),
                           );
                         },
