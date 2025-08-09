@@ -1,5 +1,6 @@
 import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,21 +12,41 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   User? _user;
+  Map<String, dynamic>? _userData;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   // Carrega os dados do usuário logado
-  void _loadUserData() {
+  void _loadUserData() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    setState(() {
-      _user = currentUser;
-    });
+    if (currentUser != null) {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
+      if (mounted) {
+        setState(() {
+          _user = currentUser;
+          _userData = userDoc.data();
+        });
+      }
+    }
   }
 
   @override
@@ -101,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             Text(
                               // Exibe os 6 primeiros caracteres do UID do usuário
-                              'ID: ${_user?.uid.substring(0, 6).toUpperCase() ?? '...'}',
+                              'ID: ${_user != null && _user!.uid.length >= 6 ? _user!.uid.substring(0, 6).toUpperCase() : '...'}',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],
@@ -223,8 +244,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        '100',
+                      Text(
+                        _userData != null
+                            ? (_userData!['coins'] ?? 0).toString()
+                            : '...',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -244,8 +267,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                       ),
                       const SizedBox(height: 4),
-                      const Text(
-                        '0',
+                      Text(
+                        _userData != null
+                            ? (_userData!['xp'] ?? 0).toString()
+                            : '...',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -260,39 +285,48 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-            DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  const TabBar(
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: Colors.purple,
-                    indicatorWeight: 4.0,
-                    tabs: [Tab(text: 'Configurações'), Tab(text: 'Coleção')],
-                  ),
-                  SizedBox(
-                    height: 200,
-                    child: TabBarView(
-                      children: [
-                        ListView(
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.logout),
-                              title: const Text('Sair'),
-                              onTap: () async {
-                                await AuthService().signOut();
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const LoginStudentPage(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        Column(
+            Column(
+              children: [
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Colors.purple,
+                  indicatorWeight: 4.0,
+                  tabs: const [
+                    Tab(text: 'Configurações'),
+                    Tab(text: 'Coleção'),
+                  ],
+                ),
+                SizedBox(
+                  // Aumenta a altura para evitar overflow e acomodar o conteúdo
+                  height: 400,
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // Aba de Configurações
+                      ListView(
+                        shrinkWrap: true,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.logout),
+                            title: const Text('Sair'),
+                            onTap: () async {
+                              await AuthService().signOut();
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const LoginStudentPage(),
+                                ),
+                                (Route<dynamic> route) => false,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      // Aba de Coleção
+                      SingleChildScrollView(
+                        child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -358,11 +392,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
