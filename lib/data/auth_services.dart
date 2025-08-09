@@ -1,8 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -182,4 +188,76 @@ class AuthService {
       return null;
     }
   }
+
+  // Login com Apple
+  Future<User?> signInWithApple() async {
+    // O login com Apple só está disponível em dispositivos Apple.
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      print('Sign in with Apple não é suportado nesta plataforma.');
+      return null;
+    }
+
+    try {
+      // Gera um nonce para segurança (previne replay attacks)
+      final rawNonce = _generateNonce();
+      final hashedNonce = _sha256(rawNonce);
+
+      // 1. Solicita a credencial da Apple
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+
+      // 2. Cria um provedor OAuth para o Firebase
+      final oauthProvider = OAuthProvider('apple.com');
+
+      // 3. Cria a credencial do Firebase com o token da Apple
+      final credential = oauthProvider.credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      // 4. Faz login no Firebase
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      // 5. Se for um novo usuário, salva os dados no Firestore
+      if (user != null) {
+        final userDoc = _firestore.collection('users').doc(user.uid);
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          await userDoc.set({
+            'email': user.email ?? appleCredential.email,
+            'name': appleCredential.givenName != null
+                ? '${appleCredential.givenName} ${appleCredential.familyName ?? ''}'.trim()
+                : user.displayName,
+            'role': 'estudante',
+          });
+        }
+      }
+
+      return user;
+    } catch (e) {
+      print('Erro durante o login com Apple: $e');
+      return null;
+    }
+  }
+}
+
+/// Gera um nonce aleatório e criptograficamente seguro.
+String _generateNonce([int length = 32]) {
+  const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  final random = Random.secure();
+  return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+}
+
+/// Retorna o hash sha256 de uma string.
+String _sha256(String input) {
+  final bytes = utf8.encode(input);
+  final digest = sha256.convert(bytes);
+  return digest.toString();
 }
