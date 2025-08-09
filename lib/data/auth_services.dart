@@ -33,6 +33,8 @@ class AuthService {
           'email': email,
           'name': name,
           'role': 'estudante',
+          'coins': 0,
+          'xp': 0,
         });
       }
       return user;
@@ -61,6 +63,8 @@ class AuthService {
           'email': email,
           'name': name,
           'role': 'gestor',
+          'coins': 0,
+          'xp': 0,
         });
       }
       return user;
@@ -179,6 +183,8 @@ class AuthService {
             'email': user.email,
             'name': user.displayName,
             'role': 'estudante', // Define o papel padrão para login com Google
+            'coins': 0,
+            'xp': 0,
           });
         }
       }
@@ -236,6 +242,8 @@ class AuthService {
                 ? '${appleCredential.givenName} ${appleCredential.familyName ?? ''}'.trim()
                 : user.displayName,
             'role': 'estudante',
+            'coins': 0,
+            'xp': 0,
           });
         }
       }

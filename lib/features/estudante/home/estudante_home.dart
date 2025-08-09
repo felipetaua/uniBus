@@ -2,6 +2,7 @@
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +23,7 @@ class StudentHomePage extends StatefulWidget {
 
 class _StudentHomePageState extends State<StudentHomePage> {
   User? _user;
+  Map<String, dynamic>? _userData;
 
   @override
   void initState() {
@@ -29,12 +31,21 @@ class _StudentHomePageState extends State<StudentHomePage> {
     _loadUserData();
   }
 
-  void _loadUserData() {
+  void _loadUserData() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    if (mounted) {
-      setState(() {
-        _user = currentUser;
-      });
+    if (currentUser != null) {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
+
+      if (mounted) {
+        setState(() {
+          _user = currentUser;
+          _userData = userDoc.data();
+        });
+      }
     }
   }
 
@@ -151,7 +162,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '9999',
+                                  _userData != null
+                                      ? (_userData!['coins'] ?? 0).toString()
+                                      : '...',
                                   style: AppTextStyles.lightBody.copyWith(
                                     color: onPrimaryColor,
                                     fontSize: 14,
@@ -167,7 +180,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '9999 XP',
+                                  _userData != null
+                                      ? '${_userData!['xp'] ?? 0} XP'
+                                      : '...',
                                   style: AppTextStyles.lightBody.copyWith(
                                     color: onPrimaryColor,
                                     fontSize: 14,
