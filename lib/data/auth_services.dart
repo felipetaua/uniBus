@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -132,6 +133,53 @@ class AuthService {
       await _auth.signOut();
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  // Login com Google
+  Future<User?> signInWithGoogle() async {
+    try {
+      // 1. Iniciar o fluxo de login do Google
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // O usuário cancelou o login
+        return null;
+      }
+
+      // 2. Obter os detalhes de autenticação da solicitação
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // 3. Criar uma credencial do Firebase
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // 4. Fazer login no Firebase com a credencial
+      UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+      User? user = userCredential.user;
+
+      // 5. Verificar se é um novo usuário e salvar no Firestore se for
+      if (user != null) {
+        final userDoc = _firestore.collection('users').doc(user.uid);
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          // Novo usuário, cria o documento
+          await userDoc.set({
+            'email': user.email,
+            'name': user.displayName,
+            'role': 'estudante', // Define o papel padrão para login com Google
+          });
+        }
+      }
+      return user;
+    } catch (e) {
+      print('Erro no login com Google: $e');
+      return null;
     }
   }
 }
