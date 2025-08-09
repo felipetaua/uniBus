@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:bus_attendance_app/data/auth_services.dart';
 import 'package:bus_attendance_app/features/auth/account_gestor.dart';
 import 'package:bus_attendance_app/features/auth/account_student.dart';
 import 'package:bus_attendance_app/features/onBoarding/onboarding_controller.dart';
 import 'package:bus_attendance_app/features/onBoarding/onboarding_data.dart';
+import 'package:bus_attendance_app/features/navegation_menu.dart';
 import 'package:provider/provider.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -146,9 +150,129 @@ class OnboardingPage extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(30.0)),
       ),
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
+        return const _UserTypeModal();
+      },
+    );
+  }
+}
+
+class _UserTypeModal extends StatefulWidget {
+  const _UserTypeModal();
+
+  @override
+  State<_UserTypeModal> createState() => _UserTypeModalState();
+}
+
+class _UserTypeModalState extends State<_UserTypeModal> {
+  bool _isLoading = false;
+  final AuthService _authService = AuthService();
+
+  Future<void> _signInWithGoogle() async {
+    if (_isLoading) return; // Previne múltiplos cliques
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final user = await _authService.signInWithGoogle();
+
+      if (mounted) {
+        if (user != null) {
+          // Navega para a tela principal e remove todas as rotas anteriores
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const NavigationMenu()),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          // Se o usuário cancelou, não faz nada. O modal permanece aberto.
+        }
+      }
+    } catch (e) {
+      // Em caso de erro, não fecha o modal, apenas mostra a mensagem.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ocorreu um erro no login: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    if (_isLoading) return;
+
+    // Adiciona a verificação da plataforma aqui
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Login com Apple está disponível apenas em dispositivos Apple.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final user = await _authService.signInWithApple();
+      if (mounted) {
+        if (user != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const NavigationMenu()),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          // Se o usuário cancelou, não faz nada, o modal permanece aberto.
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Ocorreu um erro no login com Apple: ${e.toString()}',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 30.0,
+        right: 30.0,
+        top: 30.0,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 20.0,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -178,15 +302,18 @@ class OnboardingPage extends StatelessWidget {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    debugPrint('Continuar como Estudante');
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const accountStudentPage(),
-                      ),
-                    );
-                  },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            Navigator.pop(context);
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const accountStudentPage(),
+                              ),
+                            );
+                          },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
@@ -208,15 +335,17 @@ class OnboardingPage extends StatelessWidget {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    debugPrint('Continuar como Gestor');
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const accountGestorPage(),
-                      ),
-                    );
-                  },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            Navigator.pop(context);
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const accountGestorPage(),
+                              ),
+                            );
+                          },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
                     shape: RoundedRectangleBorder(
@@ -235,16 +364,12 @@ class OnboardingPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
                     child: SizedBox(
                       height: 45,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          debugPrint('Login com Google');
-                        },
+                        onPressed: _isLoading ? null : _signInWithGoogle,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey.shade200,
                           shape: RoundedRectangleBorder(
@@ -263,10 +388,7 @@ class OnboardingPage extends StatelessWidget {
                     child: SizedBox(
                       height: 45,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          debugPrint('Login com Apple');
-                        },
+                        onPressed: _isLoading ? null : _signInWithApple,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.grey.shade200,
                           shape: RoundedRectangleBorder(
@@ -282,11 +404,11 @@ class OnboardingPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
             ],
           ),
-        );
-      },
+          if (_isLoading) const CircularProgressIndicator(),
+        ],
+      ),
     );
   }
 }
