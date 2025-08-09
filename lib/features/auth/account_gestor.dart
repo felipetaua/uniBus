@@ -1,5 +1,5 @@
-import 'package:bus_attendance_app/features/auth/login_gestor.dart';
-import 'package:bus_attendance_app/features/auth/register_gestor.dart';
+import 'package:bus_attendance_app/features/auth/login_student.dart';
+import 'package:bus_attendance_app/features/auth/register_student.dart';
 import 'package:bus_attendance_app/features/onBoarding/onboarding_page.dart';
 import 'package:flutter/material.dart';
 
@@ -147,10 +147,10 @@ class accountGestorPageState extends State<accountGestorPage> {
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const LoginGestorPage(),
-                            ),
-                          );
+                              MaterialPageRoute(
+                                builder: (context) => const LoginStudentPage(),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
@@ -172,7 +172,8 @@ class accountGestorPageState extends State<accountGestorPage> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => const RegisterGestorPage(),
+                                builder:
+                                    (context) => const RegisterStudentPage(),
                               ),
                             );
                           },
