@@ -25,7 +25,8 @@ class ProductListScreen extends StatelessWidget {
   // Lista de produtos de exemplo com o tema de skins
   final List<Product> products = [
     Product(
-      imageUrl: 'https://i.pinimg.com/564x/f3/a6/2b/f3a62b6625a3c3d5231165a639b4f494.jpg',
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558481.png',
       name: 'Avatar Guerreiro Estelar',
       price: 135.00,
       stock: 15,
@@ -33,7 +34,8 @@ class ProductListScreen extends StatelessWidget {
       reviewCount: 201,
     ),
     Product(
-      imageUrl: 'https://i.pinimg.com/564x/4e/c6/a2/4ec6a2353c8461749c362d5f80b85a36.jpg',
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558482.png',
       name: 'Avatar Feiticeira Neon',
       price: 145.00,
       stock: 10,
@@ -41,31 +43,35 @@ class ProductListScreen extends StatelessWidget {
       reviewCount: 185,
     ),
     Product(
-      imageUrl: 'https://i.pinimg.com/564x/e7/07/94/e7079496ed099b53e8d2e82a84f33177.jpg',
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558483.png',
       name: 'Avatar Anjo Cibernético',
       price: 105.00,
       stock: 12,
       rating: 4.7,
       reviewCount: 151,
     ),
-     Product(
-      imageUrl: 'https://i.pinimg.com/564x/9d/b9/a2/9db9a28f8045f062137937398e98344e.jpg',
+    Product(
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558484.png',
       name: 'Avatar Caçador de Runa',
       price: 94.00,
       stock: 4,
       rating: 4.5,
       reviewCount: 207,
     ),
-      Product(
-      imageUrl: 'https://i.pinimg.com/564x/a4/68/a2/a468a221b10626b48455a290117a4e69.jpg',
+    Product(
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558485.png',
       name: 'Avatar Guardiã Mística',
       price: 180.00,
       stock: 2,
       rating: 5.0,
       reviewCount: 310,
     ),
-     Product(
-      imageUrl: 'https://i.pinimg.com/564x/6c/3d/8c/6c3d8c1c43f3286f903e1e353c7a9775.jpg',
+    Product(
+      imageUrl:
+          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558486.png',
       name: 'Avatar Lâmina Sombria',
       price: 115.00,
       stock: 18,
@@ -103,30 +109,35 @@ class ProductListScreen extends StatelessWidget {
           TextButton(
             onPressed: () {},
             child: const Row(
-              children: [
-                Text('Raridade'),
-                Icon(Icons.keyboard_arrow_down),
-              ],
+              children: [Text('Raridade'), Icon(Icons.keyboard_arrow_down)],
             ),
-          )
+          ),
         ],
       ),
       body: Stack(
         children: [
           // Conteúdo principal com a grade de produtos
           SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 80), // Espaço para o botão flutuante
+            padding: const EdgeInsets.only(
+              bottom: 80,
+            ), // Espaço para o botão flutuante
             child: Column(
               children: [
                 // Barra de Filtros
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
                   child: SizedBox(
                     height: 40,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        FilterChipWidget(label: 'Filtros', icon: Icons.filter_list),
+                        FilterChipWidget(
+                          label: 'Filtros',
+                          icon: Icons.filter_list,
+                        ),
                         FilterChipWidget(label: 'Avaliação'),
                         FilterChipWidget(label: 'Preço'),
                         FilterChipWidget(label: 'Cor'),
@@ -135,16 +146,26 @@ class ProductListScreen extends StatelessWidget {
                   ),
                 ),
                 // Ícones de Categoria
-                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10.0,
+                    horizontal: 16.0,
+                  ),
                   child: SizedBox(
-                    height: 80,
+                    height: 90,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        CategoryIcon(icon: Icons.person_search, label: 'Avatares', isSelected: true),
+                        CategoryIcon(
+                          icon: Icons.person_search,
+                          label: 'Avatares',
+                          isSelected: true,
+                        ),
                         CategoryIcon(icon: Icons.landscape, label: 'Fundos'),
-                        CategoryIcon(icon: Icons.sentiment_satisfied_alt, label: 'Emotes'),
+                        CategoryIcon(
+                          icon: Icons.sentiment_satisfied_alt,
+                          label: 'Emotes',
+                        ),
                         CategoryIcon(icon: Icons.shield, label: 'Ícones'),
                         CategoryIcon(icon: Icons.style, label: 'Kits'),
                       ],
@@ -154,27 +175,30 @@ class ProductListScreen extends StatelessWidget {
 
                 // Grade de produtos
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: GridView.builder(
-                    shrinkWrap: true, // Essencial para GridView dentro de SingleChildScrollView
-                    physics: const NeverScrollableScrollPhysics(), // Desativa o scroll da grade
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // 2 colunas
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.65, // Proporção do cartão
-                    ),
+                    shrinkWrap:
+                        true, // Essencial para GridView dentro de SingleChildScrollView
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Desativa o scroll da grade
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // 2 colunas
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.65, // Proporção do cartão
+                        ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
                       return GridProductCard(product: product);
                     },
                   ),
-                )
+                ),
               ],
             ),
           ),
-          
+
           // Botão Flutuante do Carrinho
           Align(
             alignment: Alignment.bottomCenter,
@@ -189,7 +213,7 @@ class ProductListScreen extends StatelessWidget {
                     color: Colors.black.withOpacity(0.2),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
-                  )
+                  ),
                 ],
               ),
               child: Row(
@@ -200,21 +224,36 @@ class ProductListScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 16),
                       children: [
                         TextSpan(text: 'Ver carrinho '),
-                        TextSpan(text: '3x', style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(
+                          text: '3x',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ),
-                  const Text(
-                    'R\$ 385,00',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/icons/coin_icon.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        '385',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -243,8 +282,9 @@ class FilterChipWidget extends StatelessWidget {
         onPressed: () {},
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.grey[300]!)),
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.grey[300]!),
+        ),
       ),
     );
   }
@@ -254,8 +294,13 @@ class CategoryIcon extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isSelected;
-  const CategoryIcon({super.key, required this.icon, required this.label, this.isSelected = false});
-  
+  const CategoryIcon({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.isSelected = false,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -268,14 +313,27 @@ class CategoryIcon extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected ? Colors.blueAccent : Colors.white,
               borderRadius: BorderRadius.circular(16),
-               boxShadow: isSelected ? [
-                  BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 5, offset: const Offset(0,2))
-               ] : [],
+              boxShadow:
+                  isSelected
+                      ? [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                      : [],
             ),
-            child: Icon(icon, color: isSelected ? Colors.white : Colors.black54),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.black54,
+            ),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+          ),
         ],
       ),
     );
@@ -308,11 +366,15 @@ class GridProductCard extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                     height: 150,
-                     color: Colors.grey[200],
-                     child: Icon(Icons.image_not_supported, color: Colors.grey[400]),
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => Container(
+                        height: 150,
+                        color: Colors.grey[200],
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey[400],
+                        ),
+                      ),
                 ),
               ),
               Positioned(
@@ -325,49 +387,86 @@ class GridProductCard extends StatelessWidget {
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.favorite, color: Colors.redAccent, size: 18),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.redAccent,
+                    size: 18,
+                  ),
                 ),
               ),
               Positioned(
                 bottom: 8,
                 left: 8,
-                child: Chip(
-                  label: Text('R\$${product.price.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  backgroundColor: Colors.blueAccent.withOpacity(0.9),
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/icons/coin_icon.png',
+                        height: 16,
+                        width: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        product.price.toInt().toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   '${product.stock} restantes',
                   style: TextStyle(color: Colors.grey[600], fontSize: 10),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   product.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                 const SizedBox(height: 4),
-                 Row(
-                   children: [
-                     Icon(Icons.star, color: Colors.amber, size: 14),
-                     SizedBox(width: 4),
-                     Text('${product.rating} (${product.reviewCount})', style: TextStyle(fontSize: 11)),
-                     Spacer(),
-                     Icon(Icons.add_circle, color: Colors.blueAccent, size: 24)
-                   ],
-                 ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.amber, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${product.rating} (${product.reviewCount})',
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.add_circle,
+                      color: Colors.blueAccent,
+                      size: 22,
+                    ),
+                  ],
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

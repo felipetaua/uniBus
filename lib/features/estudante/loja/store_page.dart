@@ -1,5 +1,7 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/features/estudante/loja/product_detail_page.dart';
+import 'package:bus_attendance_app/features/estudante/loja/product_list_items.dart'
+    show ProductListScreen;
 import 'package:bus_attendance_app/models/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -320,7 +322,16 @@ class _StorePageState extends State<StorePage> {
                                       ),
                                       const SizedBox(height: 12),
                                       ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) =>
+                                                      ProductListScreen(),
+                                            ),
+                                          );
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           foregroundColor:
                                               banner.gradientColors.first,
