@@ -178,15 +178,15 @@ class ProductListScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: GridView.builder(
                     shrinkWrap:
-                        true, // Essencial para GridView dentro de SingleChildScrollView
+                        true, 
                     physics:
-                        const NeverScrollableScrollPhysics(), // Desativa o scroll da grade
+                        const NeverScrollableScrollPhysics(), 
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, // 2 colunas
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          childAspectRatio: 0.65, // Proporção do cartão
+                          childAspectRatio: 0.65, 
                         ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
