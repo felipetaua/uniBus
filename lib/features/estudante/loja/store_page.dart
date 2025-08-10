@@ -501,21 +501,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   child: Hero(
                     tag: 'product-image-${product.id}',
-                    child: Image.network(
-                      product.imageUrl,
-                      height: 150,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder:
-                          (context, error, stackTrace) => Container(
-                            height: 150,
-                            color: Colors.grey[200],
-                            child: Icon(
-                              Icons.image_not_supported,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-                    ),
+                    child: _buildProductImage(product),
                   ),
                 ),
                 Positioned(
@@ -600,6 +586,38 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Constrói o widget de imagem do produto, decidindo entre carregar
+/// da rede (http) ou de um asset local.
+Widget _buildProductImage(Product product) {
+  final bool isNetworkImage =
+      product.imageUrl.startsWith('http://') ||
+      product.imageUrl.startsWith('https://');
+
+  final Widget errorWidget = Container(
+    height: 150,
+    color: Colors.grey[200],
+    child: Icon(Icons.image_not_supported, color: Colors.grey[400]),
+  );
+
+  if (isNetworkImage) {
+    return Image.network(
+      product.imageUrl,
+      height: 150,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
+    );
+  } else {
+    return Image.asset(
+      product.imageUrl,
+      height: 150,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
     );
   }
 }

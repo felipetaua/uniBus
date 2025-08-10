@@ -59,7 +59,7 @@ flutter:
     - assets/images/events/
     - assets/icons/
     - assets/avatar/
-    - assets/items/bg/
+    - assets/products/bg/
 
   # Fontes customizadas (opcional)
   # fonts:
