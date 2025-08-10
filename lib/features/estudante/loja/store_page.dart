@@ -121,7 +121,7 @@ class _StorePageState extends State<StorePage> {
                       ],
                     ),
                     IconButton(
-                      icon: const Icon(Icons.shopping_bag_outlined, size: 28),
+                      icon: const Icon(Icons.card_giftcard_outlined, size: 28),
                       onPressed: () {},
                     ),
                   ],
@@ -148,73 +148,129 @@ class _StorePageState extends State<StorePage> {
                 // -- Filtros de Categoria --
                 SizedBox(
                   height: 40,
-                  child: ListView(
+                  child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    children: [
-                      CategoryButton(text: 'Planos de Fundo'),
-                      CategoryButton(text: 'Emotes'),
-                      CategoryButton(text: 'Ícones'),
-                    ],
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      return CategoryButton(
+                        text: categories[index],
+                        isSelected: _selectedCategoryIndex == index,
+                        onTap: () {
+                          setState(() {
+                            _selectedCategoryIndex = index;
+                          });
+                        },
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 24),
 
                 // -- Banner Promocional --
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4A90E2), Color(0xFF50E3C2)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Ganhe 30% OFF',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                Column(
+                  children: [
+                    SizedBox(
+                      height: 165,
+                      child: PageView.builder(
+                        controller: _bannerController,
+                        itemCount: banners.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentBannerIndex = index;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          final banner = banners[index];
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                colors: banner.gradientColors,
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Em avatares lendários. Oferta por tempo limitado!',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.blue,
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        banner.title,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        banner.subtitle,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor:
+                                              banner.gradientColors.first,
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              18.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text('Comprar Agora'),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              child: const Text('Comprar Agora'),
+                                Image.network(
+                                  banner.imageUrl,
+                                  width: 100,
+                                  height: 100,
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          const Icon(
+                                            Icons.error,
+                                            color: Colors.white,
+                                          ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                      // Imagem para o banner (opcional)
-                      Image.network(
-                        'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558485.png', // Exemplo de imagem de avatar
-                        width: 100,
-                        height: 100,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(banners.length, (index) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          height: 8,
+                          width: _currentBannerIndex == index ? 24 : 8,
+                          decoration: BoxDecoration(
+                            color:
+                                _currentBannerIndex == index
+                                    ? Colors.blueAccent
+                                    : Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        );
+                      }),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 24),
 
@@ -274,11 +330,13 @@ class _StorePageState extends State<StorePage> {
 class CategoryButton extends StatelessWidget {
   final String text;
   final bool isSelected;
+  final VoidCallback? onTap;
 
   const CategoryButton({
     super.key,
     required this.text,
     this.isSelected = false,
+    this.onTap,
   });
 
   @override
@@ -286,13 +344,15 @@ class CategoryButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           foregroundColor: isSelected ? Colors.white : Colors.black,
           backgroundColor: isSelected ? Colors.blueAccent : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           elevation: isSelected ? 2 : 0,
         ),
         child: Text(text),
