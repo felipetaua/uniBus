@@ -126,18 +126,14 @@ class _StorePageState extends State<StorePage> {
               ),
             ),
           ),
-
-          // This widget was incorrectly placed as a direct child of Container.
-          // It should be outside the Container, or the Container should not have a child if SingleChildScrollView is the direct child of Stack.
         ),
         SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // -- Cabeçalho com boas-vindas e perfil --
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -153,10 +149,10 @@ class _StorePageState extends State<StorePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Suas Unicoins',
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: Colors.white,
                                 fontSize: 12,
                               ),
                             ),
@@ -173,6 +169,7 @@ class _StorePageState extends State<StorePage> {
                                       ? (_userData!['coins'] ?? 0).toString()
                                       : '...',
                                   style: const TextStyle(
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -183,9 +180,21 @@ class _StorePageState extends State<StorePage> {
                         ),
                       ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.card_giftcard_outlined, size: 28),
-                      onPressed: () {},
+                    Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.card_giftcard_outlined,
+                          size: 24,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {},
+                      ),
                     ),
                   ],
                 ),
