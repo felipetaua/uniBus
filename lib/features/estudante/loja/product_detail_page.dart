@@ -108,18 +108,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Positioned.fill(
             child: Hero(
               tag: 'product-image-${widget.product.id}',
-              child: Image.network(
-                widget.product.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) => Container(
-                      color: Colors.grey[200],
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-              ),
+              child: _buildProductDetailImage(widget.product),
             ),
           ),
           // Gradiente para legibilidade
@@ -267,6 +256,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Constrói o widget de imagem do produto, decidindo entre carregar
+/// da rede (http) ou de um asset local.
+Widget _buildProductDetailImage(Product product) {
+  final bool isNetworkImage =
+      product.imageUrl.startsWith('http://') ||
+      product.imageUrl.startsWith('https://');
+
+  final Widget errorWidget = Container(
+    color: Colors.grey[200],
+    child: Icon(Icons.image_not_supported, color: Colors.grey[400]),
+  );
+
+  if (isNetworkImage) {
+    return Image.network(
+      product.imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
+    );
+  } else {
+    return Image.asset(
+      product.imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
     );
   }
 }

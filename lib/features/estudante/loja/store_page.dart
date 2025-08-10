@@ -65,47 +65,6 @@ class _StorePageState extends State<StorePage> {
     'Ícones',
   ];
 
-  final List<Product> featuredProducts = [
-    const Product(
-      id: 'prod_001',
-      name: 'Avatar Mago Cósmico',
-      imageUrl:
-          'https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-cabelo-azul-e-uma-jaqueta-roxa_902639-67626.jpg',
-      price: 135,
-      stock: '15 restantes',
-      rating: 4.8,
-      reviewCount: 201,
-      description:
-          'Um avatar místico que canaliza o poder das estrelas. Perfeito para quem busca um visual mágico e imponente.',
-      category: 'Avatares',
-    ),
-    const Product(
-      id: 'prod_002',
-      name: 'Fundo Galáxia Animada',
-      imageUrl:
-          'https://i.pinimg.com/736x/3a/05/3e/3a053e1f6a3b216892b1574d5389a084.jpg',
-      price: 95,
-      stock: '32 restantes',
-      rating: 4.9,
-      reviewCount: 543,
-      description:
-          'Leve seu perfil para outra dimensão com este fundo de galáxia animado. As estrelas se movem suavemente, criando um efeito hipnotizante.',
-      category: 'Planos de Fundo',
-    ),
-    const Product(
-      id: 'prod_003',
-      name: 'Avatar Neon Punk',
-      imageUrl: 'https://unavatar.io/github/casey',
-      price: 110,
-      stock: '8 restantes',
-      rating: 4.7,
-      reviewCount: 150,
-      description:
-          'Direto de um futuro cyberpunk, este avatar combina luzes neon com uma atitude rebelde. Estoque limitado!',
-      category: 'Avatares',
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -133,6 +92,16 @@ class _StorePageState extends State<StorePage> {
   void dispose() {
     _bannerController.dispose();
     super.dispose();
+  }
+
+  /// Retorna o stream de produtos do Firestore, aplicando filtro de categoria se houver.
+  Stream<QuerySnapshot> _getProductsStream() {
+    Query query = FirebaseFirestore.instance.collection('products');
+    if (_selectedCategoryIndex != 0) {
+      String selectedCategory = categories[_selectedCategoryIndex];
+      query = query.where('category', isEqualTo: selectedCategory);
+    }
+    return query.snapshots();
   }
 
   @override
@@ -401,19 +370,59 @@ class _StorePageState extends State<StorePage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                  height: 260,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: featuredProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = featuredProducts[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: ProductCard(product: product),
+                StreamBuilder<QuerySnapshot>(
+                  stream: _getProductsStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 260,
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                  ),
+                    }
+                    if (snapshot.hasError) {
+                      return const SizedBox(
+                        height: 260,
+                        child: Center(child: Text('Algo deu errado.')),
+                      );
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const SizedBox(
+                        height: 260,
+                        child: Center(
+                          child: Text('Nenhum item encontrado nesta categoria.'),
+                        ),
+                      );
+                    }
+
+                    final products = snapshot.data!.docs.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      return Product(
+                        id: doc.id,
+                        name: data['name'] ?? '',
+                        imageUrl: data['imageUrl'] ?? '',
+                        price: (data['price'] ?? 0).toInt(),
+                        stock: data['stock'] ?? '',
+                        rating: (data['rating'] ?? 0.0).toDouble(),
+                        reviewCount: (data['reviewCount'] ?? 0).toInt(),
+                        description: data['description'] ?? '',
+                        category: data['category'] ?? '',
+                      );
+                    }).toList();
+
+                    return SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: ProductCard(product: products[index]),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
               ],
