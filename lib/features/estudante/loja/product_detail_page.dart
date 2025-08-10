@@ -68,6 +68,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           'name': widget.product.name,
           'imageUrl': widget.product.imageUrl,
           'purchaseDate': Timestamp.now(),
+          'category': widget.product.category,
         });
       });
 
