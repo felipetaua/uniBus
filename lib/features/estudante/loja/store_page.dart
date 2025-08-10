@@ -36,22 +36,19 @@ class _StorePageState extends State<StorePage> {
     PromotionalBanner(
       title: 'Ganhe 30% OFF',
       subtitle: 'Em avatares lendários. Oferta por tempo limitado!',
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558485.png',
+      imageUrl: 'assets/images/loja/shop-2.webp',
       gradientColors: [const Color(0xFF4A90E2), const Color(0xFF50E3C2)],
     ),
     PromotionalBanner(
       title: 'Novos Fundos!',
       subtitle: 'Explore cenários incríveis para seu perfil.',
-      imageUrl:
-          'https://i.pinimg.com/564x/e7/3a/1d/e73a1d1bf1c41be958a157d763f592a0.jpg',
+      imageUrl: 'assets/images/loja/shop-3.png',
       gradientColors: [const Color(0xFF8E2DE2), const Color(0xFF4A00E0)],
     ),
     PromotionalBanner(
       title: 'Ícones Exclusivos',
       subtitle: 'Mostre seu estilo com ícones únicos.',
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/trophy-5498873-4592741.png',
+      imageUrl: 'assets/images/loja/shop-4.png',
       gradientColors: [const Color(0xFFF857A6), const Color(0xFFFF5858)],
     ),
   ];
@@ -192,21 +189,42 @@ class _StorePageState extends State<StorePage> {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.3),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.card_giftcard_outlined,
-                          size: 24,
-                          color: Colors.white,
+                    Row(
+                      children: [
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.leaderboard_outlined,
+                              size: 24,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ),
                         ),
-                        onPressed: () {},
-                      ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.card_giftcard_outlined,
+                              size: 24,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -324,17 +342,7 @@ class _StorePageState extends State<StorePage> {
                                     ],
                                   ),
                                 ),
-                                Image.network(
-                                  banner.imageUrl,
-                                  width: 100,
-                                  height: 100,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                            Icons.error,
-                                            color: Colors.white,
-                                          ),
-                                ),
+                                _buildBannerImage(banner.imageUrl),
                               ],
                             ),
                           );
@@ -610,6 +618,37 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Constrói o widget de imagem do banner, decidindo entre carregar
+/// da rede (http) ou de um asset local.
+Widget _buildBannerImage(String imageUrl) {
+  final bool isNetworkImage =
+      imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+
+  final Widget errorWidget = const Icon(
+    Icons.image_not_supported,
+    color: Colors.white70,
+    size: 50,
+  );
+
+  if (isNetworkImage) {
+    return Image.network(
+      imageUrl,
+      width: 100,
+      height: 100,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
+    );
+  } else {
+    return Image.asset(
+      imageUrl,
+      width: 100,
+      height: 100,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) => errorWidget,
     );
   }
 }
