@@ -1,3 +1,4 @@
+import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,9 +94,43 @@ class _StorePageState extends State<StorePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDarkMode = brightness == Brightness.dark;
+    final Color backgroundColor =
+        isDarkMode ? AppColors.darkBackground : AppColors.lightBackground;
+
+    return Stack(
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.35,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFB06DF9),
+                Color(0xFF828EF3),
+                Color(0xFF84CFB2),
+                Color(0xFFCAFF5C),
+              ],
+              stops: [0.0, 0.33, 0.66, 1.0],
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [backgroundColor.withOpacity(0.0), backgroundColor],
+                stops: const [0.2, 1.0],
+              ),
+            ),
+          ),
+
+          // This widget was incorrectly placed as a direct child of Container.
+          // It should be outside the Container, or the Container should not have a child if SingleChildScrollView is the direct child of Stack.
+        ),
+        SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -355,7 +390,7 @@ class _StorePageState extends State<StorePage> {
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
