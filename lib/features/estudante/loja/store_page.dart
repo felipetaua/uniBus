@@ -1,4 +1,6 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
+import 'package:bus_attendance_app/features/estudante/loja/product_detail_page.dart';
+import 'package:bus_attendance_app/models/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +63,47 @@ class _StorePageState extends State<StorePage> {
     'Emotes',
     'Cosméticos',
     'Ícones',
+  ];
+
+  final List<Product> featuredProducts = [
+    const Product(
+      id: 'prod_001',
+      name: 'Avatar Mago Cósmico',
+      imageUrl:
+          'https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-cabelo-azul-e-uma-jaqueta-roxa_902639-67626.jpg',
+      price: 135,
+      stock: '15 restantes',
+      rating: 4.8,
+      reviewCount: 201,
+      description:
+          'Um avatar místico que canaliza o poder das estrelas. Perfeito para quem busca um visual mágico e imponente.',
+      category: 'Avatares',
+    ),
+    const Product(
+      id: 'prod_002',
+      name: 'Fundo Galáxia Animada',
+      imageUrl:
+          'https://i.pinimg.com/736x/3a/05/3e/3a053e1f6a3b216892b1574d5389a084.jpg',
+      price: 95,
+      stock: '32 restantes',
+      rating: 4.9,
+      reviewCount: 543,
+      description:
+          'Leve seu perfil para outra dimensão com este fundo de galáxia animado. As estrelas se movem suavemente, criando um efeito hipnotizante.',
+      category: 'Planos de Fundo',
+    ),
+    const Product(
+      id: 'prod_003',
+      name: 'Avatar Neon Punk',
+      imageUrl: 'https://unavatar.io/github/casey',
+      price: 110,
+      stock: '8 restantes',
+      rating: 4.7,
+      reviewCount: 150,
+      description:
+          'Direto de um futuro cyberpunk, este avatar combina luzes neon com uma atitude rebelde. Estoque limitado!',
+      category: 'Avatares',
+    ),
   ];
 
   @override
@@ -360,38 +403,16 @@ class _StorePageState extends State<StorePage> {
                 const SizedBox(height: 16),
                 SizedBox(
                   height: 260,
-                  child: ListView(
+                  child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    children: const [
-                      ProductCard(
-                        imageUrl:
-                            'https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-cabelo-azul-e-uma-jaqueta-roxa_902639-67626.jpg',
-                        name: 'Avatar Mago Cósmico',
-                        price: 'R\$ 135,00',
-                        stock: '15 restantes',
-                        rating: 4.8,
-                        reviewCount: 201,
-                      ),
-                      SizedBox(width: 16),
-                      ProductCard(
-                        imageUrl:
-                            'https://i.pinimg.com/736x/3a/05/3e/3a053e1f6a3b216892b1574d5389a084.jpg',
-                        name: 'Fundo Galáxia Animada',
-                        price: 'R\$ 95,00',
-                        stock: '32 restantes',
-                        rating: 4.9,
-                        reviewCount: 543,
-                      ),
-                      SizedBox(width: 16),
-                      ProductCard(
-                        imageUrl: 'https://unavatar.io/github/casey',
-                        name: 'Avatar Neon Punk',
-                        price: 'R\$ 110,00',
-                        stock: '8 restantes',
-                        rating: 4.7,
-                        reviewCount: 150,
-                      ),
-                    ],
+                    itemCount: featuredProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = featuredProducts[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: ProductCard(product: product),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -439,135 +460,145 @@ class CategoryButton extends StatelessWidget {
 
 // Widget para o cartão de produto
 class ProductCard extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String price;
-  final String stock;
-  final double rating;
-  final int reviewCount;
+  final Product product;
 
-  const ProductCard({
-    super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.price,
-    required this.stock,
-    required this.rating,
-    required this.reviewCount,
-  });
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailPage(product: product),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                child: Image.network(
-                  imageUrl,
-                  height: 150,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Container(
-                        height: 150,
-                        color: Colors.grey[200],
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.favorite_border,
-                      color: Colors.redAccent,
-                    ),
-                    onPressed: () {},
-                    iconSize: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Container(
+        width: 180,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      stock,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$rating ($reviewCount)',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 11,
+                  child: Hero(
+                    tag: 'product-image-${product.id}',
+                    child: Image.network(
+                      product.imageUrl,
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
+                            height: 150,
+                            color: Colors.grey[200],
+                            child: Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey[400],
+                            ),
                           ),
-                        ),
-                      ],
                     ),
-                  ],
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.favorite_border,
+                        color: Colors.redAccent,
+                      ),
+                      onPressed: () {},
+                      iconSize: 20,
+                    ),
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/icons/coin_icon.png',
+                        height: 16,
+                        width: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        product.price.toString(),
+                        style: const TextStyle(
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product.stock,
+                        style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${product.rating} (${product.reviewCount})',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
