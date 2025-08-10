@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PromotionalBanner {
@@ -25,6 +27,7 @@ class _StorePageState extends State<StorePage> {
   int _selectedCategoryIndex = 0;
   int _currentBannerIndex = 0;
   final PageController _bannerController = PageController();
+  Map<String, dynamic>? _userData;
 
   final List<PromotionalBanner> banners = [
     PromotionalBanner(
@@ -60,6 +63,29 @@ class _StorePageState extends State<StorePage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
+
+      if (mounted) {
+        setState(() {
+          _userData = userDoc.data();
+        });
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _bannerController.dispose();
     super.dispose();
@@ -93,26 +119,28 @@ class _StorePageState extends State<StorePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Bem-vindo(a) de volta',
+                              'Suas Unicoins',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 12,
                               ),
                             ),
-                            const Row(
+                            Row(
                               children: [
+                                Image.asset(
+                                  'assets/icons/coin_icon.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                const SizedBox(width: 4),
                                 Text(
-                                  'dev.bruno',
-                                  style: TextStyle(
+                                  _userData != null
+                                      ? (_userData!['coins'] ?? 0).toString()
+                                      : '...',
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
-                                ),
-                                SizedBox(width: 4),
-                                Icon(
-                                  Icons.verified,
-                                  color: Colors.blue,
-                                  size: 16,
                                 ),
                               ],
                             ),
@@ -121,7 +149,7 @@ class _StorePageState extends State<StorePage> {
                       ],
                     ),
                     IconButton(
-                      icon: const Icon(Icons.shopping_bag_outlined, size: 28),
+                      icon: const Icon(Icons.card_giftcard_outlined, size: 28),
                       onPressed: () {},
                     ),
                   ],
