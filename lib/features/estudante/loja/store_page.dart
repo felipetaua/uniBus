@@ -389,25 +389,40 @@ class _StorePageState extends State<StorePage> {
                       return const SizedBox(
                         height: 260,
                         child: Center(
-                          child: Text('Nenhum item encontrado nesta categoria.'),
+                          child: Text(
+                            'Nenhum item encontrado nesta categoria.',
+                          ),
                         ),
                       );
                     }
 
-                    final products = snapshot.data!.docs.map((doc) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      return Product(
-                        id: doc.id,
-                        name: data['name'] ?? '',
-                        imageUrl: data['imageUrl'] ?? '',
-                        price: (data['price'] ?? 0).toInt(),
-                        stock: data['stock'] ?? '',
-                        rating: (data['rating'] ?? 0.0).toDouble(),
-                        reviewCount: (data['reviewCount'] ?? 0).toInt(),
-                        description: data['description'] ?? '',
-                        category: data['category'] ?? '',
-                      );
-                    }).toList();
+                    final products =
+                        snapshot.data!.docs.map((doc) {
+                          final data = doc.data() as Map<String, dynamic>;
+                          return Product(
+                            id: doc.id,
+                            name: data['name'] ?? '',
+                            imageUrl: data['imageUrl'] ?? '',
+                            price:
+                                double.tryParse(
+                                  (data['price'] ?? '0').toString(),
+                                )?.toInt() ??
+                                0,
+                            stock: data['stock'] ?? '',
+                            rating:
+                                double.tryParse(
+                                  (data['rating'] ?? '0.0').toString(),
+                                ) ??
+                                0.0,
+                            reviewCount:
+                                double.tryParse(
+                                  (data['reviewCount'] ?? '0').toString(),
+                                )?.toInt() ??
+                                0,
+                            description: data['description'] ?? '',
+                            category: data['category'] ?? '',
+                          );
+                        }).toList();
 
                     return SizedBox(
                       height: 260,
