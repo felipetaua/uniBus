@@ -121,7 +121,7 @@ class _StorePageState extends State<StorePage> {
                       ],
                     ),
                     IconButton(
-                      icon: const Icon(Icons.card_giftcard_outlined, size: 28),
+                      icon: const Icon(Icons.shopping_bag_outlined, size: 28),
                       onPressed: () {},
                     ),
                   ],
@@ -170,7 +170,7 @@ class _StorePageState extends State<StorePage> {
                 Column(
                   children: [
                     SizedBox(
-                      height: 165,
+                      height: 160,
                       child: PageView.builder(
                         controller: _bannerController,
                         itemCount: banners.length,
@@ -182,8 +182,8 @@ class _StorePageState extends State<StorePage> {
                         itemBuilder: (context, index) {
                           final banner = banners[index];
                           return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                            padding: const EdgeInsets.all(20),
+                            margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                            padding: const EdgeInsets.all(18),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               gradient: LinearGradient(
@@ -228,6 +228,12 @@ class _StorePageState extends State<StorePage> {
                                               18.0,
                                             ),
                                           ),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 10,
+                                            horizontal: 16,
+                                          ),
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
                                         ),
                                         child: const Text('Comprar Agora'),
                                       ),
@@ -351,8 +357,6 @@ class CategoryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           elevation: isSelected ? 2 : 0,
         ),
         child: Text(text),
