@@ -1,4 +1,5 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
+import 'package:bus_attendance_app/features/estudante/loja/gifts_page.dart';
 import 'package:bus_attendance_app/features/estudante/loja/product_detail_page.dart';
 import 'package:bus_attendance_app/features/estudante/loja/product_list_items.dart'
     show ProductListScreen;
@@ -224,7 +225,13 @@ class _StorePageState extends State<StorePage> {
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              
+                              //criando mover para tela de gifts
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const GiftsScreen(),
+                                ),
+                              );
                             },
                           ),
                         ),
