@@ -161,8 +161,8 @@ class _GiftsScreenState extends State<GiftsScreen> {
               children: [
                 _buildActionItem(
                   Icons.monetization_on_outlined,
-                  'Comprar',
-                  () => _showBuyCoinsModal(context),
+                  'Comprar', // Alterado para chamar o método da classe
+                  _showBuyCoinsModal,
                 ),
                 _buildActionItem(Icons.redeem, 'Receber', () {
                   // TODO: Implementar lógica para receber recompensas
@@ -313,125 +313,170 @@ class _GiftsScreenState extends State<GiftsScreen> {
       ),
     );
   }
-}
 
-void _showBuyCoinsModal(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled:
-        true, // Permite que o modal ocupe mais da metade da tela
-    backgroundColor:
-        Colors
-            .transparent, // Torna o fundo do modal transparente para a imagem vazar
-    builder: (builderContext) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+  // Função para adicionar moedas ao usuário no Firestore
+  Future<void> _addCoins(int amount) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    // Fecha o modal
+    Navigator.pop(context);
+
+    try {
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid);
+
+      // Usa FieldValue.increment para uma atualização atômica e segura
+      await userDocRef.update({'coins': FieldValue.increment(amount)});
+
+      // Recarrega os dados do usuário para atualizar a UI
+      _loadUserData();
+
+      // Mostra uma mensagem de sucesso
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$amount Unicoins adicionadas com sucesso!'),
+            backgroundColor: Colors.green,
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // Faz a coluna se ajustar ao conteúdo
-          children: [
-            // Imagem do cabeçalho
-            Image.asset('assets/header_coins.png'),
+        );
+      }
+    } catch (e) {
+      // Mostra uma mensagem de erro
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao adicionar moedas: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
-            // Conteúdo principal do modal
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  const Text(
-                    'Entrar na minha conta',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Compre ou ganhe Unicoins e utilize como troca para itens exclusivos, e adiciona vantagens.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Itens da lista de pacotes
-                  _buildUnicoinPackageItem(
-                    imagePath: 'assets/pacote_medio.png',
-                    title: 'Pacote Médio de Unicoins',
-                    subtitle: '250 Unicoins',
-                    price: 'R\$ 0,00',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildUnicoinPackageItem(
-                    imagePath: 'assets/pacote_grande.png',
-                    title: 'Pacote Grande de Unicoins',
-                    subtitle: '600 Unicoins',
-                    price: 'R\$ 0,00',
-                  ),
-                ],
-              ),
-            ),
-
-            // Banner "GRÁTIS" na parte inferior
-            // TODO: Substitua 'assets/gratis_banner.png' pelo caminho da sua imagem
-            Image.asset(
-              'assets/gratis_banner.png',
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-// Widget reutilizável para criar cada item da lista de pacotes
-Widget _buildUnicoinPackageItem({
-  required String imagePath,
-  required String title,
-  required String subtitle,
-  required String price,
-}) {
-  return Row(
-    children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Image.asset(imagePath, width: 60, height: 60, fit: BoxFit.cover),
-      ),
-      const SizedBox(width: 16),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text(
-              subtitle,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 16),
-      ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF8A2BE2), // Cor roxa
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        ),
-        child: Text(
-          price,
-          style: const TextStyle(
+  void _showBuyCoinsModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (builderContext) {
+        return Container(
+          decoration: const BoxDecoration(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('assets/images/header_coins.png'),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Entrar na minha conta',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Compre ou ganhe Unicoins e utilize como troca para itens exclusivos, e adiciona vantagens.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildUnicoinPackageItem(
+                      imagePath: 'assets/images/pacote_medio.png',
+                      title: 'Pacote Médio de Unicoins',
+                      subtitle: '250 Unicoins',
+                      price: 'R\$ 0,00',
+                      amount: 250,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildUnicoinPackageItem(
+                      imagePath: 'assets/images/pacote_grande.png',
+                      title: 'Pacote Grande de Unicoins',
+                      subtitle: '600 Unicoins',
+                      price: 'R\$ 0,00',
+                      amount: 600,
+                    ),
+                  ],
+                ),
+              ),
+              Image.asset(
+                'assets/images/gratis_banner.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildUnicoinPackageItem({
+    required String imagePath,
+    required String title,
+    required String subtitle,
+    required String price,
+    required int amount,
+  }) {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.asset(
+            imagePath,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
           ),
         ),
-      ),
-    ],
-  );
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton(
+          onPressed: () => _addCoins(amount),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF8A2BE2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          child: Text(
+            price,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

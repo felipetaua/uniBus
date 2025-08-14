@@ -85,6 +85,32 @@ class _ProfilePageState extends State<ProfilePage>
     final String? backgroundUrl = _userData?['equipped_background_image_url'];
     final String? avatarUrl = _userData?['equipped_avatar_image_url'];
 
+    // Logica para determinar o provedor de imagem para o plano de fundo
+    ImageProvider backgroundProvider;
+    if (backgroundUrl != null && backgroundUrl.isNotEmpty) {
+      if (backgroundUrl.startsWith('http')) {
+        backgroundProvider = NetworkImage(backgroundUrl);
+      } else {
+        backgroundProvider = AssetImage(backgroundUrl);
+      }
+    } else {
+      backgroundProvider = const AssetImage('assets/items/bg/bg-10.png');
+    }
+
+    // Logica para determinar o widget de imagem para o avatar
+    Widget? avatarWidget;
+    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+      if (avatarUrl.startsWith('http')) {
+        avatarWidget = Image.network(
+          avatarUrl,
+          height: 120,
+          fit: BoxFit.contain,
+        );
+      } else {
+        avatarWidget = Image.asset(avatarUrl, height: 120, fit: BoxFit.contain);
+      }
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -105,26 +131,13 @@ class _ProfilePageState extends State<ProfilePage>
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.grey[200],
                         image: DecorationImage(
-                          image:
-                              (backgroundUrl != null &&
-                                      backgroundUrl.isNotEmpty)
-                                  ? NetworkImage(backgroundUrl)
-                                  : const AssetImage(
-                                        'assets/items/bg/bg-10.png',
-                                      )
-                                      as ImageProvider,
+                          image: backgroundProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
                       child:
-                          (avatarUrl != null && avatarUrl.isNotEmpty)
-                              ? Center(
-                                child: Image.network(
-                                  avatarUrl,
-                                  height: 120,
-                                  fit: BoxFit.contain,
-                                ),
-                              )
+                          avatarWidget != null
+                              ? Center(child: avatarWidget)
                               : null,
                     ),
                     Positioned(
@@ -557,6 +570,22 @@ class CollectionItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Lógica para decidir qual widget de imagem usar (Asset ou Network)
+    Widget imageWidget;
+    if (imageUrl.startsWith('http')) {
+      imageWidget = Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      );
+    } else {
+      imageWidget = Image.asset(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      );
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -569,12 +598,7 @@ class CollectionItemCard extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder:
-                (context, error, stackTrace) => const Icon(Icons.error),
-          ),
+          child: imageWidget,
         ),
       ),
     );
