@@ -582,7 +582,7 @@ class CollectionItemCard extends StatelessWidget {
       imageWidget = Image.asset(
         imageUrl,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+        errorBuilder: (context, error, stackTrace) => const Icon(Icons.nearby_error_outlined),
       );
     }
 
