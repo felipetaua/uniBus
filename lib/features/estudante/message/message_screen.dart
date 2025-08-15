@@ -86,37 +86,66 @@ class MessagePage extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.grey.shade100,
-        body: Column(
+        body: Stack(
           children: [
+            // Fundo em gradiente com transição
             Container(
-              width: double.infinity,
-              color: const Color(0xFF141414),
-              padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top + 16.0,
-                bottom: 16.0,
+              height: MediaQuery.of(context).size.height * 0.3,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFB06DF9),
+                    Color(0xFF828EF3),
+                    Color(0xFF84CFB2),
+                    Color(0xFFCAFF5C),
+                  ],
+                  stops: [0.0, 0.33, 0.66, 1.0],
+                ),
               ),
-              child: Center(
-                child: Image.asset(
-                  'assets/images/logo-texto-image.png',
-                  height: 40,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.grey.shade100.withOpacity(0.0),
+                      Colors.grey.shade100,
+                    ],
+                    stops: const [0.1, 1.0],
+                  ),
                 ),
               ),
             ),
-            // Cabeçalho: "Chats" e ícones
-            _buildHeader(),
-
-            // Barra de Pesquisa
-            _buildSearchBar(),
-
-            // Lista de Chats
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 10.0),
-                itemCount: chatData.length,
-                itemBuilder: (context, index) {
-                  return _buildChatListItem(context, chatData[index]);
-                },
-              ),
+            // Conteúdo da página
+            Column(
+              children: [
+                // Cabeçalho com logo (agora transparente)
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/logo-texto-image.png',
+                      height: 40,
+                    ),
+                  ),
+                ),
+                _buildHeader(),
+                _buildSearchBar(),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    itemCount: chatData.length,
+                    itemBuilder: (context, index) {
+                      return _buildChatListItem(context, chatData[index]);
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
