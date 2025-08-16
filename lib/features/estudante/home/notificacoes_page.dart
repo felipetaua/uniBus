@@ -164,6 +164,11 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     // Dados de exemplo
     final List<Map<String, String>> notifications = [
       {
+        'title': 'Você esta em um grupo!',
+        'subtitle': 'Ahora você pode receber notificações do seu gestor.',
+        'time': '1h atrás',
+      },
+      {
         'title': 'Presença confirmada!',
         'subtitle': 'Sua presença para o dia 25/10 foi confirmada com sucesso.',
         'time': '2h atrás',

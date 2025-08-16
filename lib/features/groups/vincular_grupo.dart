@@ -56,7 +56,13 @@ class _VincularGrupoPageState extends State<VincularGrupoPage> {
                 .limit(10)
                 .get();
 
-        _groupMembers = membersSnapshot.docs.map((doc) => doc.data()).toList();
+        _groupMembers =
+            membersSnapshot.docs.map((doc) {
+              final data = doc.data();
+              data['id'] =
+                  doc.id; // Adiciona o ID do documento para usar como chave única
+              return data;
+            }).toList();
       } else {
         _errorMessage = 'Nenhum grupo encontrado com este código.';
       }
@@ -77,20 +83,63 @@ class _VincularGrupoPageState extends State<VincularGrupoPage> {
     });
 
     try {
-      // Usar um batch para garantir que ambas as operações sejam atômicas
-      final batch = _firestore.batch();
-
-      // 1. Atualiza o documento do usuário com o ID do grupo
       final userRef = _firestore
           .collection('users')
           .doc(_auth.currentUser!.uid);
-      batch.update(userRef, {'group_id': _groupId});
+      final newGroupRef = _firestore.collection('groups').doc(_groupId!);
 
-      // 2. Incrementa a contagem de membros no grupo
-      final groupRef = _firestore.collection('groups').doc(_groupId!);
-      batch.update(groupRef, {'member_count': FieldValue.increment(1)});
+      // Usar uma transação para garantir a consistência dos contadores
+      await _firestore.runTransaction((transaction) async {
+      
+        // --- LEITURAS PRIMEIRO ---
+        // 1. Pega o estado atual do usuário
+        final userSnapshot = await transaction.get(userRef);
+        if (!userSnapshot.exists) {
+          throw Exception("Documento do usuário não encontrado.");
+        }
 
-      await batch.commit();
+        // 2. Pega o estado do novo grupo para garantir que ele existe
+        final newGroupSnapshot = await transaction.get(newGroupRef);
+        if (!newGroupSnapshot.exists) {
+          throw Exception(
+            "O grupo que você está tentando entrar não existe mais.",
+          );
+        }
+
+        final oldGroupId = userSnapshot.data()?['group_id'];
+        DocumentSnapshot? oldGroupSnapshot;
+        DocumentReference? oldGroupRef;
+
+        // 3. Se houver um grupo antigo, pega o estado dele
+        if (oldGroupId != null) {
+          oldGroupRef = _firestore.collection('groups').doc(oldGroupId);
+          oldGroupSnapshot = await transaction.get(oldGroupRef);
+        }
+
+        // --- ESCRITAS DEPOIS ---
+
+        // Se o usuário já estiver no grupo alvo, não faz nada.
+        if (oldGroupId == _groupId) {
+          return;
+        }
+
+        // 4. Se o usuário estava em um grupo antigo e ele existe, decrementa o contador
+        if (oldGroupId != null &&
+            oldGroupSnapshot != null &&
+            oldGroupSnapshot.exists) {
+          transaction.update(oldGroupRef!, {
+            'member_count': FieldValue.increment(-1),
+          });
+        }
+
+        // 5. Atualiza o group_id do usuário para o novo grupo
+        transaction.update(userRef, {'group_id': _groupId});
+
+        // 6. Incrementa o contador de membros do novo grupo
+        transaction.update(newGroupRef, {
+          'member_count': FieldValue.increment(1),
+        });
+      });
 
       if (mounted) {
         // Mostra o popup de boas-vindas
@@ -99,7 +148,7 @@ class _VincularGrupoPageState extends State<VincularGrupoPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao entrar no grupo.')),
+          SnackBar(content: Text('Erro ao entrar no grupo: ${e.toString()}')),
         );
       }
     } finally {
@@ -300,8 +349,9 @@ class _VincularGrupoPageState extends State<VincularGrupoPage> {
                   child: CircleAvatar(
                     radius: 18,
                     backgroundImage: NetworkImage(
-                      member['avatar_url'] ??
-                          'https://i.pravatar.cc/150?u=${member['uid']}',
+                      // Corrigido para usar o campo e ID corretos
+                      member['photoURL'] ??
+                          'https://i.pravatar.cc/150?u=${member['id']}',
                     ),
                   ),
                 );
