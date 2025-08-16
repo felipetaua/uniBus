@@ -87,6 +87,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
     final Color onPrimaryColor =
         isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
 
+    // Verifica se o usuário está vinculado a um grupo
+    final bool hasGroup = _userData != null && _userData?['group_id'] != null;
+
     return Stack(
       children: [
         Container(
@@ -267,129 +270,165 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      children: [
-                        Icon(Icons.calendar_today, color: primaryColor),
-                        const SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Sexta-feira, 18/07/2025',
-                              style: AppTextStyles.lightTitle.copyWith(
-                                fontSize: 18,
-                                color: textPrimaryColor,
-                              ),
+                    child:
+                        hasGroup
+                            ? Row(
+                              children: [
+                                Icon(Icons.calendar_today, color: primaryColor),
+                                const SizedBox(width: 15),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Sexta-feira, 18/07/2025',
+                                      style: AppTextStyles.lightTitle.copyWith(
+                                        fontSize: 18,
+                                        color: textPrimaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'Ônibus das 17h',
+                                      style: AppTextStyles.lightBody.copyWith(
+                                        color: textSecondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                            : Row(
+                              children: [
+                                Icon(
+                                  Icons.group_add_outlined,
+                                  color: primaryColor,
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Vincule-se a um grupo',
+                                        style: AppTextStyles.lightTitle
+                                            .copyWith(
+                                              fontSize: 18,
+                                              color: textPrimaryColor,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        'Peça o código ao organizador para ver as informações do ônibus.',
+                                        style: AppTextStyles.lightBody.copyWith(
+                                          color: textSecondaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Ônibus das 17h',
-                              style: AppTextStyles.lightBody.copyWith(
-                                color: textSecondaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
               // Seção "Você vai hoje?"
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Center(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    'Você vai hoje?',
-                    style: AppTextStyles.lightTitle.copyWith(
-                      color: textPrimaryColor,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Botões de confirmação de presença
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Lógica para "Vou hoje"
-                        },
-                        icon: const Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.white,
-                        ),
-                        label: const Text(
-                          'Vou hoje',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                            0xFF84CFB2,
-                          ), // Verde-água
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        ),
+              if (hasGroup) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Center(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Você vai hoje?',
+                      style: AppTextStyles.lightTitle.copyWith(
+                        color: textPrimaryColor,
                       ),
                     ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Lógica para "Não vou"
-                        },
-                        icon: const Icon(
-                          Icons.cancel_outlined,
-                          color: Colors.white,
-                        ),
-                        label: const Text(
-                          'Não vou',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFB687E7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Botões de confirmação de presença
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Lógica para "Vou hoje"
+                          },
+                          icon: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.white,
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          label: const Text(
+                            'Vou hoje',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                              0xFF84CFB2,
+                            ), // Verde-água
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // Lógica para "Escanear para confirmar"
-                  },
-                  icon: Icon(Icons.qr_code, color: primaryColor),
-                  label: Text(
-                    'Escanear para confirmar',
-                    style: TextStyle(color: primaryColor),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: primaryColor, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    minimumSize: const Size(
-                      double.infinity,
-                      0,
-                    ), // Ocupa a largura total
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // Lógica para "Não vou"
+                          },
+                          icon: const Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Não vou',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFB687E7),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // Lógica para "Escanear para confirmar"
+                    },
+                    icon: Icon(Icons.qr_code, color: primaryColor),
+                    label: Text(
+                      'Escanear para confirmar',
+                      style: TextStyle(color: primaryColor),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: primaryColor, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      minimumSize: const Size(
+                        double.infinity,
+                        0,
+                      ), // Ocupa a largura total
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 30),
               // Seção "Eventos acadêmicos"
               Padding(
