@@ -1,6 +1,7 @@
 // lib/pages/gestor_dashboard_page.dart
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
+import 'package:bus_attendance_app/features/gestor/dashboard/gerenciamento_grupo.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -174,7 +175,7 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
                     _user?.displayName ?? 'Gestor',
                     style: AppTextStyles.lightTitle.copyWith(
                       color: onPrimaryColor,
-                      fontSize: 18,
+                      fontSize: 16,
                     ),
                   ),
                 ],
@@ -292,7 +293,11 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
             label: 'Criar/Gerir Grupos',
             color: const Color(0xFFB687E7),
             onTap: () {
-              // TODO: Navegar para a tela de gerenciamento de grupos
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const GroupManagementPage(),
+                ),
+              );
             },
           ),
           _ActionCard(
