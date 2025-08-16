@@ -1,10 +1,8 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart'; // Adicionar 'qr_flutter' no pubspec.yaml
+import 'package:qr_flutter/qr_flutter.dart'; 
 
-// --- NOVOS MODELOS ---
-// Modelo de dados para o motorista
 class Driver {
   final String name;
   final String avatarUrl;
@@ -20,11 +18,9 @@ class Bus {
   Bus({required this.model, required this.plate});
 }
 
-// --- MODELOS EXISTENTES ATUALIZADOS ---
-// Modelo de dados para os pontos de parada
 class PickupPoint {
   final String name;
-  final String address; // Pode ser substituído por coordenadas no futuro
+  final String address; //  Por coordenadas no futuro
 
   PickupPoint({required this.name, required this.address});
 }
@@ -150,7 +146,6 @@ class _RotesPagesState extends State<RotesPages> {
                   width: 200,
                   height: 200,
                   child: QrImageView(
-                    // Widget do pacote qr_flutter
                     data: route.qrCodeData,
                     version: QrVersions.auto,
                     size: 200.0,
@@ -228,125 +223,198 @@ class _RotesPagesState extends State<RotesPages> {
         isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
     final Color primaryColor =
         isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
+    final Color onPrimaryColor =
+        isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Gerenciar Rotas',
-          style: AppTextStyles.lightTitle.copyWith(color: textPrimaryColor),
-        ),
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: textPrimaryColor),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: Icon(
-                Icons.warning_amber_rounded,
-                color: Colors.amber.shade700,
+      body: Stack(
+        children: [
+          // Fundo com gradiente
+          Container(
+            height: MediaQuery.of(context).size.height * 0.35,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFB06DF9),
+                  Color(0xFF828EF3),
+                  Color(0xFF84CFB2),
+                  Color(0xFFCAFF5C),
+                ],
+                stops: [0.0, 0.33, 0.66, 1.0],
               ),
-              tooltip: 'Enviar Alerta de Emergência',
-              onPressed: _showEmergencyAlert,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [backgroundColor.withOpacity(0.0), backgroundColor],
+                  stops: const [0.2, 1.0],
+                ),
+              ),
             ),
           ),
-        ],
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(
-          16.0,
-          16.0,
-          16.0,
-          80.0,
-        ), // Espaço para o FAB
-        itemCount: _routes.length,
-        itemBuilder: (context, index) {
-          final route = _routes[index];
-          return Card(
-            elevation: 4,
-            color: surfaceColor,
-            margin: const EdgeInsets.only(bottom: 16.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+          // Conteúdo principal rolável
+          SafeArea(
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    route.name,
-                    style: AppTextStyles.lightTitle.copyWith(
-                      fontSize: 18,
-                      color: textPrimaryColor,
+                  _buildHeader(onPrimaryColor),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Suas Rotas Ativas',
+                      style: AppTextStyles.lightTitle.copyWith(
+                        fontSize: 20,
+                        color: textPrimaryColor,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildInfoRow(
-                    Icons.person_outline,
-                    'Motorista: ${route.driver.name}',
-                    textSecondaryColor,
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    itemCount: _routes.length,
+                    itemBuilder: (context, index) {
+                      final route = _routes[index];
+                      return _buildRouteCard(
+                        route,
+                        surfaceColor,
+                        textPrimaryColor,
+                        textSecondaryColor,
+                        primaryColor,
+                      );
+                    },
                   ),
-                  _buildInfoRow(
-                    Icons.directions_bus_outlined,
-                    'Ônibus: ${route.bus.plate}',
-                    textSecondaryColor,
-                  ),
-                  _buildInfoRow(
-                    Icons.location_on_outlined,
-                    '${route.points.length} pontos de parada',
-                    textSecondaryColor,
-                  ),
-                  const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Botões de Ação com Ícones
-                      Row(
-                        children: [
-                          _ActionButton(
-                            icon: Icons.pin_drop_outlined,
-                            label: 'Ao Vivo',
-                            onTap: () {
-                              // TODO: Navegar para a tela de localização em tempo real
-                            },
-                          ),
-                          const SizedBox(width: 8),
-                          _ActionButton(
-                            icon: Icons.qr_code_scanner_rounded,
-                            label: 'QR Code',
-                            onTap: () => _showQrCodeDialog(route),
-                          ),
-                        ],
-                      ),
-                      TextButton.icon(
-                        icon: Icon(
-                          Icons.edit_outlined,
-                          size: 18,
-                          color: primaryColor,
-                        ),
-                        label: Text(
-                          'Editar',
-                          style: TextStyle(color: primaryColor),
-                        ),
-                        onPressed: () {
-                          // TODO: Navegar para a tela de edição da rota
-                        },
-                      ),
-                    ],
-                  ),
+                  const SizedBox(height: 80), // Espaço para o FAB
                 ],
               ),
             ),
-          );
-        },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddMenu,
         backgroundColor: primaryColor,
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: 'Adicionar',
+      ),
+    );
+  }
+
+  Widget _buildHeader(Color onPrimaryColor) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Gerenciar Rotas',
+            style: AppTextStyles.lightTitle.copyWith(
+              color: onPrimaryColor,
+              fontSize: 24,
+            ),
+          ),
+          Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.3),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.warning_amber_rounded, color: onPrimaryColor),
+              tooltip: 'Enviar Alerta de Emergência',
+              onPressed: _showEmergencyAlert,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRouteCard(
+    BusRoute route,
+    Color surfaceColor,
+    Color textPrimaryColor,
+    Color textSecondaryColor,
+    Color primaryColor,
+  ) {
+    return Card(
+      elevation: 4,
+      color: surfaceColor,
+      margin: const EdgeInsets.only(bottom: 16.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              route.name,
+              style: AppTextStyles.lightTitle.copyWith(
+                fontSize: 18,
+                color: textPrimaryColor,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildInfoRow(
+              Icons.person_outline,
+              'Motorista: ${route.driver.name}',
+              textSecondaryColor,
+            ),
+            _buildInfoRow(
+              Icons.directions_bus_outlined,
+              'Ônibus: ${route.bus.plate}',
+              textSecondaryColor,
+            ),
+            _buildInfoRow(
+              Icons.location_on_outlined,
+              '${route.points.length} pontos de parada',
+              textSecondaryColor,
+            ),
+            const Divider(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    _ActionButton(
+                      icon: Icons.pin_drop_outlined,
+                      label: 'Ao Vivo',
+                      onTap: () {
+                        // TODO: Navegar para a tela de localização em tempo real
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    _ActionButton(
+                      icon: Icons.qr_code_scanner_rounded,
+                      label: 'QR Code',
+                      onTap: () => _showQrCodeDialog(route),
+                    ),
+                  ],
+                ),
+                TextButton.icon(
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: primaryColor,
+                  ),
+                  label: Text('Editar', style: TextStyle(color: primaryColor)),
+                  onPressed: () {
+                    // TODO: Navegar para a tela de edição da rota
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -378,6 +446,11 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor =
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkPrimary
+            : AppColors.lightPrimary;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -385,12 +458,9 @@ class _ActionButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.lightPrimary, size: 24),
+            Icon(icon, color: primaryColor, size: 24),
             const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(color: AppColors.lightPrimary, fontSize: 12),
-            ),
+            Text(label, style: TextStyle(color: primaryColor, fontSize: 12)),
           ],
         ),
       ),
