@@ -2,6 +2,7 @@
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
+import 'package:bus_attendance_app/features/estudante/home/notificacoes_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -214,16 +215,26 @@ class _StudentHomePageState extends State<StudentHomePage> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.3),
-                          ),
-                          child: Icon(
-                            Icons.notifications_none,
-                            color: onPrimaryColor,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NotificacoesPage(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 45,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withOpacity(0.3),
+                            ),
+                            child: Icon(
+                              Icons.notifications_none,
+                              color: onPrimaryColor,
+                            ),
                           ),
                         ),
                       ],
