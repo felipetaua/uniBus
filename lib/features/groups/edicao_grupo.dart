@@ -78,10 +78,31 @@ class _GroupEditPageState extends State<GroupEditPage> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () async {
                   try {
-                    await FirebaseFirestore.instance
+                    final firestore = FirebaseFirestore.instance;
+                    final groupRef = firestore
                         .collection('groups')
-                        .doc(widget.group.id)
-                        .delete();
+                        .doc(widget.group.id);
+
+                    // Inicia um batch para garantir a atomicidade
+                    final batch = firestore.batch();
+
+                    // 1. Encontra todos os usuários no grupo
+                    final membersSnapshot =
+                        await firestore
+                            .collection('users')
+                            .where('group_id', isEqualTo: widget.group.id)
+                            .get();
+
+                    // 2. Para cada membro, atualiza o group_id para null
+                    for (final doc in membersSnapshot.docs) {
+                      batch.update(doc.reference, {'group_id': null});
+                    }
+
+                    // 3. Deleta o grupo
+                    batch.delete(groupRef);
+
+                    await batch.commit();
+
                     if (mounted) {
                       Navigator.pop(context); // Fecha o dialog
                       Navigator.pop(context); // Volta para a lista de grupos
