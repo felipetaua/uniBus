@@ -1,7 +1,8 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
+import 'package:bus_attendance_app/features/gestor/rotas/create_route_page.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart'; 
+import 'package:qr_flutter/qr_flutter.dart';
 
 class Driver {
   final String name;
@@ -184,7 +185,11 @@ class _RotesPagesState extends State<RotesPages> {
                 title: const Text('Criar Nova Rota'),
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: Navegar para a tela de criação de rota
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CreateRoutePage(),
+                    ),
+                  );
                 },
               ),
               ListTile(

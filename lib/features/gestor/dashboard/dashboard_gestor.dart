@@ -167,6 +167,7 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
                     'Bem-vindo(a),',
                     style: AppTextStyles.lightBody.copyWith(
                       color: onPrimaryColor,
+                      fontSize: 14,
                     ),
                   ),
                   Text(
