@@ -19,7 +19,7 @@ dependencies:
   
   # Geração de PDF
   pdf: ^3.10.7
-  printing: ^5.12.0
+  printing: ^5.14.2
   
   # UI
   cupertino_icons: ^1.0.6
@@ -42,6 +42,7 @@ dependencies:
   firebase_core: ^4.0.0
   firebase_auth: ^6.0.0
   cloud_firestore: ^6.0.0
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:
