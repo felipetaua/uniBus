@@ -18,7 +18,7 @@ dependencies:
   intl: ^0.20.2
   
   # Geração de PDF
-  pdf: ^3.10.7
+  pdf: ^3.11.3
   printing: ^5.14.2
   
   # UI

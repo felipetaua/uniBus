@@ -3,7 +3,7 @@ import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 // Para o PDF, você precisará dos pacotes:
-import 'package:pdf/pdf.dart';
+import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
@@ -26,19 +26,19 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
       ),
     );
 
-    final pdf = pw.Document();
+    final pdfDoc = pw.Document();
 
-    pdf.addPage(
+    pdfDoc.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat.a4,
+        pageFormat: pdf.PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Center(child: pw.Text('Relatório de Presença - UniBus'));
         },
       ),
-    ); // Fim do pw.Page
+    );
 
     await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
+      onLayout: (pdf.PdfPageFormat format) async => pdfDoc.save(),
     );
   }
 
@@ -58,52 +58,125 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
         isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
     final Color primaryColor =
         isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
+    final Color onPrimaryColor =
+        isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Relatórios',
-          style: AppTextStyles.lightTitle.copyWith(color: textPrimaryColor),
-        ),
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: textPrimaryColor),
+      body: Stack(
+        children: [
+          // Fundo com gradiente
+          Container(
+            height: MediaQuery.of(context).size.height * 0.35,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFB06DF9),
+                  Color(0xFF828EF3),
+                  Color(0xFF84CFB2),
+                  Color(0xFFCAFF5C),
+                ],
+                stops: [0.0, 0.33, 0.66, 1.0],
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [backgroundColor.withOpacity(0.0), backgroundColor],
+                  stops: const [0.2, 1.0],
+                ),
+              ),
+            ),
+          ),
+          // Conteúdo principal rolável
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(onPrimaryColor),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: _buildDateFilter(primaryColor, textSecondaryColor),
+                  ),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Resumo do Período',
+                      style: AppTextStyles.lightTitle.copyWith(
+                        fontSize: 20,
+                        color: textPrimaryColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: _buildMetricsGrid(),
+                  ),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      'Presença na Semana',
+                      style: AppTextStyles.lightTitle.copyWith(
+                        fontSize: 20,
+                        color: textPrimaryColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: _buildAttendanceChart(
+                      surfaceColor,
+                      primaryColor,
+                      textSecondaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDateFilter(primaryColor, textSecondaryColor),
-            const SizedBox(height: 24),
-            Text(
-              'Resumo do Período',
-              style: AppTextStyles.lightTitle.copyWith(
-                fontSize: 20,
-                color: textPrimaryColor,
-              ),
+    );
+  }
+
+  Widget _buildHeader(Color onPrimaryColor) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Relatórios',
+            style: AppTextStyles.lightTitle.copyWith(
+              color: onPrimaryColor,
+              fontSize: 24,
             ),
-            const SizedBox(height: 16),
-            _buildMetricsGrid(),
-            const SizedBox(height: 24),
-            Text(
-              'Presença na Semana',
-              style: AppTextStyles.lightTitle.copyWith(
-                fontSize: 20,
-                color: textPrimaryColor,
-              ),
+          ),
+          Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.3),
             ),
-            const SizedBox(height: 16),
-            _buildAttendanceChart(
-              surfaceColor,
-              primaryColor,
-              textSecondaryColor,
+            child: IconButton(
+              icon: Icon(Icons.picture_as_pdf_outlined, color: onPrimaryColor),
+              tooltip: 'Gerar Relatório em PDF',
+              onPressed: _generatePdf,
             ),
-            const SizedBox(height: 32),
-            _buildPdfButton(primaryColor),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -225,7 +298,21 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
             BarChartData(
               alignment: BarChartAlignment.spaceAround,
               maxY: 50, // Capacidade máxima do ônibus
-              barTouchData: BarTouchData(enabled: true),
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  getTooltipColor: (group) => Colors.black87,
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    return BarTooltipItem(
+                      '${rod.toY.round()}',
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ),
               titlesData: FlTitlesData(
                 show: true,
                 bottomTitles: AxisTitles(
@@ -274,7 +361,6 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
                         fontSize: 12,
                         color: textSecondaryColor,
                       );
-                      // Mostra apenas os valores de 10 em 10 para não poluir
                       if (value % 10 != 0) {
                         return Container();
                       }
@@ -306,11 +392,11 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
               ),
               borderData: FlBorderData(show: false),
               barGroups: [
-                _makeBarData(0, 30, primaryColor),
-                _makeBarData(1, 35, primaryColor),
-                _makeBarData(2, 28, primaryColor),
-                _makeBarData(3, 40, primaryColor),
-                _makeBarData(4, 42, primaryColor),
+                _makeBarData(0, 30),
+                _makeBarData(1, 35),
+                _makeBarData(2, 28),
+                _makeBarData(3, 40),
+                _makeBarData(4, 42),
               ],
             ),
           ),
@@ -319,37 +405,24 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
     );
   }
 
-  BarChartGroupData _makeBarData(int x, double y, Color color) {
+  BarChartGroupData _makeBarData(int x, double y) {
     return BarChartGroupData(
       x: x,
       barRods: [
         BarChartRodData(
           toY: y,
-          color: color,
           width: 20,
+          gradient: const LinearGradient(
+            colors: [AppColors.lightPrimary, Color(0xFF84CFB2)],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(6),
             topRight: Radius.circular(6),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildPdfButton(Color primaryColor) {
-    return ElevatedButton.icon(
-      icon: const Icon(Icons.picture_as_pdf_outlined, color: Colors.white),
-      label: const Text(
-        'Gerar Relatório em PDF',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-      onPressed: _generatePdf,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
-        minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 5,
-      ),
     );
   }
 }
