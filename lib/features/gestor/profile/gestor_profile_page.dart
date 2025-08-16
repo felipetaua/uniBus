@@ -69,7 +69,7 @@ class _GestorProfilePageState extends State<GestorProfilePage> {
                 children: [
                   // Fundo com gradiente
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.35,
+                    height: MediaQuery.of(context).size.height * 0.45,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
