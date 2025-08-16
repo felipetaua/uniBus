@@ -1,7 +1,7 @@
 // lib/pages/gestor_dashboard_page.dart
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
-import 'package:bus_attendance_app/features/gestor/dashboard/gerenciamento_grupo.dart';
+import 'package:bus_attendance_app/features/groups/gerenciamento_grupo.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
