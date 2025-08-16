@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:bus_attendance_app/features/groups/edicao_grupo.dart';
-import 'package:bus_attendance_app/features/groups/lista_menbros.dart';
+import 'package:bus_attendance_app/features/groups/lista_membros.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
