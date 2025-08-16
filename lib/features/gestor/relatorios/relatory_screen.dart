@@ -251,7 +251,7 @@ class _GestorRelatoryPageState extends State<GestorRelatoryPage> {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 15,
       mainAxisSpacing: 15,
-      childAspectRatio: 1.5,
+      childAspectRatio: 1, // Diminuir aumenta a altura dos cards
       children: const [
         _MetricCard(
           title: 'Média Diária',
@@ -460,7 +460,7 @@ class _MetricCard extends StatelessWidget {
                   value,
                   style: AppTextStyles.lightTitle.copyWith(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 20,
                   ),
                 ),
                 Text(
