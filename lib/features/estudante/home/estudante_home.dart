@@ -1,5 +1,3 @@
-// lib/pages/student_home_page.dart
-
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:bus_attendance_app/features/estudante/home/notificacoes_page.dart';
@@ -7,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class Event {
   final String title;
@@ -29,11 +28,16 @@ class _StudentHomePageState extends State<StudentHomePage> {
   Map<String, dynamic>? _groupData;
   bool _isBusDayToday = false;
   bool _isLoading = true;
+  bool? _todaysAttendance;
+  bool _isUpdatingPresence = false;
+  bool? _presenceUpdateAction;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    initializeDateFormatting('pt_BR', null).then((_) {
+      _loadUserData();
+    });
   }
 
   void _loadUserData() async {
@@ -48,10 +52,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
     }
 
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser.uid)
+              .get();
 
       final userData = userDoc.data();
       final groupId = userData?['group_id'];
@@ -59,10 +64,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
       bool isBusDayToday = false;
 
       if (groupId != null) {
-        final groupDoc = await FirebaseFirestore.instance
-            .collection('groups')
-            .doc(groupId)
-            .get();
+        final groupDoc =
+            await FirebaseFirestore.instance
+                .collection('groups')
+                .doc(groupId)
+                .get();
 
         if (groupDoc.exists) {
           groupData = groupDoc.data();
@@ -72,12 +78,29 @@ class _StudentHomePageState extends State<StudentHomePage> {
         }
       }
 
+      // Carrega o status de presença para o dia atual
+      final today = DateTime.now();
+      final dateString = DateFormat('yyyy-MM-dd').format(today);
+      final attendanceDocId = '${currentUser.uid}_$dateString';
+
+      final attendanceDoc =
+          await FirebaseFirestore.instance
+              .collection('attendances')
+              .doc(attendanceDocId)
+              .get();
+
+      bool? todaysAttendance;
+      if (attendanceDoc.exists) {
+        todaysAttendance = attendanceDoc.data()?['will_attend'];
+      }
+
       if (mounted) {
         setState(() {
           _user = currentUser;
           _userData = userData;
           _groupData = groupData;
           _isBusDayToday = isBusDayToday;
+          _todaysAttendance = todaysAttendance;
           _isLoading = false;
         });
       }
@@ -91,12 +114,70 @@ class _StudentHomePageState extends State<StudentHomePage> {
     }
   }
 
+  Future<void> _confirmPresence(bool willAttend) async {
+    if (_user == null) return;
+
+    setState(() {
+      _isUpdatingPresence = true;
+      _presenceUpdateAction = willAttend;
+    });
+
+    try {
+      final today = DateTime.now();
+      final dateString = DateFormat('yyyy-MM-dd').format(today);
+      final attendanceDocId = '${_user!.uid}_$dateString';
+
+      await FirebaseFirestore.instance
+          .collection('attendances')
+          .doc(attendanceDocId)
+          .set({
+            'user_id': _user!.uid,
+            'user_name': _user?.displayName ?? 'Nome não disponível',
+            'group_id': _userData?['group_id'],
+            'date': Timestamp.fromDate(
+              DateTime(today.year, today.month, today.day),
+            ),
+            'will_attend': willAttend,
+            'updated_at': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+      if (mounted) {
+        setState(() {
+          _todaysAttendance = willAttend;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Sua presença foi ${willAttend ? "confirmada" : "marcada como ausente"}.',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao confirmar presença: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUpdatingPresence = false;
+          _presenceUpdateAction = null;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDarkMode = brightness == Brightness.dark;
 
-    // Lista de eventos - pode ser carregada de um banco de dados no futuro
     final List<Event> academicEvents = [
       Event(
         title: 'Palestra de IA',
@@ -111,8 +192,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
       Event(
         title: 'Maratona de Programação',
         date: '05/12/2025 às 09:00',
-        imagePath:
-            'assets/images/events/event_palestra.png', // Exemplo com imagem reutilizada
+        imagePath: 'assets/images/events/event_palestra.png',
       ),
     ];
 
@@ -136,7 +216,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
       );
     }
 
-    // Verifica se o usuário está vinculado a um grupo
     final bool hasGroup = _userData != null && _userData?['group_id'] != null;
 
     return Stack(
@@ -214,9 +293,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _userData != null
-                                      ? (_userData!['coins'] ?? 0).toString()
-                                      : '...',
+                                  (_userData?['coins'] ?? 0).toString(),
                                   style: AppTextStyles.lightBody.copyWith(
                                     color: onPrimaryColor,
                                     fontSize: 14,
@@ -232,9 +309,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  _userData != null
-                                      ? '${_userData!['xp'] ?? 0} XP'
-                                      : '...',
+                                  '${_userData?['xp'] ?? 0} XP',
                                   style: AppTextStyles.lightBody.copyWith(
                                     color: onPrimaryColor,
                                     fontSize: 14,
@@ -339,10 +414,12 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      toBeginningOfSentenceCase(DateFormat(
-                                        "EEEE, dd 'de' MMMM",
-                                        "pt_BR",
-                                      ).format(DateTime.now()))!,
+                                      toBeginningOfSentenceCase(
+                                        DateFormat(
+                                          "EEEE, dd 'de' MMMM",
+                                          "pt_BR",
+                                        ).format(DateTime.now()),
+                                      )!,
                                       style: AppTextStyles.lightTitle.copyWith(
                                         fontSize: 18,
                                         color: textPrimaryColor,
@@ -417,23 +494,44 @@ class _StudentHomePageState extends State<StudentHomePage> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Lógica para "Vou hoje"
-                          },
-                          icon: const Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'Vou hoje',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          onPressed:
+                              _isUpdatingPresence
+                                  ? null
+                                  : () => _confirmPresence(true),
+                          icon:
+                              (_isUpdatingPresence &&
+                                      _presenceUpdateAction == true)
+                                  ? Container()
+                                  : const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.white,
+                                  ),
+                          label:
+                              (_isUpdatingPresence &&
+                                      _presenceUpdateAction == true)
+                                  ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : const Text(
+                                    'Vou hoje',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(
-                              0xFF84CFB2,
-                            ), // Verde-água
+                            backgroundColor: const Color(0xFF84CFB2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
+                              side:
+                                  _todaysAttendance == true
+                                      ? const BorderSide(
+                                        color: Colors.white,
+                                        width: 2,
+                                      )
+                                      : BorderSide.none,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 15.0),
                           ),
@@ -442,21 +540,44 @@ class _StudentHomePageState extends State<StudentHomePage> {
                       const SizedBox(width: 15),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Lógica para "Não vou"
-                          },
-                          icon: const Icon(
-                            Icons.cancel_outlined,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'Não vou',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          onPressed:
+                              _isUpdatingPresence
+                                  ? null
+                                  : () => _confirmPresence(false),
+                          icon:
+                              (_isUpdatingPresence &&
+                                      _presenceUpdateAction == false)
+                                  ? Container()
+                                  : const Icon(
+                                    Icons.cancel_outlined,
+                                    color: Colors.white,
+                                  ),
+                          label:
+                              (_isUpdatingPresence &&
+                                      _presenceUpdateAction == false)
+                                  ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : const Text(
+                                    'Não vou',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFB687E7),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
+                              side:
+                                  _todaysAttendance == false
+                                      ? const BorderSide(
+                                        color: Colors.white,
+                                        width: 2,
+                                      )
+                                      : BorderSide.none,
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 15.0),
                           ),
@@ -491,6 +612,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
                   ),
                 ),
               ],
+
+              // CORREÇÃO DE LAYOUT: Movido para dentro da Column
               const SizedBox(height: 30),
               // Seção "Eventos acadêmicos"
               Padding(
