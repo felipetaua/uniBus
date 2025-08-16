@@ -57,62 +57,112 @@ class _GestorProfilePageState extends State<GestorProfilePage> {
         isDarkMode ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
     final Color textSecondaryColor =
         isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-    final Color primaryColor =
-        isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
+    final Color onPrimaryColor =
+        isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Meu Perfil',
-          style: AppTextStyles.lightTitle.copyWith(color: textPrimaryColor),
-        ),
-        backgroundColor: backgroundColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: textPrimaryColor),
-      ),
       body:
           _user == null
               ? const Center(child: CircularProgressIndicator())
-              : ListView(
-                padding: const EdgeInsets.all(20.0),
+              : Stack(
                 children: [
-                  _buildHeader(textPrimaryColor, textSecondaryColor),
-                  const SizedBox(height: 24),
-                  _buildInfoCard(surfaceColor, textPrimaryColor),
-                  const SizedBox(height: 24),
-                  _buildMenuList(surfaceColor, textPrimaryColor, primaryColor),
+                  // Fundo com gradiente
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFB06DF9),
+                          Color(0xFF828EF3),
+                          Color(0xFF84CFB2),
+                          Color(0xFFCAFF5C),
+                        ],
+                        stops: [0.0, 0.33, 0.66, 1.0],
+                      ),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            backgroundColor.withOpacity(0.0),
+                            backgroundColor,
+                          ],
+                          stops: const [0.2, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Conteúdo principal rolável
+                  SafeArea(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildHeader(onPrimaryColor, textSecondaryColor),
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            child: _buildInfoCard(
+                              surfaceColor,
+                              textPrimaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                            ),
+                            child: _buildMenuList(
+                              surfaceColor,
+                              textPrimaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
     );
   }
 
-  Widget _buildHeader(Color textPrimaryColor, Color textSecondaryColor) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage:
-              _user?.photoURL != null
-                  ? NetworkImage(_user!.photoURL!)
-                  : const AssetImage('assets/avatar/profile_placeholder.png')
-                      as ImageProvider,
-          backgroundColor: Colors.grey.shade300,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          _user?.displayName ?? 'Nome do Gestor',
-          style: AppTextStyles.lightTitle.copyWith(
-            fontSize: 22,
-            color: textPrimaryColor,
+  Widget _buildHeader(Color onPrimaryColor, Color textSecondaryColor) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage:
+                _user?.photoURL != null
+                    ? NetworkImage(_user!.photoURL!)
+                    : const AssetImage('assets/avatar/profile_placeholder.png')
+                        as ImageProvider,
+            backgroundColor: Colors.white.withOpacity(0.3),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          _user?.email ?? 'email@gestor.com',
-          style: AppTextStyles.lightBody.copyWith(color: textSecondaryColor),
-        ),
-      ],
+          const SizedBox(height: 16),
+          Text(
+            _user?.displayName ?? 'Nome do Gestor',
+            style: AppTextStyles.lightTitle.copyWith(
+              fontSize: 22,
+              color: onPrimaryColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _user?.email ?? 'email@gestor.com',
+            style: AppTextStyles.lightBody.copyWith(
+              color: onPrimaryColor.withOpacity(0.8),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -122,7 +172,7 @@ class _GestorProfilePageState extends State<GestorProfilePage> {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -153,15 +203,14 @@ class _GestorProfilePageState extends State<GestorProfilePage> {
     );
   }
 
-  Widget _buildMenuList(
-    Color surfaceColor,
-    Color textPrimaryColor,
-    Color primaryColor,
-  ) {
+  Widget _buildMenuList(Color surfaceColor, Color textPrimaryColor) {
     return Container(
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+        ],
       ),
       child: Column(
         children: [
@@ -171,18 +220,18 @@ class _GestorProfilePageState extends State<GestorProfilePage> {
             onTap: () {},
             color: textPrimaryColor,
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, indent: 16, endIndent: 16),
           _buildMenuTile(
             icon: Icons.help_outline,
             title: 'Ajuda e Suporte',
             onTap: () {},
             color: textPrimaryColor,
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, indent: 16, endIndent: 16),
           _buildMenuTile(
             icon: Icons.logout,
             title: 'Sair',
-            color: Colors.red,
+            color: Colors.red.shade400,
             onTap: () async {
               await AuthService().signOut();
               if (mounted) {
