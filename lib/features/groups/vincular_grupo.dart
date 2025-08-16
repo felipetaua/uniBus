@@ -77,10 +77,20 @@ class _VincularGrupoPageState extends State<VincularGrupoPage> {
     });
 
     try {
-      // Atualiza o documento do usuário com o ID do grupo
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-        'group_id': _groupId,
-      });
+      // Usar um batch para garantir que ambas as operações sejam atômicas
+      final batch = _firestore.batch();
+
+      // 1. Atualiza o documento do usuário com o ID do grupo
+      final userRef = _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid);
+      batch.update(userRef, {'group_id': _groupId});
+
+      // 2. Incrementa a contagem de membros no grupo
+      final groupRef = _firestore.collection('groups').doc(_groupId!);
+      batch.update(groupRef, {'member_count': FieldValue.increment(1)});
+
+      await batch.commit();
 
       if (mounted) {
         // Mostra o popup de boas-vindas

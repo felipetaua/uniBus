@@ -65,8 +65,9 @@ class _CreateRoutePageState extends State<CreateRoutePage> {
         'bus_id': _selectedBusId,
         'points': points,
         'invite_code': inviteCode,
-        'organizer_id': user.uid,
+        'owner_id': user.uid, // Unificado para 'owner_id' para consistência
         'created_at': FieldValue.serverTimestamp(),
+        'member_count': 0, // Inicializa a contagem de membros
       });
 
       if (mounted) {
