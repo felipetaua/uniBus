@@ -29,6 +29,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
   bool _isBusDayToday = false;
   bool _isLoading = true;
   bool? _todaysAttendance;
+  bool _pointsAwardedToday = false;
   bool _isUpdatingPresence = false;
   bool? _presenceUpdateAction;
 
@@ -90,8 +91,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
               .get();
 
       bool? todaysAttendance;
+      bool pointsAwardedToday = false;
       if (attendanceDoc.exists) {
-        todaysAttendance = attendanceDoc.data()?['will_attend'];
+        final attendanceData = attendanceDoc.data();
+        todaysAttendance = attendanceData?['will_attend'];
+        pointsAwardedToday = attendanceData?['points_awarded_for_day'] ?? false;
       }
 
       if (mounted) {
@@ -101,6 +105,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
           _groupData = groupData;
           _isBusDayToday = isBusDayToday;
           _todaysAttendance = todaysAttendance;
+          _pointsAwardedToday = pointsAwardedToday;
           _isLoading = false;
         });
       }
@@ -117,6 +122,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
   Future<void> _confirmPresence(bool willAttend) async {
     if (_user == null) return;
 
+    // Apenas concede pontos se o usuário confirmar que vai E os pontos ainda não foram concedidos hoje.
+    final bool shouldAwardPoints = willAttend && !_pointsAwardedToday;
+
     setState(() {
       _isUpdatingPresence = true;
       _presenceUpdateAction = willAttend;
@@ -126,22 +134,55 @@ class _StudentHomePageState extends State<StudentHomePage> {
       final today = DateTime.now();
       final dateString = DateFormat('yyyy-MM-dd').format(today);
       final attendanceDocId = '${_user!.uid}_$dateString';
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user!.uid);
 
-      await FirebaseFirestore.instance
+      // Usar um batch para garantir que ambas as escritas aconteçam ou falhem juntas.
+      final batch = FirebaseFirestore.instance.batch();
+
+      // 1. Define o status da presença.
+      final attendanceDocRef = FirebaseFirestore.instance
           .collection('attendances')
-          .doc(attendanceDocId)
-          .set({
-            'user_id': _user!.uid,
-            'user_name': _user?.displayName ?? 'Nome não disponível',
-            'group_id': _userData?['group_id'],
-            'date': Timestamp.fromDate(
-              DateTime(today.year, today.month, today.day),
-            ),
-            'will_attend': willAttend,
-            'updated_at': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+          .doc(attendanceDocId);
+
+      final Map<String, dynamic> attendanceData = {
+        'user_id': _user!.uid,
+        'user_name': _user?.displayName ?? 'Nome não disponível',
+        'group_id': _userData?['group_id'],
+        'date': Timestamp.fromDate(
+          DateTime(today.year, today.month, today.day),
+        ),
+        'will_attend': willAttend,
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+
+      // 2. Se for a primeira confirmação, atualiza moedas e XP.
+      if (shouldAwardPoints) {
+        batch.update(userDocRef, {
+          'coins': FieldValue.increment(12),
+          'xp': FieldValue.increment(18),
+        });
+        // Marca que os pontos foram concedidos para este dia.
+        attendanceData['points_awarded_for_day'] = true;
+      }
+
+      batch.set(attendanceDocRef, attendanceData, SetOptions(merge: true));
+
+      await batch.commit();
 
       if (mounted) {
+        // Atualiza o estado local para refletir as mudanças imediatamente na UI.
+        if (shouldAwardPoints) {
+          setState(() {
+            final currentCoins = (_userData?['coins'] ?? 0) as int;
+            final currentXp = (_userData?['xp'] ?? 0) as int;
+            _userData?['coins'] = currentCoins + 12;
+            _userData?['xp'] = currentXp + 18;
+            _pointsAwardedToday = true;
+          });
+        }
+
         setState(() {
           _todaysAttendance = willAttend;
         });
@@ -150,7 +191,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
             content: Text(
               'Sua presença foi ${willAttend ? "confirmada" : "marcada como ausente"}.',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor:
+                willAttend ? const Color(0xFF84CFB2) : const Color(0xFFB687E7),
           ),
         );
       }
@@ -164,6 +206,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
         );
       }
     } finally {
+      // Adiciona um pequeno delay para evitar spam de cliques
+      await Future.delayed(const Duration(seconds: 2));
+
       if (mounted) {
         setState(() {
           _isUpdatingPresence = false;
