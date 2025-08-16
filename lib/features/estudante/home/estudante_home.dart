@@ -6,6 +6,7 @@ import 'package:bus_attendance_app/features/estudante/home/notificacoes_page.dar
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Event {
   final String title;
@@ -25,6 +26,9 @@ class StudentHomePage extends StatefulWidget {
 class _StudentHomePageState extends State<StudentHomePage> {
   User? _user;
   Map<String, dynamic>? _userData;
+  Map<String, dynamic>? _groupData;
+  bool _isBusDayToday = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -33,19 +37,56 @@ class _StudentHomePageState extends State<StudentHomePage> {
   }
 
   void _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final userDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(currentUser.uid)
-              .get();
+    if (currentUser == null) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      final userData = userDoc.data();
+      final groupId = userData?['group_id'];
+      Map<String, dynamic>? groupData;
+      bool isBusDayToday = false;
+
+      if (groupId != null) {
+        final groupDoc = await FirebaseFirestore.instance
+            .collection('groups')
+            .doc(groupId)
+            .get();
+
+        if (groupDoc.exists) {
+          groupData = groupDoc.data();
+          final List<dynamic> activeDays = groupData?['active_days'] ?? [];
+          final int todayWeekday = DateTime.now().weekday;
+          isBusDayToday = activeDays.contains(todayWeekday);
+        }
+      }
 
       if (mounted) {
         setState(() {
           _user = currentUser;
-          _userData = userDoc.data();
+          _userData = userData;
+          _groupData = groupData;
+          _isBusDayToday = isBusDayToday;
+          _isLoading = false;
         });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar dados: ${e.toString()}')),
+        );
       }
     }
   }
@@ -87,6 +128,13 @@ class _StudentHomePageState extends State<StudentHomePage> {
         isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
     final Color onPrimaryColor =
         isDarkMode ? AppColors.darkOnPrimary : AppColors.lightOnPrimary;
+
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     // Verifica se o usuário está vinculado a um grupo
     final bool hasGroup = _userData != null && _userData?['group_id'] != null;
@@ -291,7 +339,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Sexta-feira, 18/07/2025',
+                                      toBeginningOfSentenceCase(DateFormat(
+                                        "EEEE, dd 'de' MMMM",
+                                        "pt_BR",
+                                      ).format(DateTime.now()))!,
                                       style: AppTextStyles.lightTitle.copyWith(
                                         fontSize: 18,
                                         color: textPrimaryColor,
@@ -299,7 +350,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      'Ônibus das 17h',
+                                      _groupData?['name'] ?? 'Ônibus',
                                       style: AppTextStyles.lightBody.copyWith(
                                         color: textSecondaryColor,
                                       ),
@@ -345,7 +396,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
               ),
               const SizedBox(height: 30),
               // Seção "Você vai hoje?"
-              if (hasGroup) ...[
+              if (hasGroup && _isBusDayToday) ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Center(

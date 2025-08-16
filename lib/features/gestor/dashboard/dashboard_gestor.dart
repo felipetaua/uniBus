@@ -1,6 +1,7 @@
 // lib/pages/gestor_dashboard_page.dart
 
 import 'package:bus_attendance_app/core/theme/colors.dart';
+import 'package:bus_attendance_app/features/gestor/cronograma/cronograma_presenca.dart';
 import 'package:bus_attendance_app/features/groups/gerenciamento_grupo.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -314,6 +315,11 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
             color: const Color(0xFFF3C482),
             onTap: () {
               // TODO: Navegar para a tela de criação de cronograma
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ScheduleCreationPage(),
+                ),
+              );
             },
           ),
         ],
