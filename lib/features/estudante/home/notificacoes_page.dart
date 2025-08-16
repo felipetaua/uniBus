@@ -86,10 +86,6 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     );
   }
 
-  // Dentro da classe _NotificacoesPageState em NotificacoesPage.dart
-
-  // ... (resto do seu código)
-
   Widget _buildNoGroupIndicator(
     Color primaryColor,
     Color textPrimaryColor,
@@ -155,8 +151,6 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     );
   }
 
-  // ... (resto do seu código)
-
   Widget _buildNotificationsList(
     Color textPrimaryColor,
     Color textSecondaryColor,
@@ -165,13 +159,13 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     final List<Map<String, String>> notifications = [
       {
         'title': 'Você esta em um grupo!',
-        'subtitle': 'Ahora você pode receber notificações do seu gestor.',
+        'subtitle': 'Agora você pode receber notificações do seu gestor.',
         'time': '1h atrás',
       },
       {
-        'title': 'Presença confirmada!',
-        'subtitle': 'Sua presença para o dia 25/10 foi confirmada com sucesso.',
-        'time': '2h atrás',
+        'title': 'Seu oníbus quebrou!',
+        'subtitle': 'Nossa equipe vai te ajudar.',
+        'time': '1min atrás',
       },
     ];
 
