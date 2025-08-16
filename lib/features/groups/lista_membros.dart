@@ -16,7 +16,7 @@ class GroupMember {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return GroupMember(
       uid: doc.id,
-      name: data['displayName'] ?? 'Nome não encontrado',
+      name: data['name'] ?? 'Nome não encontrado',
       avatarUrl: data['photoURL'] ?? '',
     );
   }
@@ -68,17 +68,24 @@ class _GroupMembersPageState extends State<GroupMembersPage> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () async {
                   try {
-                    // Lógica para remover o membro: setar o group_id dele para null
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(member.uid)
-                        .update({'group_id': null});
+                    // Usar um batch para garantir a atomicidade da operação
+                    final batch = FirebaseFirestore.instance.batch();
 
-                    // Atualizar a contagem de membros no grupo
-                    await FirebaseFirestore.instance
+                    // 1. Desvincula o usuário do grupo
+                    final userRef = FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(member.uid);
+                    batch.update(userRef, {'group_id': null});
+
+                    // 2. Decrementa a contagem de membros no grupo
+                    final groupRef = FirebaseFirestore.instance
                         .collection('groups')
-                        .doc(widget.group.id)
-                        .update({'member_count': FieldValue.increment(-1)});
+                        .doc(widget.group.id);
+                    batch.update(groupRef, {
+                      'member_count': FieldValue.increment(-1),
+                    });
+
+                    await batch.commit();
 
                     if (mounted) {
                       Navigator.pop(context);
@@ -259,19 +266,24 @@ class _GroupMembersPageState extends State<GroupMembersPage> {
         color: surfaceColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 8,
+            horizontal: 16,
+          ),
           leading: CircleAvatar(
             backgroundImage:
                 member.avatarUrl.isNotEmpty
                     ? NetworkImage(member.avatarUrl)
                     : const AssetImage('assets/avatar/profile_placeholder.png')
                         as ImageProvider,
-            radius: 25,
+            radius: 30,
           ),
           title: Text(
             member.name,
             style: AppTextStyles.lightBody.copyWith(
               fontWeight: FontWeight.bold,
               color: textPrimaryColor,
+              fontSize: 16,
             ),
           ),
           trailing: IconButton(
