@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
     _loadUserData();
     _tabController = TabController(length: 2, vsync: this);
-    _collectionTabController = TabController(length: 2, vsync: this);
+    _collectionTabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -72,6 +72,9 @@ class _ProfilePageState extends State<ProfilePage>
     } else if (category == 'Avatares') {
       fieldToUpdate = 'equipped_avatar_image_url';
       idFieldToUpdate = 'equipped_avatar_id';
+    } else if (category == 'Cosméticos') {
+      // TODO: Definir os campos para cosméticos quando a lógica for implementada
+      return;
     } else {
       return;
     }
@@ -363,24 +366,76 @@ class _ProfilePageState extends State<ProfilePage>
                     controller: _tabController,
                     children: [
                       // Aba de Configurações
-                      ListView(
-                        shrinkWrap: true,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.logout),
-                            title: const Text('Sair'),
-                            onTap: () async {
-                              await AuthService().signOut();
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const LoginStudentPage(),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.purple[700]!,
+                                    Colors.blue[400]!,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                                (Route<dynamic> route) => false,
-                              );
-                            },
-                          ),
-                        ],
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/gift-shop.png',
+                                    width: 80,
+                                    height: 80,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Sua Coleção',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Equipe seus itens favoritos para personalizar seu perfil.',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ListTile(
+                              leading: const Icon(Icons.logout),
+                              title: const Text('Sair'),
+                              onTap: () async {
+                                await AuthService().signOut();
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const LoginStudentPage(),
+                                  ),
+                                  (Route<dynamic> route) => false,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                       // Aba de Coleção
                       StreamBuilder<QuerySnapshot>(
@@ -419,72 +474,35 @@ class _ProfilePageState extends State<ProfilePage>
                                   .where((doc) => doc['category'] == 'Avatares')
                                   .toList();
 
+                          final List<DocumentSnapshot> cosmetics =
+                              inventoryDocs
+                                  .where(
+                                    (doc) => doc['category'] == 'Cosméticos',
+                                  )
+                                  .toList();
+
                           final String? equippedBgId =
                               _userData?['equipped_background_id'];
                           final String? equippedAvatarId =
                               _userData?['equipped_avatar_id'];
+                          final String? equippedCosmeticId =
+                              _userData?['equipped_cosmetic_id'];
 
                           return Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.purple[700]!,
-                                        Colors.blue[400]!,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/gift-shop.png',
-                                        width: 80,
-                                        height: 80,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      const Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Sua Coleção',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              'Equipe seus itens favoritos para personalizar seu perfil.',
-                                              style: TextStyle(
-                                                color: Colors.white70,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
                               TabBar(
                                 controller: _collectionTabController,
                                 labelColor: Colors.black,
                                 unselectedLabelColor: Colors.grey,
                                 indicatorColor: Colors.purple,
-                                tabs: [
-                                  Tab(text: 'Planos de Fundo'),
-                                  Tab(text: 'Avatares'),
+                                tabs: const [
+                                  Tab(icon: Icon(Icons.wallpaper_outlined)),
+                                  Tab(
+                                    icon: Icon(
+                                      Icons.face_retouching_natural_outlined,
+                                    ),
+                                  ),
+                                  Tab(icon: Icon(Icons.auto_awesome_outlined)),
                                 ],
                               ),
                               Expanded(
@@ -499,6 +517,10 @@ class _ProfilePageState extends State<ProfilePage>
                                     _buildItemGrid(
                                       avatars, // Corrigido
                                       equippedAvatarId,
+                                    ),
+                                    _buildItemGrid(
+                                      cosmetics,
+                                      equippedCosmeticId,
                                     ),
                                   ],
                                 ),
@@ -582,7 +604,9 @@ class CollectionItemCard extends StatelessWidget {
       imageWidget = Image.asset(
         imageUrl,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => const Icon(Icons.nearby_error_outlined),
+        errorBuilder:
+            (context, error, stackTrace) =>
+                const Icon(Icons.nearby_error_outlined),
       );
     }
 
