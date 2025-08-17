@@ -41,6 +41,27 @@ class _StudentHomePageState extends State<StudentHomePage> {
     });
   }
 
+  // --- Lógica de Nível (copiada de profile_page.dart para consistência) ---
+  // XP necessário para ir do nível (level - 1) para o nível (level)
+  int _xpForNextLevel(int currentLevel) {
+    // Ex: Nível 1->2: 100xp, 2->3: 150xp, 3->4: 200xp
+    return 50 + ((currentLevel - 1) * 50);
+  }
+
+  // Calcula o nível atual com base no XP total
+  int _calculateLevel(int totalXp) {
+    int level = 1;
+    int xpForLevelUp = _xpForNextLevel(level);
+    int cumulativeXp = 0;
+
+    while (totalXp >= cumulativeXp + xpForLevelUp) {
+      cumulativeXp += xpForLevelUp;
+      level++;
+      xpForLevelUp = _xpForNextLevel(level);
+    }
+    return level;
+  }
+
   void _loadUserData() async {
     setState(() {
       _isLoading = true;
@@ -138,6 +159,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
           .collection('users')
           .doc(_user!.uid);
 
+      // Pega o XP e nível atuais ANTES de qualquer modificação
+      final int currentXp = (_userData?['xp'] ?? 0) as int;
+      final int oldLevel = _calculateLevel(currentXp);
+
       // Usar um batch para garantir que ambas as escritas aconteçam ou falhem juntas.
       final batch = FirebaseFirestore.instance.batch();
 
@@ -158,10 +183,39 @@ class _StudentHomePageState extends State<StudentHomePage> {
       };
 
       // 2. Se for a primeira confirmação, atualiza moedas e XP.
+      int coinsGained = 0;
+      int xpGained = 0;
+
       if (shouldAwardPoints) {
+        coinsGained = 12; // Moedas por confirmar presença
+        xpGained = 18; // XP por confirmar presença
+
+        // Verifica se o usuário subiu de nível
+        final int newXp = currentXp + xpGained;
+        final int newLevel = _calculateLevel(newXp);
+
+        if (newLevel > oldLevel) {
+          final int levelsGained = newLevel - oldLevel;
+          final int levelUpCoinReward =
+              levelsGained * 50; // 50 moedas por nível
+          coinsGained += levelUpCoinReward;
+
+          // Mostra uma notificação para o usuário
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Parabéns! Você subiu para o nível $newLevel e ganhou $levelUpCoinReward moedas!',
+                ),
+                backgroundColor: Colors.amber[700],
+              ),
+            );
+          }
+        }
+
         batch.update(userDocRef, {
-          'coins': FieldValue.increment(12),
-          'xp': FieldValue.increment(18),
+          'coins': FieldValue.increment(coinsGained),
+          'xp': FieldValue.increment(xpGained),
         });
         // Marca que os pontos foram concedidos para este dia.
         attendanceData['points_awarded_for_day'] = true;
@@ -176,9 +230,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
         if (shouldAwardPoints) {
           setState(() {
             final currentCoins = (_userData?['coins'] ?? 0) as int;
-            final currentXp = (_userData?['xp'] ?? 0) as int;
-            _userData?['coins'] = currentCoins + 12;
-            _userData?['xp'] = currentXp + 18;
+            _userData?['coins'] = currentCoins + coinsGained;
+            _userData?['xp'] = currentXp + xpGained;
             _pointsAwardedToday = true;
           });
         }

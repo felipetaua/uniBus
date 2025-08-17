@@ -275,6 +275,7 @@ class _ProfilePageState extends State<ProfilePage>
                         ],
                       ),
                       const SizedBox(height: 15),
+
                       Text(
                         'Level $currentLevel',
                         style: const TextStyle(
@@ -300,7 +301,9 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                             ),
                           ),
+
                           const SizedBox(width: 15),
+
                           Column(
                             children: [
                               Image.asset(
@@ -309,7 +312,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 height: 30,
                               ),
                               const Text(
-                                'x2',
+                                '50',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
