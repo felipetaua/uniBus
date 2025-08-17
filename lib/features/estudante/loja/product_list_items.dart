@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 // Um modelo de dados simples para representar um produto
 class Product {
@@ -221,10 +222,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Colors.grey[100],
+        backgroundColor: const Color(0xFF42A5F5),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          // Altera o ícone de voltar para preto para ser visível no fundo claro
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: TextField(
@@ -245,11 +248,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
           InkWell(
             onTap: () {}, // Ação do botão
             borderRadius: BorderRadius.circular(8),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [Text('Raridade'), Icon(Icons.keyboard_arrow_down)],
+                children: [
+                  Text('Raridade', style: TextStyle(color: Colors.white60)),
+                  Icon(Icons.keyboard_arrow_down, color: Colors.white60),
+                ],
               ),
             ),
           ),
