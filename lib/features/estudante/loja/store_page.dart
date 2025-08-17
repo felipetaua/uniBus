@@ -178,7 +178,9 @@ class _StorePageState extends State<StorePage> {
                                 const SizedBox(width: 4),
                                 Text(
                                   _userData != null
-                                      ? (_userData!['coins'] ?? 0).toString()
+                                      ? ((_userData!['coins'] ?? 0) as num)
+                                          .toInt()
+                                          .toString()
                                       : '...',
                                   style: const TextStyle(
                                     color: Colors.white,

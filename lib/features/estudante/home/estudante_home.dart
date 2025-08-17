@@ -390,7 +390,9 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  (_userData?['coins'] ?? 0).toString(),
+                                  ((_userData?['coins'] ?? 0) as num)
+                                      .toInt()
+                                      .toString(),
                                   style: AppTextStyles.lightBody.copyWith(
                                     color: onPrimaryColor,
                                     fontSize: 14,
@@ -434,7 +436,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             color: onPrimaryColor,
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 2),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(

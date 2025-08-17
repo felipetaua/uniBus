@@ -403,10 +403,10 @@ class _ProfilePageState extends State<ProfilePage>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _userData != null
-                                ? (_userData!['coins'] ?? 0).toString()
+                            _userData != null 
+                                ? ((_userData!['coins'] ?? 0) as num).toInt().toString()
                                 : '...',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),

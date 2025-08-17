@@ -162,7 +162,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         }
 
         transaction.update(userRef, {
-          'coins': FieldValue.increment(-totalCost),
+          'coins': FieldValue.increment(-totalCost.toInt()),
         });
 
         for (final cartItem in _cart.values) {

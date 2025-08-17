@@ -150,7 +150,9 @@ class _GiftsScreenState extends State<GiftsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _userData != null ? (_userData!['coins'] ?? 0).toString() : '...',
+              _userData != null
+                  ? ((_userData!['coins'] ?? 0) as num).toInt().toString()
+                  : '...',
               style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
