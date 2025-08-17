@@ -436,7 +436,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                             color: onPrimaryColor,
                           ),
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
