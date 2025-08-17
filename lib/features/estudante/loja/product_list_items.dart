@@ -42,13 +42,23 @@ class Product {
       );
     }
 
+    // Lógica para tratar o campo 'stock' que pode ser um número ou a string "Ilimitado"
+    int stockValue;
+    final stockData = data['stock'];
+    if (stockData is String && stockData.toLowerCase() == 'ilimitado') {
+      stockValue =
+          -1; // Usamos -1 para representar estoque ilimitado internamente
+    } else {
+      stockValue = int.tryParse(stockData?.toString() ?? '0') ?? 0;
+    }
+
     return Product(
       id: doc.id,
       imageUrl: data['imageUrl'] ?? '',
       name: data['name'] ?? 'Produto sem nome',
       category: data['category'] ?? 'Geral',
       price: double.tryParse(data['price']?.toString() ?? '0.0') ?? 0.0,
-      stock: int.tryParse(data['stock']?.toString() ?? '0') ?? 0,
+      stock: stockValue,
       rating: double.tryParse(data['rating']?.toString() ?? '0.0') ?? 0.0,
       reviewCount: int.tryParse(data['reviewCount']?.toString() ?? '0') ?? 0,
     );
@@ -75,7 +85,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   bool _isPurchasing = false;
 
   void _addToCart(Product product) {
-    if (product.stock <= 0) {
+    // Não pode adicionar se o estoque for limitado e zerado.
+    if (product.stock != -1 && product.stock <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Este item está fora de estoque!'),
@@ -87,7 +98,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
     setState(() {
       if (_cart.containsKey(product.id)) {
-        if (_cart[product.id]!.quantity < product.stock) {
+        // Permite adicionar se for ilimitado ou se a quantidade for menor que o estoque.
+        if (product.stock == -1 ||
+            _cart[product.id]!.quantity < product.stock) {
           _cart[product.id]!.quantity++;
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -169,9 +182,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
           }
 
           // Atualiza o estoque do produto
-          transaction.update(productRef, {
-            'stock': FieldValue.increment(-cartItem.quantity),
-          });
+          // Apenas decrementa o estoque se não for ilimitado
+          if (cartItem.product.stock != -1) {
+            transaction.update(productRef, {
+              'stock': FieldValue.increment(-cartItem.quantity),
+            });
+          }
         }
       });
 
@@ -331,10 +347,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // 2 colunas
+                              crossAxisCount: 2, // colunas
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: 0.65,
+                              childAspectRatio: 0.57,
                             ),
                         itemCount: products.length,
                         itemBuilder: (context, index) {
@@ -625,48 +641,67 @@ class GridProductCard extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${product.stock} restantes',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 10),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${product.rating} (${product.reviewCount})',
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.add_circle,
-                        color: Colors.blueAccent,
+          // Envolve a seção de detalhes em um Expanded para preencher o espaço restante
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Informações do produto (nome, estoque)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.stock == -1
+                            ? 'Ilimitado'
+                            : '${product.stock} restantes',
+                        style: TextStyle(
+                          color:
+                              product.stock == 0
+                                  ? Colors.red
+                                  : Colors.grey[600],
+                          fontSize: 10,
+                        ),
                       ),
-                      iconSize: 22,
-                      onPressed: onAddToCart,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(height: 4),
+                      Text(
+                        product.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  // Avaliação e botão de adicionar
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${product.rating} (${product.reviewCount})',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.add_circle,
+                          color: Colors.blueAccent,
+                        ),
+                        iconSize: 30, // Aumenta a área de toque
+                        onPressed: onAddToCart,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
