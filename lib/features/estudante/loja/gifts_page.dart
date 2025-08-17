@@ -166,9 +166,11 @@ class _GiftsScreenState extends State<GiftsScreen> {
                   'Comprar', // Alterado para chamar o método da classe
                   _showBuyCoinsModal,
                 ),
-                _buildActionItem(Icons.redeem, 'Receber', () {
-                  // TODO: Implementar lógica para receber recompensas
-                }),
+                _buildActionItem(
+                  Icons.redeem,
+                  'Receber',
+                  _showReceiveCoinsModal,
+                ),
               ],
             ),
           ],
@@ -472,6 +474,157 @@ class _GiftsScreenState extends State<GiftsScreen> {
           ),
           child: Text(
             price,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Modal para ganhar moedas
+  void _showReceiveCoinsModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (builderContext) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('assets/images/header_coins.png'),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Ganhe Unicoins Grátis',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Complete tarefas e desafios para acumular Unicoins e trocar por itens incríveis na loja.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildEarnCoinOptionItem(
+                      icon: Icons.login,
+                      title: 'Login Diário',
+                      subtitle: 'Ganhe moedas por entrar todo dia',
+                      reward: '+10',
+                      onTap: () {
+                        // TODO: Implementar lógica de recompensa diária
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Recompensa diária ainda não implementada.',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildEarnCoinOptionItem(
+                      icon: Icons.slow_motion_video,
+                      title: 'Assistir Anúncio',
+                      subtitle: 'Ganhe moedas assistindo um vídeo',
+                      reward: '+5',
+                      onTap: () {
+                        // TODO: Implementar lógica para assistir anúncios
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Recompensa por anúncio ainda não implementada.',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Image.asset(
+                'assets/images/gratis_banner.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEarnCoinOptionItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String reward,
+    required VoidCallback onTap,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Icon(icon, size: 30, color: Colors.grey[700]),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton.icon(
+          onPressed: onTap,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+          icon: Image.asset(
+            'assets/icons/coin_icon.png',
+            height: 16,
+            width: 16,
+          ),
+          label: Text(
+            reward,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
