@@ -41,7 +41,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
     });
   }
 
-  // --- Lógica de Nível (copiada de profile_page.dart para consistência) ---
   // XP necessário para ir do nível (level - 1) para o nível (level)
   int _xpForNextLevel(int currentLevel) {
     // Ex: Nível 1->2: 100xp, 2->3: 150xp, 3->4: 200xp

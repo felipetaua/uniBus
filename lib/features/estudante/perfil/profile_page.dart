@@ -174,416 +174,474 @@ class _ProfilePageState extends State<ProfilePage>
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          const SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey[200],
-                        image: DecorationImage(
-                          image: backgroundProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child:
-                          avatarWidget != null
-                              ? Center(child: avatarWidget)
-                              : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          currentLevel.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+      body: Stack(
+        children: [
+          // Fundo com gradiente que se estende para a status bar
+          Container(
+            height: MediaQuery.of(context).size.height * 0.35,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFFB06DF9),
+                  Color(0xFF828EF3),
+                  Color(0xFF84CFB2),
+                  Color(0xFFCAFF5C),
+                ],
+                stops: [0.0, 0.33, 0.66, 1.0],
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white.withOpacity(0.0), Colors.white],
+                  stops: const [0.2, 1.0],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
+              ),
+            ),
+          ),
+          // Conteúdo principal, usando SafeArea para evitar a sobreposição com a status bar
+          SafeArea(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        _user?.displayName ?? 'User Guest',
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
+                      Stack(
+                        alignment: Alignment.bottomRight,
                         children: [
-                          Text(
-                            // Exibe os 6 primeiros caracteres do UID do usuário
-                            'ID: ${_user != null && _user!.uid.length >= 6 ? _user!.uid.substring(0, 6).toUpperCase() : '...'}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
+                          Container(
+                            width: 100,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.grey[200],
+                              image: DecorationImage(
+                                image: backgroundProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
+                            child:
+                                avatarWidget != null
+                                    ? Center(child: avatarWidget)
+                                    : null,
                           ),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {
-                              if (_user?.uid != null) {
-                                Clipboard.setData(
-                                  ClipboardData(text: _user!.uid),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'ID copiado para a área de transferência!',
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Icon(
-                              Icons.copy,
-                              size: 16,
-                              color: Colors.grey[600],
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                currentLevel.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 15),
-
-                      Text(
-                        'Level $currentLevel',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: SizedBox(
-                                height: 10,
-                                child: LinearProgressIndicator(
-                                  value: levelProgress,
-                                  backgroundColor: const Color(0xFFE0E0E0),
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    progressColor,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              _user?.displayName ?? 'User Guest',
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Text(
+                                  // Exibe os 6 primeiros caracteres do UID do usuário
+                                  'ID: ${_user != null && _user!.uid.length >= 6 ? _user!.uid.substring(0, 6).toUpperCase() : '...'}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
+                                const SizedBox(width: 4),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (_user?.uid != null) {
+                                      Clipboard.setData(
+                                        ClipboardData(text: _user!.uid),
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'ID copiado para a área de transferência!',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Icon(
+                                    Icons.copy,
+                                    size: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
+
+                            Text(
+                              'Level $currentLevel',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 15),
-                          Column(
-                            children: [
-                              Image.asset(
-                                'assets/icons/stack-coins.png',
-                                width: 30,
-                                height: 30,
-                              ),
-                              const Text(
-                                '50',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: SizedBox(
+                                      height: 10,
+                                      child: LinearProgressIndicator(
+                                        value: levelProgress,
+                                        backgroundColor: const Color.fromARGB(
+                                          255,
+                                          247,
+                                          247,
+                                          247,
+                                        ),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              progressColor,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 15),
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/icons/stack-coins.png',
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    const Text(
+                                      '50',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 24.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/icons/tropy_icon.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            '-',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Melhor Rank',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/icons/coin_icon.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _userData != null
+                                ? (_userData!['coins'] ?? 0).toString()
+                                : '...',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Unicoins',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/icons/xp_icon.png',
+                            width: 40,
+                            height: 40,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _userData != null
+                                ? (_userData!['xp'] ?? 0).toString()
+                                : '...',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Experiência',
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 24.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/icons/tropy_icon.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      '-',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Melhor Rank',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/icons/coin_icon.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _userData != null
-                          ? (_userData!['coins'] ?? 0).toString()
-                          : '...',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('Unicoins', style: TextStyle(color: Colors.grey[600])),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Image.asset(
-                      'assets/icons/xp_icon.png',
-                      width: 40,
-                      height: 40,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _userData != null
-                          ? (_userData!['xp'] ?? 0).toString()
-                          : '...',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Experiência',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: Colors.purple,
-                  indicatorWeight: 4.0,
-                  tabs: const [
-                    Tab(text: 'Configurações'),
-                    Tab(text: 'Coleção'),
-                  ],
-                ),
                 Expanded(
-                  // Adicionado Expanded para que o TabBarView ocupe o espaço restante
-                  child: TabBarView(
-                    controller: _tabController,
+                  child: Column(
                     children: [
-                      // Aba de Configurações
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ListView(
-                          shrinkWrap: true,
+                      TabBar(
+                        controller: _tabController,
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.grey,
+                        indicatorColor: Colors.purple,
+                        indicatorWeight: 4.0,
+                        tabs: const [
+                          Tab(text: 'Configurações'),
+                          Tab(text: 'Coleção'),
+                        ],
+                      ),
+                      Expanded(
+                        // Adicionado Expanded para que o TabBarView ocupe o espaço restante
+                        child: TabBarView(
+                          controller: _tabController,
                           children: [
-                            Container(
+                            // Aba de Configurações
+                            Padding(
                               padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.purple[700]!,
-                                    Colors.blue[400]!,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Row(
+                              child: ListView(
+                                shrinkWrap: true,
                                 children: [
-                                  Image.asset(
-                                    'assets/icons/gift-shop.png',
-                                    width: 80,
-                                    height: 80,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                  Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.purple[700]!,
+                                          Colors.blue[400]!,
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Row(
                                       children: [
-                                        Text(
-                                          'Sua Coleção',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        Image.asset(
+                                          'assets/icons/gift-shop.png',
+                                          width: 80,
+                                          height: 80,
                                         ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Equipe seus itens favoritos para personalizar seu perfil.',
-                                          style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 14,
+                                        const SizedBox(width: 12),
+                                        const Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Sua Coleção',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'Equipe seus itens favoritos para personalizar seu perfil.',
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
+                                  const SizedBox(height: 16),
+                                  ListTile(
+                                    leading: const Icon(Icons.logout),
+                                    title: const Text('Sair'),
+                                    onTap: () async {
+                                      await AuthService().signOut();
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  const LoginStudentPage(),
+                                        ),
+                                        (Route<dynamic> route) => false,
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            ListTile(
-                              leading: const Icon(Icons.logout),
-                              title: const Text('Sair'),
-                              onTap: () async {
-                                await AuthService().signOut();
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const LoginStudentPage(),
-                                  ),
-                                  (Route<dynamic> route) => false,
+                            // Aba de Coleção
+                            StreamBuilder<QuerySnapshot>(
+                              stream:
+                                  _user != null
+                                      ? FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(_user!.uid)
+                                          .collection('inventory')
+                                          .snapshots()
+                                      : null,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.docs.isEmpty) {
+                                  return const Center(
+                                    child: Text('Você ainda não possui itens.'),
+                                  );
+                                }
+
+                                final inventoryDocs = snapshot.data!.docs;
+                                final List<DocumentSnapshot> backgrounds =
+                                    inventoryDocs
+                                        .where(
+                                          (doc) =>
+                                              doc['category'] ==
+                                              'Planos de Fundo',
+                                        )
+                                        .toList();
+                                final List<DocumentSnapshot> avatars =
+                                    inventoryDocs
+                                        .where(
+                                          (doc) =>
+                                              doc['category'] == 'Avatares',
+                                        )
+                                        .toList();
+
+                                final List<DocumentSnapshot> cosmetics =
+                                    inventoryDocs
+                                        .where(
+                                          (doc) =>
+                                              doc['category'] == 'Cosméticos',
+                                        )
+                                        .toList();
+
+                                final String? equippedBgId =
+                                    _userData?['equipped_background_id'];
+                                final String? equippedAvatarId =
+                                    _userData?['equipped_avatar_id'];
+                                final String? equippedCosmeticId =
+                                    _userData?['equipped_cosmetic_id'];
+
+                                return Column(
+                                  children: [
+                                    TabBar(
+                                      controller: _collectionTabController,
+                                      labelColor: Colors.black,
+                                      unselectedLabelColor: Colors.grey,
+                                      indicatorColor: Colors.purple,
+                                      tabs: const [
+                                        Tab(
+                                          icon: Icon(Icons.wallpaper_outlined),
+                                        ),
+                                        Tab(
+                                          icon: Icon(
+                                            Icons
+                                                .face_retouching_natural_outlined,
+                                          ),
+                                        ),
+                                        Tab(
+                                          icon: Icon(
+                                            Icons.auto_awesome_outlined,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: TabBarView(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        controller: _collectionTabController,
+                                        children: [
+                                          _buildItemGrid(
+                                            backgrounds, // Corrigido
+                                            equippedBgId,
+                                          ),
+                                          _buildItemGrid(
+                                            avatars, // Corrigido
+                                            equippedAvatarId,
+                                          ),
+                                          _buildItemGrid(
+                                            cosmetics,
+                                            equippedCosmeticId,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 );
                               },
                             ),
                           ],
                         ),
-                      ),
-                      // Aba de Coleção
-                      StreamBuilder<QuerySnapshot>(
-                        stream:
-                            _user != null
-                                ? FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(_user!.uid)
-                                    .collection('inventory')
-                                    .snapshots()
-                                : null,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (!snapshot.hasData ||
-                              snapshot.data!.docs.isEmpty) {
-                            return const Center(
-                              child: Text('Você ainda não possui itens.'),
-                            );
-                          }
-
-                          final inventoryDocs = snapshot.data!.docs;
-                          final List<DocumentSnapshot> backgrounds =
-                              inventoryDocs
-                                  .where(
-                                    (doc) =>
-                                        doc['category'] == 'Planos de Fundo',
-                                  )
-                                  .toList();
-                          final List<DocumentSnapshot> avatars =
-                              inventoryDocs
-                                  .where((doc) => doc['category'] == 'Avatares')
-                                  .toList();
-
-                          final List<DocumentSnapshot> cosmetics =
-                              inventoryDocs
-                                  .where(
-                                    (doc) => doc['category'] == 'Cosméticos',
-                                  )
-                                  .toList();
-
-                          final String? equippedBgId =
-                              _userData?['equipped_background_id'];
-                          final String? equippedAvatarId =
-                              _userData?['equipped_avatar_id'];
-                          final String? equippedCosmeticId =
-                              _userData?['equipped_cosmetic_id'];
-
-                          return Column(
-                            children: [
-                              TabBar(
-                                controller: _collectionTabController,
-                                labelColor: Colors.black,
-                                unselectedLabelColor: Colors.grey,
-                                indicatorColor: Colors.purple,
-                                tabs: const [
-                                  Tab(icon: Icon(Icons.wallpaper_outlined)),
-                                  Tab(
-                                    icon: Icon(
-                                      Icons.face_retouching_natural_outlined,
-                                    ),
-                                  ),
-                                  Tab(icon: Icon(Icons.auto_awesome_outlined)),
-                                ],
-                              ),
-                              Expanded(
-                                child: TabBarView(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  controller: _collectionTabController,
-                                  children: [
-                                    _buildItemGrid(
-                                      backgrounds, // Corrigido
-                                      equippedBgId,
-                                    ),
-                                    _buildItemGrid(
-                                      avatars, // Corrigido
-                                      equippedAvatarId,
-                                    ),
-                                    _buildItemGrid(
-                                      cosmetics,
-                                      equippedCosmeticId,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        },
                       ),
                     ],
                   ),
