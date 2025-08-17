@@ -301,9 +301,7 @@ class _ProfilePageState extends State<ProfilePage>
                               ),
                             ),
                           ),
-
                           const SizedBox(width: 15),
-
                           Column(
                             children: [
                               Image.asset(
