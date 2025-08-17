@@ -80,13 +80,71 @@ class _ProfilePageState extends State<ProfilePage>
     }
 
     await userRef.update({fieldToUpdate: imageUrl, idFieldToUpdate: itemId});
-    _loadUserData(); // Recarrega os dados para atualizar a UI
+    _loadUserData();
+  }
+
+  // XP necessário para ir do nível (level - 1) para o nível (level)
+  int _xpForNextLevel(int currentLevel) {
+    // Ex: Nível 1->2: 100xp, 2->3: 150xp, 3->4: 200xp
+    return 50 + ((currentLevel - 1) * 50);
+  }
+
+  // Calcula o nível atual com base no XP total
+  int _calculateLevel(int totalXp) {
+    int level = 1;
+    int xpForLevelUp = _xpForNextLevel(level);
+    int cumulativeXp = 0;
+
+    while (totalXp >= cumulativeXp + xpForLevelUp) {
+      cumulativeXp += xpForLevelUp;
+      level++;
+      xpForLevelUp = _xpForNextLevel(level);
+    }
+    return level;
+  }
+
+  // Calcula o XP total necessário para atingir um determinado nível
+  int _getTotalXpForLevel(int level) {
+    if (level <= 1) return 0;
+    int totalXp = 0;
+    for (int i = 1; i < level; i++) {
+      totalXp += _xpForNextLevel(i);
+    }
+    return totalXp;
+  }
+
+  // Calcula o progresso percentual para o próximo nível
+  double _calculateProgress(int totalXp) {
+    final int currentLevel = _calculateLevel(totalXp);
+    final int xpForCurrentLevelStart = _getTotalXpForLevel(currentLevel);
+    final int xpNeededForNextLevel = _xpForNextLevel(currentLevel);
+
+    if (xpNeededForNextLevel == 0) return 1.0; // Evita divisão por zero
+
+    final int xpIntoCurrentLevel = totalXp - xpForCurrentLevelStart;
+    return xpIntoCurrentLevel / xpNeededForNextLevel;
   }
 
   @override
   Widget build(BuildContext context) {
     final String? backgroundUrl = _userData?['equipped_background_image_url'];
     final String? avatarUrl = _userData?['equipped_avatar_image_url'];
+
+    // Leveling System Calculation
+    final int totalXp = _userData?['xp'] ?? 0;
+    final int currentLevel = _calculateLevel(totalXp);
+    final double levelProgress = _calculateProgress(totalXp);
+
+    // Lista de cores para a barra de progresso
+    final List<Color> progressColors = [
+      const Color(0xFFB06DF9),
+      const Color(0xFF828EF3),
+      const Color(0xFF84CFB2),
+      const Color(0xFFCAFF5C),
+    ];
+    // Seleciona a cor com base no nível atual
+    final Color progressColor =
+        progressColors[currentLevel % progressColors.length];
 
     // Logica para determinar o provedor de imagem para o plano de fundo
     ImageProvider backgroundProvider;
@@ -155,9 +213,9 @@ class _ProfilePageState extends State<ProfilePage>
                           color: Colors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
+                        child: Text(
+                          currentLevel.toString(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -217,9 +275,9 @@ class _ProfilePageState extends State<ProfilePage>
                         ],
                       ),
                       const SizedBox(height: 15),
-                      const Text(
-                        'Level',
-                        style: TextStyle(
+                      Text(
+                        'Level $currentLevel',
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
@@ -230,16 +288,13 @@ class _ProfilePageState extends State<ProfilePage>
                           Expanded(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: const SizedBox(
+                              child: SizedBox(
                                 height: 10,
                                 child: LinearProgressIndicator(
-                                  value:
-                                      0.7, // Exemplo de progresso da barra em %
-                                  backgroundColor: Color(0xFFE0E0E0),
+                                  value: levelProgress,
+                                  backgroundColor: const Color(0xFFE0E0E0),
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(
-                                      0xFFB06DF9,
-                                    ), // Adicionar a funcionalidade de trocar a cor da barra de progresso entre essas cores: Color(0xFFB06DF9), Color(0xFF828EF3), Color(0xFF84CFB2), Color(0xFFCAFF5C),
+                                    progressColor,
                                   ),
                                 ),
                               ),
