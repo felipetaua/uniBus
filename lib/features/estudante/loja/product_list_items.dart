@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Um modelo de dados simples para representar um produto
 class Product {
@@ -17,68 +18,36 @@ class Product {
     required this.rating,
     required this.reviewCount,
   });
+
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    // Use a nullable map to prevent a crash if the document data is unexpectedly null.
+    final data = doc.data() as Map<String, dynamic>?;
+
+    // If data is null, return a default 'error' product to avoid crashing the list.
+    if (data == null) {
+      return Product(
+        imageUrl: '',
+        name: 'Erro ao carregar',
+        price: 0,
+        stock: 0,
+        rating: 0,
+        reviewCount: 0,
+      );
+    }
+
+    return Product(
+      imageUrl: data['imageUrl'] ?? '',
+      name: data['name'] ?? 'Produto sem nome',
+      price: double.tryParse(data['price']?.toString() ?? '0.0') ?? 0.0,
+      stock: int.tryParse(data['stock']?.toString() ?? '0') ?? 0,
+      rating: double.tryParse(data['rating']?.toString() ?? '0.0') ?? 0.0,
+      reviewCount: int.tryParse(data['reviewCount']?.toString() ?? '0') ?? 0,
+    );
+  }
 }
 
 class ProductListScreen extends StatelessWidget {
   ProductListScreen({super.key});
-
-  // Lista de produtos de exemplo com o tema de skins
-  final List<Product> products = [
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558481.png',
-      name: 'Avatar Guerreiro Estelar',
-      price: 135.00,
-      stock: 15,
-      rating: 4.8,
-      reviewCount: 201,
-    ),
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558482.png',
-      name: 'Avatar Feiticeira Neon',
-      price: 145.00,
-      stock: 10,
-      rating: 4.9,
-      reviewCount: 185,
-    ),
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558483.png',
-      name: 'Avatar Anjo Cibernético',
-      price: 105.00,
-      stock: 12,
-      rating: 4.7,
-      reviewCount: 151,
-    ),
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558484.png',
-      name: 'Avatar Caçador de Runa',
-      price: 94.00,
-      stock: 4,
-      rating: 4.5,
-      reviewCount: 207,
-    ),
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558485.png',
-      name: 'Avatar Guardiã Mística',
-      price: 180.00,
-      stock: 2,
-      rating: 5.0,
-      reviewCount: 310,
-    ),
-    Product(
-      imageUrl:
-          'https://cdn3d.iconscout.com/3d/premium/thumb/gamer-avatar-6743411-5558486.png',
-      name: 'Avatar Lâmina Sombria',
-      price: 115.00,
-      stock: 18,
-      rating: 4.6,
-      reviewCount: 199,
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +75,15 @@ class ProductListScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Row(
-              children: [Text('Raridade'), Icon(Icons.keyboard_arrow_down)],
+          InkWell(
+            onTap: () {}, // Ação do botão
+            borderRadius: BorderRadius.circular(8),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [Text('Raridade'), Icon(Icons.keyboard_arrow_down)],
+              ),
             ),
           ),
         ],
@@ -157,14 +131,14 @@ class ProductListScreen extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       children: [
                         CategoryIcon(
-                          icon: Icons.person_search,
-                          label: 'Avatares',
+                          icon: Icons.apps,
+                          label: 'Tudo',
                           isSelected: true,
                         ),
                         CategoryIcon(icon: Icons.landscape, label: 'Fundos'),
                         CategoryIcon(
-                          icon: Icons.sentiment_satisfied_alt,
-                          label: 'Emotes',
+                          icon: Icons.person_search,
+                          label: 'Avatares',
                         ),
                         CategoryIcon(icon: Icons.shield, label: 'Ícones'),
                         CategoryIcon(icon: Icons.style, label: 'Kits'),
@@ -176,22 +150,47 @@ class ProductListScreen extends StatelessWidget {
                 // Grade de produtos
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: GridView.builder(
-                    shrinkWrap:
-                        true, 
-                    physics:
-                        const NeverScrollableScrollPhysics(), 
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // 2 colunas
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 0.65, 
-                        ),
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return GridProductCard(product: product);
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream:
+                        FirebaseFirestore.instance
+                            .collection('products')
+                            .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Algo deu errado: ${snapshot.error}'),
+                        );
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(
+                          child: Text('Nenhum produto encontrado.'),
+                        );
+                      }
+
+                      final products =
+                          snapshot.data!.docs
+                              .map((doc) => Product.fromFirestore(doc))
+                              .toList();
+
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 colunas
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                              childAspectRatio: 0.65,
+                            ),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return GridProductCard(product: product);
+                        },
+                      );
                     },
                   ),
                 ),
@@ -219,16 +218,18 @@ class ProductListScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      children: [
-                        TextSpan(text: 'Ver carrinho '),
-                        TextSpan(
-                          text: '3x',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                  Expanded(
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        children: [
+                          TextSpan(text: 'Ver carrinho '),
+                          TextSpan(
+                            text: '3x',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Row(
@@ -274,6 +275,7 @@ class FilterChipWidget extends StatelessWidget {
       child: ActionChip(
         avatar: icon != null ? Icon(icon, size: 18) : null,
         label: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(label),
             if (icon == null) const Icon(Icons.keyboard_arrow_down, size: 18),
@@ -346,6 +348,33 @@ class GridProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeholder = Container(
+      height: 150,
+      color: Colors.grey[200],
+      child: Icon(Icons.image_not_supported, color: Colors.grey[400]),
+    );
+
+    Widget imageWidget;
+    if (product.imageUrl.isEmpty) {
+      imageWidget = placeholder;
+    } else if (product.imageUrl.startsWith('http')) {
+      imageWidget = Image.network(
+        product.imageUrl,
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+      );
+    } else {
+      imageWidget = Image.asset(
+        product.imageUrl,
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -361,21 +390,7 @@ class GridProductCard extends StatelessWidget {
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
-                child: Image.network(
-                  product.imageUrl,
-                  height: 150,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Container(
-                        height: 150,
-                        color: Colors.grey[200],
-                        child: Icon(
-                          Icons.image_not_supported,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                ),
+                child: imageWidget,
               ),
               Positioned(
                 top: 8,
