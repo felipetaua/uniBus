@@ -1,11 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Um modelo de dados simples para representar um produto
 class Product {
+  final String id;
   final String imageUrl;
   final String name;
   final double price;
+  final String category;
   final int stock;
   final double rating;
   final int reviewCount;
@@ -13,10 +16,12 @@ class Product {
   Product({
     required this.imageUrl,
     required this.name,
+    required this.id,
     required this.price,
     required this.stock,
     required this.rating,
     required this.reviewCount,
+    required this.category,
   });
 
   factory Product.fromFirestore(DocumentSnapshot doc) {
@@ -26,18 +31,22 @@ class Product {
     // If data is null, return a default 'error' product to avoid crashing the list.
     if (data == null) {
       return Product(
+        id: doc.id,
         imageUrl: '',
         name: 'Erro ao carregar',
         price: 0,
         stock: 0,
         rating: 0,
         reviewCount: 0,
+        category: 'Geral',
       );
     }
 
     return Product(
+      id: doc.id,
       imageUrl: data['imageUrl'] ?? '',
       name: data['name'] ?? 'Produto sem nome',
+      category: data['category'] ?? 'Geral',
       price: double.tryParse(data['price']?.toString() ?? '0.0') ?? 0.0,
       stock: int.tryParse(data['stock']?.toString() ?? '0') ?? 0,
       rating: double.tryParse(data['rating']?.toString() ?? '0.0') ?? 0.0,
@@ -46,8 +55,137 @@ class Product {
   }
 }
 
-class ProductListScreen extends StatelessWidget {
+class CartItem {
+  final Product product;
+  int quantity;
+
+  CartItem({required this.product, this.quantity = 1});
+}
+
+class ProductListScreen extends StatefulWidget {
   ProductListScreen({super.key});
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  final Map<String, CartItem> _cart = {};
+  bool _isPurchasing = false;
+
+  void _addToCart(Product product) {
+    if (product.stock <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Este item está fora de estoque!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      if (_cart.containsKey(product.id)) {
+        if (_cart[product.id]!.quantity < product.stock) {
+          _cart[product.id]!.quantity++;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Você já adicionou todo o estoque de ${product.name}!',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      } else {
+        _cart[product.id] = CartItem(product: product);
+      }
+    });
+  }
+
+  int _calculateTotalItems() {
+    if (_cart.isEmpty) return 0;
+    return _cart.values.map((item) => item.quantity).reduce((a, b) => a + b);
+  }
+
+  double _calculateTotalPrice() {
+    if (_cart.isEmpty) return 0.0;
+    return _cart.values
+        .map((item) => item.product.price * item.quantity)
+        .reduce((a, b) => a + b);
+  }
+
+  Future<void> _purchaseItems() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Você precisa estar logado para comprar.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    if (_cart.isEmpty) return;
+
+    setState(() => _isPurchasing = true);
+
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final userRef = firestore.collection('users').doc(user.uid);
+
+      await firestore.runTransaction((transaction) async {
+        final userSnapshot = await transaction.get(userRef);
+        if (!userSnapshot.exists) throw Exception("Usuário não encontrado.");
+
+        final currentCoins = (userSnapshot.data()?['coins'] ?? 0) as int;
+        final totalCost = _calculateTotalPrice();
+
+        if (currentCoins < totalCost) throw Exception("Moedas insuficientes!");
+
+        transaction.update(userRef, {
+          'coins': FieldValue.increment(-totalCost),
+        });
+
+        for (final cartItem in _cart.values) {
+          final productRef = firestore
+              .collection('products')
+              .doc(cartItem.product.id);
+
+          for (int i = 0; i < cartItem.quantity; i++) {
+            final inventoryRef = userRef.collection('inventory').doc();
+            transaction.set(inventoryRef, {
+              'productId': cartItem.product.id,
+              'name': cartItem.product.name,
+              'imageUrl': cartItem.product.imageUrl,
+              'category': cartItem.product.category,
+              'purchaseDate': FieldValue.serverTimestamp(),
+            });
+          }
+
+          transaction.update(productRef, {
+            'stock': FieldValue.increment(-cartItem.quantity),
+          });
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Compra realizada com sucesso!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      setState(() => _cart.clear());
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro na compra: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
