@@ -63,12 +63,13 @@ class CartItem {
 }
 
 class ProductListScreen extends StatefulWidget {
-  ProductListScreen({super.key});
+  const ProductListScreen({super.key});
 
   @override
   State<ProductListScreen> createState() => _ProductListScreenState();
 }
 
+// adicionar a funcionalidade de carrinho de compras
 class _ProductListScreenState extends State<ProductListScreen> {
   final Map<String, CartItem> _cart = {};
   bool _isPurchasing = false;
@@ -139,10 +140,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
         final userSnapshot = await transaction.get(userRef);
         if (!userSnapshot.exists) throw Exception("Usuário não encontrado.");
 
-        final currentCoins = (userSnapshot.data()?['coins'] ?? 0) as int;
+        final currentCoins = (userSnapshot.data()?['coins'] ?? 0) as num;
         final totalCost = _calculateTotalPrice();
 
-        if (currentCoins < totalCost) throw Exception("Moedas insuficientes!");
+        if (currentCoins < totalCost) {
+          throw Exception("Moedas insuficientes!");
+        }
 
         transaction.update(userRef, {
           'coins': FieldValue.increment(-totalCost),
@@ -153,6 +156,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               .collection('products')
               .doc(cartItem.product.id);
 
+          // Adiciona cada item ao inventário
           for (int i = 0; i < cartItem.quantity; i++) {
             final inventoryRef = userRef.collection('inventory').doc();
             transaction.set(inventoryRef, {
@@ -164,26 +168,35 @@ class _ProductListScreenState extends State<ProductListScreen> {
             });
           }
 
+          // Atualiza o estoque do produto
           transaction.update(productRef, {
             'stock': FieldValue.increment(-cartItem.quantity),
           });
         }
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Compra realizada com sucesso!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      setState(() => _cart.clear());
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Compra realizada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        setState(() => _cart.clear());
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro na compra: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro na compra: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isPurchasing = false);
+      }
     }
   }
 
@@ -231,8 +244,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
           // Conteúdo principal com a grade de produtos
           SingleChildScrollView(
             padding: const EdgeInsets.only(
-              bottom: 80,
-            ), // Espaço para o botão flutuante
+              bottom: 96, // Espaço para o botão flutuante
+            ),
             child: Column(
               children: [
                 // Barra de Filtros
@@ -245,7 +258,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     height: 40,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: [
+                      children: const [
                         FilterChipWidget(
                           label: 'Filtros',
                           icon: Icons.filter_list,
@@ -267,7 +280,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     height: 90,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: [
+                      children: const [
                         CategoryIcon(
                           icon: Icons.apps,
                           label: 'Tudo',
@@ -326,7 +339,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           final product = products[index];
-                          return GridProductCard(product: product);
+                          return GridProductCard(
+                            product: product,
+                            onAddToCart: () => _addToCart(product),
+                          );
                         },
                       );
                     },
@@ -337,62 +353,85 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ),
 
           // Botão Flutuante do Carrinho
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
+          if (_cart.isNotEmpty)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: GestureDetector(
+                onTap: _isPurchasing ? null : _purchaseItems,
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: const TextSpan(
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                        children: [
-                          TextSpan(text: 'Ver carrinho '),
-                          TextSpan(
-                            text: '3x',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        'assets/icons/coin_icon.png',
-                        height: 20,
-                        width: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '385',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                ],
+                  child:
+                      _isPurchasing
+                          ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                          : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                    children: [
+                                      const TextSpan(text: 'Comprar ('),
+                                      TextSpan(
+                                        text: '${_calculateTotalItems()}x',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const TextSpan(text: ')'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/coin_icon.png',
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _calculateTotalPrice().toInt().toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -482,7 +521,12 @@ class CategoryIcon extends StatelessWidget {
 
 class GridProductCard extends StatelessWidget {
   final Product product;
-  const GridProductCard({super.key, required this.product});
+  final VoidCallback onAddToCart;
+  const GridProductCard({
+    super.key,
+    required this.product,
+    required this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -610,10 +654,15 @@ class GridProductCard extends StatelessWidget {
                       style: const TextStyle(fontSize: 11),
                     ),
                     const Spacer(),
-                    const Icon(
-                      Icons.add_circle,
-                      color: Colors.blueAccent,
-                      size: 22,
+                    IconButton(
+                      icon: const Icon(
+                        Icons.add_circle,
+                        color: Colors.blueAccent,
+                      ),
+                      iconSize: 22,
+                      onPressed: onAddToCart,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
