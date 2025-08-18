@@ -76,6 +76,12 @@ class _EventCreationPageState extends State<EventCreationPage> {
       }
     } catch (e) {
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao buscar seus grupos: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
         setState(() => _isLoading = false);
       }
     }
@@ -147,10 +153,13 @@ class _EventCreationPageState extends State<EventCreationPage> {
     if (!_formKey.currentState!.validate() ||
         _selectedGroup == null ||
         _selectedDate == null ||
-        _selectedTime == null) {
+        _selectedTime == null ||
+        _selectedAssetPath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por favor, preencha todos os campos obrigatórios.'),
+          content: Text(
+            'Por favor, preencha todos os campos, incluindo a imagem.',
+          ),
         ),
       );
       return;
@@ -169,7 +178,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
       await FirebaseFirestore.instance.collection('events').add({
         'title': _titleController.text,
         'description': _descriptionController.text,
-        'imageUrl': _selectedAssetPath, // Salva o caminho do asset
+        'imageUrl': _selectedAssetPath!, // Agora é seguro usar '!'
         'date': Timestamp.fromDate(eventDateTime),
         'groupId': _selectedGroup!.id,
         'ownerId': FirebaseAuth.instance.currentUser?.uid,

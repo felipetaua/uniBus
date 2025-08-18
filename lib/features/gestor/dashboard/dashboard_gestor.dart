@@ -380,49 +380,58 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
         const SizedBox(height: 15),
         SizedBox(
           height: 250,
-          child: StreamBuilder<QuerySnapshot>(
-            stream:
-                _user != null
-                    ? FirebaseFirestore.instance
-                        .collection('events')
-                        .where('ownerId', isEqualTo: _user!.uid)
-                        .orderBy('date', descending: true)
-                        .snapshots()
-                    : null,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(
-                  child: Text(
-                    'Nenhum evento criado ainda.',
-                    style: AppTextStyles.lightBody,
+          child:
+              _user == null
+                  ? const Center(child: Text("Carregando dados do usuário..."))
+                  : StreamBuilder<QuerySnapshot>(
+                    stream:
+                        FirebaseFirestore.instance
+                            .collection('events')
+                            .where('ownerId', isEqualTo: _user!.uid)
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                    builder: (context, eventSnapshot) {
+                      if (eventSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (eventSnapshot.hasError) {
+                        // Importante: Adicionar tratamento de erro
+                        return const Center(
+                          child: Text("Erro ao carregar eventos."),
+                        );
+                      }
+                      if (!eventSnapshot.hasData ||
+                          eventSnapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: Text(
+                            'Nenhum evento criado ainda.',
+                            style: AppTextStyles.lightBody,
+                          ),
+                        );
+                      }
+
+                      final events =
+                          eventSnapshot.data!.docs
+                              .map((doc) => Event.fromFirestore(doc))
+                              .toList();
+
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          return EventCard(
+                            event: event,
+                            isDarkMode: isDarkMode,
+                            onConfirm: () {}, // Ação para 'Editar'
+                            onDecline: () {}, // Ação para 'Excluir'
+                          );
+                        },
+                      );
+                    },
                   ),
-                );
-              }
-
-              final events =
-                  snapshot.data!.docs
-                      .map((doc) => Event.fromFirestore(doc))
-                      .toList();
-
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  return EventCard(
-                    event: event,
-                    isDarkMode: isDarkMode,
-                    onConfirm: () {}, // Ação para o gestor pode ser 'Editar'
-                    onDecline: () {}, // Ou 'Excluir'
-                  );
-                },
-              );
-            },
-          ),
         ),
       ],
     );
