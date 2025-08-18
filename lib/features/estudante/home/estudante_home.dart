@@ -1,19 +1,12 @@
 import 'package:bus_attendance_app/core/theme/colors.dart';
 import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:bus_attendance_app/features/estudante/home/notificacoes_page.dart';
+import 'package:bus_attendance_app/models/event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-class Event {
-  final String title;
-  final String date;
-  final String imagePath;
-
-  Event({required this.title, required this.date, required this.imagePath});
-}
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});
@@ -275,24 +268,6 @@ class _StudentHomePageState extends State<StudentHomePage> {
     final Brightness brightness = Theme.of(context).brightness;
     final bool isDarkMode = brightness == Brightness.dark;
 
-    final List<Event> academicEvents = [
-      Event(
-        title: 'Palestra de IA',
-        date: '20/11/2025 às 19:30',
-        imagePath: 'assets/images/events/event_palestra.png',
-      ),
-      Event(
-        title: 'Feira de Ciências',
-        date: '23/08/2025 às 20:30',
-        imagePath: 'assets/images/events/event_feira_ciencias.png',
-      ),
-      Event(
-        title: 'Maratona de Programação',
-        date: '05/12/2025 às 09:00',
-        imagePath: 'assets/images/events/event_palestra.png',
-      ),
-    ];
-
     final Color primaryColor =
         isDarkMode ? AppColors.darkPrimary : AppColors.lightPrimary;
     final Color backgroundColor =
@@ -520,7 +495,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                         ).format(DateTime.now()),
                                       )!,
                                       style: AppTextStyles.lightTitle.copyWith(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         color: textPrimaryColor,
                                       ),
                                     ),
@@ -528,6 +503,7 @@ class _StudentHomePageState extends State<StudentHomePage> {
                                     Text(
                                       _groupData?['name'] ?? 'Ônibus',
                                       style: AppTextStyles.lightBody.copyWith(
+                                        fontSize: 14,
                                         color: textSecondaryColor,
                                       ),
                                     ),
@@ -712,62 +688,110 @@ class _StudentHomePageState extends State<StudentHomePage> {
                 ),
               ],
 
-              // CORREÇÃO DE LAYOUT: Movido para dentro da Column
               const SizedBox(height: 30),
               // Seção "Eventos acadêmicos"
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Eventos acadêmicos',
-                      style: AppTextStyles.lightTitle.copyWith(
-                        color: textPrimaryColor,
-                        fontSize: 20,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Lógica para "Ver mais" eventos
-                      },
-                      child: Text(
-                        'Ver mais',
-                        style: AppTextStyles.lightBody.copyWith(
-                          color: primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
+              if (hasGroup)
+                _buildEventsSection(
+                  context,
+                  primaryColor,
+                  textPrimaryColor,
+                  _userData?['group_id'],
                 ),
-              ),
-              const SizedBox(height: 15),
-              // Lista de eventos acadêmicos (Horizontal Scroll)
-              SizedBox(
-                height: 250, // Altura fixa para o carrossel de eventos
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  itemCount: academicEvents.length,
-                  itemBuilder: (context, index) {
-                    final event = academicEvents[index];
-                    return EventCard(
-                      title: event.title,
-                      date: event.date,
-                      imagePath: event.imagePath,
-                      isDarkMode: isDarkMode,
-                      onConfirm: () {
-                        // TODO: Adicionar lógica para confirmar presença no evento
-                      },
-                      onDecline: () {
-                        // TODO: Adicionar lógica para recusar presença no evento
-                      },
-                    );
-                  },
-                ),
-              ),
               const SizedBox(height: 40),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEventsSection(
+    BuildContext context,
+    Color primaryColor,
+    Color textPrimaryColor,
+    String? groupId,
+  ) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Próximos Eventos',
+                style: AppTextStyles.lightTitle.copyWith(
+                  color: textPrimaryColor,
+                  fontSize: 20,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  // TODO: Navegar para a tela de todos os eventos
+                },
+                child: Text(
+                  'Ver todos',
+                  style: AppTextStyles.lightBody.copyWith(color: primaryColor),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 250,
+          child: StreamBuilder<QuerySnapshot>(
+            stream:
+                FirebaseFirestore.instance
+                    .collection('events')
+                    .where('groupId', isEqualTo: groupId)
+                    // Filtra por eventos que ainda não aconteceram
+                    .where('date', isGreaterThanOrEqualTo: Timestamp.now())
+                    .orderBy('date') // Ordena os eventos pela data mais próxima
+                    .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return const Center(child: Text("Erro ao carregar eventos."));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Text(
+                    'Nenhum evento futuro no seu grupo.',
+                    style: AppTextStyles.lightBody,
+                  ),
+                );
+              }
+
+              final events =
+                  snapshot.data!.docs
+                      .map((doc) => Event.fromFirestore(doc))
+                      .toList();
+
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  final event = events[index];
+                  return EventCard(
+                    title: event.title,
+                    date: event.formattedDate,
+                    imagePath: event.imageUrl,
+                    isDarkMode: isDarkMode,
+                    onConfirm:
+                        () {}, // TODO: Implement student confirm presence
+                    onDecline:
+                        () {}, // TODO: Implement student decline presence
+                  );
+                },
+              );
+            },
           ),
         ),
       ],
