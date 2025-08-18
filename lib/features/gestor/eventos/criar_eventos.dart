@@ -13,22 +13,22 @@ class EventCreationPage extends StatefulWidget {
   State<EventCreationPage> createState() => _EventCreationPageState();
 }
 
-class _EventCreationPageState extends State<EventCreationPage> {
-  // CORREÇÃO: Caminhos das imagens padronizados.
-  // Certifique-se que estes arquivos existem e a pasta está declarada no pubspec.yaml
-  final List<String> _eventAssetImages = [
-    'assets/images/events/conferencia.jpg',
-    'assets/images/events/congresso.jpg',
-    'assets/images/events/debate.jpg',
-    'assets/images/events/defesa_tese.jpg',
-    'assets/images/events/formatura.jpg',
-    'assets/images/events/hackathon.jpg',
-    'assets/images/events/palestra.jpg',
-    'assets/images/events/seminario.jpg',
-    'assets/images/events/visita_tecnica.png',
-    'assets/images/events/workshop.jpg',
-  ];
+const List<String> _eventAssetImages = [
+  'assets/images/events/conferencia.jpg',
+  'assets/images/events/congresso.jpg',
+  'assets/images/events/debate.jpg',
+  'assets/images/events/defesa_tese.jpg',
+  'assets/images/events/formatura.jpg',
+  'assets/images/events/hackathon.jpg',
+  'assets/images/events/palestra.jpg',
+  'assets/images/events/seminário.jpg',
+  'assets/images/events/visita-tecnica.png',
+  'assets/images/events/workshop.jpg',
+  'assets/images/events/apresent.png',
+  'assets/images/events/feira.png',
+];
 
+class _EventCreationPageState extends State<EventCreationPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -68,12 +68,16 @@ class _EventCreationPageState extends State<EventCreationPage> {
               .get();
       final groups =
           snapshot.docs.map((doc) => Group.fromFirestore(doc)).toList();
-      setState(() {
-        _managedGroups = groups;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _managedGroups = groups;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -334,7 +338,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
   Widget _buildImagePicker(Color surfaceColor, Color textPrimaryColor) {
     return Center(
       child: GestureDetector(
-        onTap: _selectLocalImage, 
+        onTap: _selectLocalImage,
         child: Container(
           height: 150,
           width: double.infinity,
