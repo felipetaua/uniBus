@@ -13,6 +13,8 @@ class GiftsScreen extends StatefulWidget {
 
 class _GiftsScreenState extends State<GiftsScreen> {
   Map<String, dynamic>? _userData;
+  bool _canClaimDailyReward = false;
+  bool _isClaimingReward = false;
 
   @override
   void initState() {
@@ -33,7 +35,34 @@ class _GiftsScreenState extends State<GiftsScreen> {
         setState(() {
           _userData = userDoc.data();
         });
+        _checkDailyRewardStatus();
       }
+    }
+  }
+
+  void _checkDailyRewardStatus() {
+    if (_userData == null) {
+      if (mounted) setState(() => _canClaimDailyReward = false);
+      return;
+    }
+
+    if (_userData!.containsKey('lastDailyRewardClaim')) {
+      final Timestamp lastClaimTimestamp = _userData!['lastDailyRewardClaim'];
+      final DateTime lastClaimDate = lastClaimTimestamp.toDate();
+      final DateTime now = DateTime.now();
+
+      // Compara apenas a data (ignora a hora)
+      if (lastClaimDate.year == now.year &&
+          lastClaimDate.month == now.month &&
+          lastClaimDate.day == now.day) {
+        if (mounted) setState(() => _canClaimDailyReward = false); // Já coletou
+      } else {
+        if (mounted)
+          setState(() => _canClaimDailyReward = true); // Pode coletar
+      }
+    } else {
+      // Nunca coletou antes
+      if (mounted) setState(() => _canClaimDailyReward = true);
     }
   }
 
@@ -359,6 +388,76 @@ class _GiftsScreenState extends State<GiftsScreen> {
     }
   }
 
+  Future<void> _claimDailyReward() async {
+    // Fecha o modal antes de processar
+    Navigator.pop(context);
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    final userDocRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.uid);
+    const int rewardAmount = 10;
+
+    try {
+      // Usar uma transação para garantir a consistência dos dados
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(userDocRef);
+        final data = snapshot.data();
+
+        if (data == null) {
+          throw Exception("Usuário não encontrado.");
+        }
+
+        // Verifica se a recompensa já foi coletada hoje
+        if (data.containsKey('lastDailyRewardClaim')) {
+          final Timestamp lastClaimTimestamp = data['lastDailyRewardClaim'];
+          final DateTime lastClaimDate = lastClaimTimestamp.toDate();
+          final DateTime now = DateTime.now();
+
+          // Compara apenas a data (ignora a hora)
+          if (lastClaimDate.year == now.year &&
+              lastClaimDate.month == now.month &&
+              lastClaimDate.day == now.day) {
+            // Lança uma exceção se já foi coletado hoje
+            throw Exception("Recompensa diária já coletada. Volte amanhã!");
+          }
+        }
+
+        // Se não foi coletada, atualiza as moedas e a data do último resgate
+        transaction.update(userDocRef, {
+          'coins': FieldValue.increment(rewardAmount),
+          'lastDailyRewardClaim':
+              Timestamp.now(), // Atualiza para o momento atual
+        });
+      });
+
+      // Se a transação for bem-sucedida
+      _loadUserData(); // Atualiza a UI e o status do botão
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('+$rewardAmount Unicoins coletadas com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      // Se ocorrer um erro ou se a recompensa já foi coletada
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst("Exception: ", "")),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isClaimingReward = false);
+    }
+  }
+
   void _showBuyCoinsModal() {
     showModalBottomSheet(
       context: context,
@@ -524,19 +623,14 @@ class _GiftsScreenState extends State<GiftsScreen> {
                     _buildEarnCoinOptionItem(
                       icon: Icons.login,
                       title: 'Login Diário',
-                      subtitle: 'Ganhe moedas por entrar todo dia',
+                      subtitle:
+                          _canClaimDailyReward
+                              ? 'Ganhe moedas por entrar todo dia'
+                              : 'Recompensa já coletada hoje',
                       reward: '+10',
-                      onTap: () {
-                        // TODO: Implementar lógica de recompensa diária
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Recompensa diária ainda não implementada.',
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: _claimDailyReward,
+                      isEnabled: _canClaimDailyReward,
+                      isLoading: _isClaimingReward,
                     ),
                     const SizedBox(height: 16),
                     _buildEarnCoinOptionItem(
@@ -577,6 +671,8 @@ class _GiftsScreenState extends State<GiftsScreen> {
     required String subtitle,
     required String reward,
     required VoidCallback onTap,
+    bool isEnabled = true,
+    bool isLoading = false,
   }) {
     return Row(
       children: [
@@ -610,26 +706,41 @@ class _GiftsScreenState extends State<GiftsScreen> {
         ),
         const SizedBox(width: 16),
         ElevatedButton.icon(
-          onPressed: onTap,
+          onPressed: isEnabled && !isLoading ? onTap : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor:
+                isEnabled ? const Color(0xFF42A5F5) : Colors.grey.shade400,
+            disabledBackgroundColor: Colors.grey.shade300,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-          icon: Image.asset(
-            'assets/icons/coin_icon.png',
-            height: 16,
-            width: 16,
-          ),
-          label: Text(
-            reward,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          icon:
+              isLoading
+                  ? Container() // Não mostra ícone durante o loading
+                  : Image.asset(
+                    'assets/icons/coin_icon.png',
+                    height: 16,
+                    width: 16,
+                  ),
+          label:
+              isLoading
+                  ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                  : Text(
+                    reward,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
         ),
       ],
     );
