@@ -8,13 +8,45 @@ import 'package:bus_attendance_app/core/theme/text_styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-// Reutilizando a classe Event do exemplo do estudante
+// Modelo de dados para o Evento, baseado no seu event_model.dart
 class Event {
+  final String id;
   final String title;
-  final String date;
-  final String imagePath;
-  Event({required this.title, required this.date, required this.imagePath});
+  final String description;
+  final String imageUrl;
+  final DateTime date;
+  final String groupId;
+  final String ownerId;
+
+  Event({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.date,
+    required this.groupId,
+    required this.ownerId,
+  });
+
+  factory Event.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Event(
+      id: doc.id,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      imageUrl:
+          data['imageUrl'] ??
+          'assets/images/events/palestra.jpg', // Imagem padrão
+      date: (data['date'] as Timestamp).toDate(),
+      groupId: data['groupId'] ?? '',
+      ownerId: data['ownerId'] ?? '',
+    );
+  }
+
+  String get formattedDate =>
+      DateFormat("dd/MM/y 'às' HH:mm", "pt_BR").format(date);
 }
 
 class GestorDashboardPage extends StatefulWidget {
@@ -59,21 +91,8 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
     final bool isDarkMode = brightness == Brightness.dark;
 
     // Dados de exemplo para o dashboard do gestor
-    // TODO: Substituir por dados reais do Firebase
     final int confirmedToday = 32;
     final int totalCapacity = 45;
-    final List<Event> createdEvents = [
-      Event(
-        title: 'Feira de Ciências',
-        date: '23/08/2025 às 20:30',
-        imagePath: 'assets/images/events/event_feira_ciencias.png',
-      ),
-      Event(
-        title: 'Palestra de IA',
-        date: '20/11/2025 às 19:30',
-        imagePath: 'assets/images/events/event_palestra.png',
-      ),
-    ];
 
     // Cores do tema
     final Color backgroundColor =
@@ -133,12 +152,7 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
               const SizedBox(height: 20),
               _buildActionsGrid(context),
               const SizedBox(height: 30),
-              _buildEventsSection(
-                context,
-                primaryColor,
-                textPrimaryColor,
-                createdEvents,
-              ),
+              _buildEventsSection(context, primaryColor, textPrimaryColor),
               const SizedBox(height: 40),
             ],
           ),
@@ -307,7 +321,6 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
             label: 'Criar Evento',
             color: const Color(0xFF84CFB2),
             onTap: () {
-              // TODO: Navegar para a tela de criação de eventos
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const EventCreationPage(),
@@ -320,7 +333,6 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
             label: 'Criar Cronograma',
             color: const Color(0xFFF3C482),
             onTap: () {
-              // TODO: Navegar para a tela de criação de cronograma
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const ScheduleCreationPage(),
@@ -337,7 +349,6 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
     BuildContext context,
     Color primaryColor,
     Color textPrimaryColor,
-    List<Event> events,
   ) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -369,32 +380,49 @@ class _GestorDashboardPageState extends State<GestorDashboardPage> {
         const SizedBox(height: 15),
         SizedBox(
           height: 250,
-          child:
-              events.isEmpty
-                  ? Center(
-                    child: Text(
-                      'Nenhum evento criado ainda.',
-                      style: AppTextStyles.lightBody,
-                    ),
-                  )
-                  : ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                      final event = events[index];
-                      // Pode criar um `ManagerEventCard` se precisar de ações diferentes (ex: editar)
-                      return EventCard(
-                        title: event.title,
-                        date: event.date,
-                        imagePath: event.imagePath,
-                        isDarkMode: isDarkMode,
-                        onConfirm:
-                            () {}, // Ação para o gestor pode ser 'Editar'
-                        onDecline: () {}, // Ou 'Excluir'
-                      );
-                    },
+          child: StreamBuilder<QuerySnapshot>(
+            stream:
+                _user != null
+                    ? FirebaseFirestore.instance
+                        .collection('events')
+                        .where('ownerId', isEqualTo: _user!.uid)
+                        .orderBy('date', descending: true)
+                        .snapshots()
+                    : null,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(
+                  child: Text(
+                    'Nenhum evento criado ainda.',
+                    style: AppTextStyles.lightBody,
                   ),
+                );
+              }
+
+              final events =
+                  snapshot.data!.docs
+                      .map((doc) => Event.fromFirestore(doc))
+                      .toList();
+
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  final event = events[index];
+                  return EventCard(
+                    event: event,
+                    isDarkMode: isDarkMode,
+                    onConfirm: () {}, // Ação para o gestor pode ser 'Editar'
+                    onDecline: () {}, // Ou 'Excluir'
+                  );
+                },
+              );
+            },
+          ),
         ),
       ],
     );
@@ -446,21 +474,16 @@ class _ActionCard extends StatelessWidget {
   }
 }
 
-// Reutilizando o EventCard da tela de estudante
-// Pode ser movido para um arquivo compartilhado em `lib/core/widgets/`
+// Card de Evento atualizado para usar o novo modelo
 class EventCard extends StatelessWidget {
-  final String title;
-  final String date;
-  final String imagePath;
+  final Event event;
   final bool isDarkMode;
-  final VoidCallback onConfirm; // Para o gestor, pode ser 'Editar'
-  final VoidCallback onDecline; // Para o gestor, pode ser 'Excluir'
+  final VoidCallback onConfirm;
+  final VoidCallback onDecline;
 
   const EventCard({
     super.key,
-    required this.title,
-    required this.date,
-    required this.imagePath,
+    required this.event,
     required this.isDarkMode,
     required this.onConfirm,
     required this.onDecline,
@@ -472,6 +495,8 @@ class EventCard extends StatelessWidget {
         isDarkMode ? AppColors.darkSurface : AppColors.lightSurface;
     final Color textPrimaryColor =
         isDarkMode ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final Color textSecondaryColor =
+        isDarkMode ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
 
     return Container(
       width: 250,
@@ -495,23 +520,47 @@ class EventCard extends StatelessWidget {
               top: Radius.circular(16.0),
             ),
             child: Image.asset(
-              imagePath,
+              event.imageUrl,
               height: 110,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                // Widget de fallback caso a imagem não seja encontrada
+                return Container(
+                  height: 110,
+                  color: Colors.grey.shade200,
+                  child: const Icon(
+                    Icons.image_not_supported_outlined,
+                    color: Colors.grey,
+                  ),
+                );
+              },
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Text(
-              title,
-              style: AppTextStyles.lightBody.copyWith(
-                fontWeight: FontWeight.bold,
-                color: textPrimaryColor,
-                fontSize: 16,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: AppTextStyles.lightBody.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: textPrimaryColor,
+                    fontSize: 16,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  event.formattedDate,
+                  style: AppTextStyles.lightBody.copyWith(
+                    fontSize: 12,
+                    color: textSecondaryColor,
+                  ),
+                ),
+              ],
             ),
           ),
           const Spacer(),
@@ -520,7 +569,6 @@ class EventCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Para o gestor, os botões podem ter outras funções
                 IconButton(
                   icon: Icon(Icons.delete_outline, color: Colors.red.shade300),
                   onPressed: onDecline,
